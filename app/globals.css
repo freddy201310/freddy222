@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background:
+    radial-gradient(1200px 600px at 100% -10%, #eef0ff 0%, transparent 60%),
+    radial-gradient(900px 500px at -10% 10%, #fff1ea 0%, transparent 55%),
+    #faf8f3;
+  min-height: 100vh;
+}
+
+/* Lightweight typography for rendered Markdown */
+.prose-study h1,
+.prose-study h2,
+.prose-study h3 {
+  font-weight: 700;
+  color: #1a1d29;
+  line-height: 1.25;
+  margin: 1.2em 0 0.5em;
+}
+.prose-study h1 { font-size: 1.5rem; }
+.prose-study h2 { font-size: 1.25rem; }
+.prose-study h3 { font-size: 1.05rem; }
+.prose-study p { margin: 0.6em 0; line-height: 1.7; }
+.prose-study ul,
+.prose-study ol { margin: 0.5em 0 0.5em 1.25em; line-height: 1.7; }
+.prose-study li { margin: 0.25em 0; }
+.prose-study strong { color: #1a1d29; font-weight: 700; }
+.prose-study code {
+  background: #eef0ff;
+  padding: 0.1em 0.35em;
+  border-radius: 0.35rem;
+  font-size: 0.9em;
+}
+.prose-study pre {
+  background: #1a1d29;
+  color: #f3f4ff;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  overflow-x: auto;
+  margin: 0.8em 0;
+}
+.prose-study pre code { background: transparent; padding: 0; }
+.prose-study table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.8em 0;
+  font-size: 0.92rem;
+}
+.prose-study th,
+.prose-study td {
+  border: 1px solid #e6e3da;
+  padding: 0.5rem 0.7rem;
+  text-align: left;
+}
+.prose-study th { background: #f3f1ea; font-weight: 600; }
+.prose-study blockquote {
+  border-left: 3px solid #5b6cff;
+  padding-left: 0.9rem;
+  color: #555a6b;
+  margin: 0.8em 0;
+}
