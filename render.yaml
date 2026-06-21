@@ -1,0 +1,23 @@
+# Render Blueprint — deploy Snapfix with no local setup.
+# 1. Push this repo to GitHub.
+# 2. Go to https://render.com → New → Blueprint → connect this repo.
+# 3. Render reads this file, runs the build, and gives you a public URL.
+# 4. In the service's Environment tab, set ANTHROPIC_API_KEY and
+#    GOOGLE_SHEETS_WEBHOOK_URL (see README). Then Save — it redeploys.
+services:
+  - type: web
+    name: snapfix
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      # Set these two in the Render dashboard (sync:false keeps them out of git).
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: GOOGLE_SHEETS_WEBHOOK_URL
+        sync: false
