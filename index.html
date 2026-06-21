@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f0f1a" />
+  <title>Snapfix — photo editing, stupidly simple</title>
+  <meta name="description" content="Snapfix makes photo editing effortless. Upload a photo, let AI suggest the perfect look, and apply it in one tap. Join the waitlist." />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/landing.css" />
+</head>
+<body class="landing">
+  <header class="topbar">
+    <a class="brand" href="/">
+      <span class="logo">◑</span> Snapfix
+    </a>
+    <div class="topbar-actions">
+      <a class="btn btn-sm nav-link" href="#how">How it works</a>
+      <a class="btn btn-primary" href="editor.html">Try the editor</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="lp-hero">
+      <div class="lp-hero-copy">
+        <div class="lp-eyebrow">✨ Now in early access</div>
+        <h1>Photo editing,<br /><span class="grad">stupidly simple</span>.</h1>
+        <p class="lp-sub">
+          Upload a photo and let <strong>AI suggest the perfect look</strong> — then apply it in one tap.
+          No layers, no jargon, no skills required.
+        </p>
+
+        <!-- Waitlist -->
+        <form id="waitlistForm" class="waitlist" novalidate>
+          <input
+            id="waitlistEmail"
+            class="waitlist-input"
+            type="email"
+            inputmode="email"
+            autocomplete="email"
+            placeholder="you@example.com"
+            aria-label="Email address"
+            required
+          />
+          <button id="waitlistBtn" class="btn btn-pro waitlist-btn" type="submit">Join the waitlist</button>
+        </form>
+        <p id="waitlistMsg" class="waitlist-msg" role="status" aria-live="polite"></p>
+        <p class="waitlist-note">No spam. We'll email you when your spot opens up.</p>
+      </div>
+
+      <div class="lp-hero-art" aria-hidden="true">
+        <div class="art-card">
+          <div class="art-photo art-before">Before</div>
+          <div class="art-divider"></div>
+          <div class="art-photo art-after">After</div>
+        </div>
+        <div class="art-chip art-chip-1">🤖 “Warm sunset glow — brighter, softer shadows.”</div>
+        <div class="art-chip art-chip-2">✨ Applied</div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section id="how" class="lp-features">
+      <h2 class="lp-h2">Why people love it</h2>
+      <div class="feature-grid">
+        <div class="feature">
+          <div class="feature-ico">🤖</div>
+          <h3>AI Suggest</h3>
+          <p>Claude looks at your photo and recommends the exact edits that make it pop — you just tap Apply.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-ico">✨</div>
+          <h3>Magic Words</h3>
+          <p>Type what you want — “warm and bright, like sunset” — and watch it happen. No sliders to learn.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-ico">⚡</div>
+          <h3>One-tap enhance</h3>
+          <p>Not sure where to start? One button balances exposure, color, and contrast instantly.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-ico">🎨</div>
+          <h3>Beautiful filters</h3>
+          <p>A curated set of looks — from vivid to vintage — that actually flatter real photos.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="lp-steps">
+      <h2 class="lp-h2">Three taps to a better photo</h2>
+      <div class="steps">
+        <div class="step"><span class="step-n">1</span><div><h3>Upload</h3><p>Drop any photo from your phone or computer.</p></div></div>
+        <div class="step"><span class="step-n">2</span><div><h3>Let AI suggest</h3><p>Get a recommended look tuned to your exact image.</p></div></div>
+        <div class="step"><span class="step-n">3</span><div><h3>Apply &amp; download</h3><p>Tap apply, tweak if you like, and save. Done.</p></div></div>
+      </div>
+    </section>
+
+    <!-- Bottom CTA -->
+    <section class="lp-cta">
+      <h2>Be first in line.</h2>
+      <p>Join the waitlist and get early access plus a free month of Pro.</p>
+      <a class="btn btn-pro btn-cta" href="#" data-scroll-top>Join the waitlist</a>
+      <a class="btn btn-glow btn-cta" href="editor.html">Or try the editor now →</a>
+    </section>
+  </main>
+
+  <footer class="lp-footer">
+    <span>◑ Snapfix</span>
+    <span class="lp-footer-dim">Photo editing, stupidly simple.</span>
+  </footer>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="js/landing.js"></script>
+</body>
+</html>

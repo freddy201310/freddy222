@@ -1,0 +1,17 @@
+{
+  "name": "snapfix",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Snapfix — photo editing, stupidly simple. Landing page, waitlist, and AI edit suggestions.",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.1",
+    "express": "^4.21.2"
+  }
+}
