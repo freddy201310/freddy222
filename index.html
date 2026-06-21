@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>🚀 Quiz Blitz! — Brain Power Game</title>
+<style>
+  :root {
+    --bg1: #6d28d9;
+    --bg2: #2563eb;
+    --card: #ffffff;
+    --ink: #1e1b4b;
+    --good: #22c55e;
+    --bad: #ef4444;
+    --gold: #f59e0b;
+    --shadow: 0 8px 0 rgba(0,0,0,.18);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    font-family: "Trebuchet MS", "Comic Sans MS", system-ui, sans-serif;
+    color: var(--ink);
+    background: linear-gradient(135deg, var(--bg1), var(--bg2));
+    background-size: 200% 200%;
+    animation: drift 12s ease infinite;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    user-select: none;
+  }
+  @keyframes drift { 0%{background-position:0 0} 50%{background-position:100% 100%} 100%{background-position:0 0} }
+
+  #app {
+    width: min(560px, 94vw);
+    height: min(820px, 96vh);
+    background: rgba(255,255,255,.10);
+    border: 3px solid rgba(255,255,255,.35);
+    border-radius: 28px;
+    padding: 18px;
+    backdrop-filter: blur(6px);
+    display: flex; flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .screen { display: none; flex: 1; flex-direction: column; min-height: 0; }
+  .screen.active { display: flex; animation: pop .35s ease; }
+  @keyframes pop { from{transform:scale(.92);opacity:0} to{transform:scale(1);opacity:1} }
+
+  /* ---------- START ---------- */
+  .title {
+    text-align: center; color: #fff; margin: 6px 0 2px;
+    font-size: clamp(34px, 9vw, 56px); letter-spacing: 1px;
+    text-shadow: 0 4px 0 rgba(0,0,0,.25);
+    animation: bob 2.4s ease-in-out infinite;
+  }
+  @keyframes bob { 0%,100%{transform:translateY(0) rotate(-1deg)} 50%{transform:translateY(-8px) rotate(1deg)} }
+  .subtitle { text-align:center; color:#fde68a; font-weight:bold; margin: 0 0 8px; font-size: clamp(14px,3.6vw,18px); }
+  .hint { text-align:center; color:#e9d5ff; font-size: 14px; margin: 2px 0 14px; }
+
+  .cats { display:grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 4px; overflow:auto; }
+  .cat {
+    border:none; cursor:pointer; color:#fff; font-weight:bold;
+    border-radius: 20px; padding: 18px 10px; font-size: 18px;
+    box-shadow: var(--shadow); transition: transform .08s;
+    display:flex; flex-direction:column; gap:6px; align-items:center;
+  }
+  .cat .emoji { font-size: 38px; }
+  .cat:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,.18); }
+  .cat.surprise { grid-column: 1 / -1; background: linear-gradient(90deg,#f59e0b,#ec4899,#8b5cf6); font-size: 22px; }
+  .cat.c-math { background:#3b82f6; } .cat.c-science { background:#10b981; }
+  .cat.c-geo { background:#06b6d4; } .cat.c-words { background:#a855f7; }
+  .cat.c-facts { background:#f43f5e; }
+
+  .best { text-align:center; color:#fff; margin-top: auto; font-weight:bold; font-size: 16px; padding-top:10px; }
+  .best span { color:#fde047; }
+
+  /* ---------- GAME ---------- */
+  .hud { display:flex; justify-content:space-between; align-items:center; gap:8px; color:#fff; }
+  .pill { background: rgba(0,0,0,.22); border-radius:16px; padding:8px 12px; font-weight:bold; font-size:16px; text-align:center; min-width:74px; }
+  .pill small { display:block; font-size:10px; opacity:.8; letter-spacing:1px; }
+  .pill b { font-size: 22px; }
+  .combo { color:#fde047; }
+  .combo.hot { animation: shake .3s infinite; }
+
+  .timebar-wrap { height: 16px; background: rgba(0,0,0,.25); border-radius: 10px; margin: 12px 0; overflow:hidden; }
+  #timebar { height:100%; width:100%; background: linear-gradient(90deg,#22c55e,#fde047,#ef4444); background-size:300% 100%; background-position:0 0; transition: width .2s linear; }
+
+  .qcard {
+    background: var(--card); border-radius: 24px; padding: 22px 18px;
+    text-align:center; box-shadow: var(--shadow);
+    display:flex; flex-direction:column; justify-content:center; align-items:center;
+    min-height: 150px; margin-bottom: 14px; position: relative;
+  }
+  .qcat { font-size: 14px; font-weight:bold; color:#7c3aed; letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; }
+  .qtext { font-size: clamp(26px, 7vw, 40px); font-weight: bold; line-height:1.2; }
+  .feedback { position:absolute; top:-14px; right:-6px; font-size:46px; opacity:0; }
+  .feedback.show { animation: burst .6s ease; }
+  @keyframes burst { 0%{transform:scale(0) rotate(-20deg);opacity:1} 60%{transform:scale(1.3) rotate(10deg);opacity:1} 100%{transform:scale(1) rotate(0);opacity:0} }
+
+  .answers { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:auto; }
+  .ans {
+    border:none; cursor:pointer; color:#fff; font-weight:bold;
+    border-radius:18px; padding:22px 8px; font-size: clamp(18px,5vw,24px);
+    background:#4f46e5; box-shadow: var(--shadow); transition: transform .07s;
+  }
+  .ans:nth-child(2){background:#0891b2}.ans:nth-child(3){background:#db2777}.ans:nth-child(4){background:#ea580c}
+  .ans:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,.18); }
+  .ans.correct { background: var(--good) !important; animation: glow .5s; }
+  .ans.wrong { background: var(--bad) !important; animation: shake .35s; }
+  @keyframes glow { 0%{transform:scale(1)} 50%{transform:scale(1.06)} 100%{transform:scale(1)} }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-6px)} 80%{transform:translateX(6px)} }
+
+  .cheer { text-align:center; color:#fde047; font-weight:bold; height: 26px; font-size: 20px; margin-top:8px; }
+
+  /* ---------- GAME OVER ---------- */
+  .over { text-align:center; color:#fff; display:flex; flex-direction:column; height:100%; }
+  .over h2 { font-size: clamp(40px,11vw,64px); margin: 10px 0 0; text-shadow:0 4px 0 rgba(0,0,0,.25); }
+  .scorebig { font-size: clamp(70px, 22vw, 130px); color:#fde047; font-weight:bold; line-height:1; margin: 6px 0; text-shadow:0 5px 0 rgba(0,0,0,.25); }
+  .stats { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin: 14px 0; }
+  .stat { background: rgba(0,0,0,.22); border-radius:16px; padding:12px 6px; }
+  .stat b { display:block; font-size: 26px; color:#fff; }
+  .stat small { font-size:11px; opacity:.85; letter-spacing:1px; }
+  .newbest { color:#fde047; font-size:22px; font-weight:bold; animation: bob 1s ease-in-out infinite; }
+
+  .bigbtn {
+    border:none; cursor:pointer; color:#fff; font-weight:bold;
+    border-radius:22px; padding:20px; font-size:26px; margin-top:auto;
+    background: linear-gradient(90deg,#22c55e,#16a34a); box-shadow: var(--shadow);
+  }
+  .bigbtn:active{ transform: translateY(4px); box-shadow:0 2px 0 rgba(0,0,0,.18); }
+  .linkbtn { background:none;border:none;color:#e9d5ff;cursor:pointer;font-size:15px;margin-top:10px;text-decoration:underline; }
+
+  #mute {
+    position:absolute; top:14px; right:14px; z-index:5;
+    background: rgba(0,0,0,.25); border:none; color:#fff; cursor:pointer;
+    width:42px;height:42px;border-radius:12px;font-size:20px;
+  }
+
+  /* floating confetti emojis on win */
+  .confetti { position:absolute; top:-40px; font-size:28px; animation: fall linear forwards; pointer-events:none; }
+  @keyframes fall { to { transform: translateY(900px) rotate(720deg); opacity:0; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <button id="mute" title="Sound on/off">🔊</button>
+
+  <!-- START SCREEN -->
+  <section id="screen-start" class="screen active">
+    <h1 class="title">🚀 Quiz Blitz!</h1>
+    <p class="subtitle">Answer fast. Build streaks. Power up your brain! 🧠⚡</p>
+    <p class="hint">Pick a topic to start a 60-second challenge:</p>
+    <div class="cats">
+      <button class="cat surprise" data-cat="all"><span class="emoji">🎲</span>Surprise Me!</button>
+      <button class="cat c-math" data-cat="math"><span class="emoji">➕</span>Math</button>
+      <button class="cat c-science" data-cat="science"><span class="emoji">🔬</span>Science</button>
+      <button class="cat c-geo" data-cat="geo"><span class="emoji">🌍</span>Geography</button>
+      <button class="cat c-words" data-cat="words"><span class="emoji">📖</span>Words</button>
+      <button class="cat c-facts" data-cat="facts"><span class="emoji">💡</span>Fun Facts</button>
+    </div>
+    <p class="best">🏆 Best Score: <span id="best-start">0</span></p>
+  </section>
+
+  <!-- GAME SCREEN -->
+  <section id="screen-game" class="screen">
+    <div class="hud">
+      <div class="pill"><small>SCORE</small><b id="score">0</b></div>
+      <div class="pill"><small>STREAK</small><b id="combo" class="combo">x1</b></div>
+      <div class="pill"><small>TIME</small><b id="clock">60</b></div>
+    </div>
+    <div class="timebar-wrap"><div id="timebar"></div></div>
+    <div class="qcard">
+      <div class="qcat" id="qcat">MATH</div>
+      <div class="qtext" id="qtext">Ready?</div>
+      <div class="feedback" id="feedback">✅</div>
+    </div>
+    <div class="answers" id="answers"></div>
+    <div class="cheer" id="cheer"></div>
+  </section>
+
+  <!-- GAME OVER SCREEN -->
+  <section id="screen-over" class="screen">
+    <div class="over">
+      <h2 id="over-title">Time's Up! ⏰</h2>
+      <div class="scorebig" id="final-score">0</div>
+      <div class="newbest" id="newbest" style="display:none">🎉 NEW HIGH SCORE! 🎉</div>
+      <div class="stats">
+        <div class="stat"><b id="stat-correct">0</b><small>CORRECT</small></div>
+        <div class="stat"><b id="stat-streak">0</b><small>BEST STREAK</small></div>
+        <div class="stat"><b id="stat-acc">0%</b><small>ACCURACY</small></div>
+      </div>
+      <p class="best">🏆 Best Score: <span id="best-over">0</span></p>
+      <button class="bigbtn" id="again">Play Again ▶</button>
+      <button class="linkbtn" id="home">⬅ Pick another topic</button>
+    </div>
+  </section>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---------- Question bank (non-math categories) ----------
+  const BANK = {
+    science: [
+      ["What planet is known as the Red Planet?", "Mars", ["Venus","Jupiter","Mercury"]],
+      ["What gas do plants breathe in?", "Carbon dioxide", ["Oxygen","Helium","Nitrogen"]],
+      ["How many legs does an insect have?", "6", ["4","8","10"]],
+      ["What is H2O better known as?", "Water", ["Salt","Air","Gold"]],
+      ["What is the center of an atom called?", "Nucleus", ["Electron","Shell","Cell"]],
+      ["Which animal is a mammal?", "Whale", ["Shark","Octopus","Crocodile"]],
+      ["What force pulls things to the ground?", "Gravity", ["Magnetism","Friction","Wind"]],
+      ["What part of the body pumps blood?", "Heart", ["Lungs","Brain","Liver"]],
+      ["What do bees make?", "Honey", ["Milk","Silk","Web"]],
+      ["What is the closest star to Earth?", "The Sun", ["The Moon","Mars","Polaris"]],
+      ["Which is the largest planet?", "Jupiter", ["Earth","Saturn","Neptune"]],
+      ["What do we call frozen rain?", "Hail", ["Fog","Steam","Dew"]],
+      ["What state is ice?", "Solid", ["Liquid","Gas","Plasma"]],
+      ["What do caterpillars turn into?", "Butterflies", ["Spiders","Bees","Ants"]],
+      ["Which gas do humans need to breathe?", "Oxygen", ["Carbon dioxide","Hydrogen","Neon"]],
+    ],
+    geo: [
+      ["What is the largest ocean?", "Pacific", ["Atlantic","Indian","Arctic"]],
+      ["Which continent is Egypt in?", "Africa", ["Asia","Europe","Australia"]],
+      ["What is the capital of France?", "Paris", ["London","Rome","Berlin"]],
+      ["What is the longest river?", "Nile", ["Amazon","Yangtze","Thames"]],
+      ["Which country has the Great Wall?", "China", ["Japan","India","Korea"]],
+      ["What is the capital of the USA?", "Washington, D.C.", ["New York","Los Angeles","Chicago"]],
+      ["The Sahara is a huge what?", "Desert", ["Forest","Ocean","Mountain"]],
+      ["How many continents are there?", "7", ["5","6","8"]],
+      ["Which is the tallest mountain?", "Everest", ["K2","Kilimanjaro","Alps"]],
+      ["What is the capital of Japan?", "Tokyo", ["Beijing","Seoul","Bangkok"]],
+      ["Which country is shaped like a boot?", "Italy", ["Spain","Greece","Brazil"]],
+      ["What is the smallest continent?", "Australia", ["Europe","Antarctica","Asia"]],
+      ["The Amazon rainforest is mostly in which country?", "Brazil", ["Peru","Mexico","Chile"]],
+      ["Which ocean is the coldest?", "Arctic", ["Indian","Pacific","Atlantic"]],
+    ],
+    words: [
+      ["Which word is spelled correctly?", "Friend", ["Freind","Frend","Friende"]],
+      ["What is the opposite of 'happy'?", "Sad", ["Glad","Tall","Fast"]],
+      ["What is a group of wolves called?", "Pack", ["Herd","Flock","School"]],
+      ["Which word is a noun?", "Dog", ["Run","Jump","Quickly"]],
+      ["What is the plural of 'mouse'?", "Mice", ["Mouses","Mouse","Mices"]],
+      ["Which word rhymes with 'cat'?", "Hat", ["Dog","Cup","Pen"]],
+      ["What is the opposite of 'begin'?", "End", ["Start","Open","Go"]],
+      ["Which is spelled correctly?", "Because", ["Becuase","Becouse","Becase"]],
+      ["A word that means 'big'?", "Huge", ["Tiny","Slow","Soft"]],
+      ["What is the past tense of 'run'?", "Ran", ["Runned","Running","Runs"]],
+      ["Which word is an action (verb)?", "Swim", ["Blue","Happy","Table"]],
+      ["What is the opposite of 'day'?", "Night", ["Noon","Sun","Morning"]],
+      ["Plural of 'child'?", "Children", ["Childs","Childes","Childern"]],
+      ["Which is a synonym for 'fast'?", "Quick", ["Slow","Heavy","Loud"]],
+    ],
+    facts: [
+      ["How many days are in a leap year?", "366", ["365","364","367"]],
+      ["What color do you get mixing blue and yellow?", "Green", ["Purple","Orange","Brown"]],
+      ["How many sides does a triangle have?", "3", ["4","5","6"]],
+      ["What is the first month of the year?", "January", ["March","December","June"]],
+      ["How many minutes are in an hour?", "60", ["30","100","24"]],
+      ["What do you call a baby dog?", "Puppy", ["Kitten","Cub","Calf"]],
+      ["How many colors are in a rainbow?", "7", ["5","6","8"]],
+      ["What shape is a stop sign?", "Octagon", ["Square","Circle","Hexagon"]],
+      ["How many hours are in a day?", "24", ["12","48","60"]],
+      ["What do you call a baby cat?", "Kitten", ["Puppy","Foal","Chick"]],
+      ["How many sides does a square have?", "4", ["3","5","6"]],
+      ["Which is the largest: km, m, or cm?", "km", ["m","cm","mm"]],
+      ["What season comes after winter?", "Spring", ["Summer","Fall","Autumn"]],
+      ["How many wheels does a tricycle have?", "3", ["2","4","1"]],
+    ],
+  };
+
+  const CAT_LABEL = { math:"MATH", science:"SCIENCE", geo:"GEOGRAPHY", words:"WORDS", facts:"FUN FACTS" };
+  const CHEERS = ["Nice! 👍","Great! ✨","On fire! 🔥","Brain power! 🧠","Boom! 💥","Genius! 🌟","Unstoppable! 🚀","Wow! 🤩"];
+
+  // ---------- State ----------
+  const ROUND_TIME = 60;
+  let score, combo, bestStreak, correctCount, totalCount, timeLeft, level;
+  let mode, current, qTimer, gameTimer, qDeadline, accepting;
+
+  // ---------- DOM ----------
+  const $ = (id) => document.getElementById(id);
+  const screens = { start: $("screen-start"), game: $("screen-game"), over: $("screen-over") };
+  function show(name) {
+    Object.values(screens).forEach(s => s.classList.remove("active"));
+    screens[name].classList.add("active");
+  }
+
+  // ---------- Sound (Web Audio, no files) ----------
+  let actx = null, muted = false;
+  function beep(freq, dur, type, vol) {
+    if (muted) return;
+    try {
+      if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.type = type || "square"; o.frequency.value = freq;
+      g.gain.value = vol || 0.15;
+      o.connect(g); g.connect(actx.destination);
+      const t = actx.currentTime;
+      o.start(t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      o.stop(t + dur);
+    } catch (e) {}
+  }
+  function playSound(kind) {
+    if (kind === "correct") { beep(660, .12, "square", .18); setTimeout(()=>beep(880,.14,"square",.18),90); }
+    else if (kind === "wrong") { beep(180, .25, "sawtooth", .2); }
+    else if (kind === "level") { beep(523,.1,"triangle",.2); setTimeout(()=>beep(659,.1,"triangle",.2),100); setTimeout(()=>beep(784,.16,"triangle",.2),200); }
+    else if (kind === "tick") { beep(420, .05, "sine", .08); }
+    else if (kind === "over") { beep(392,.18,"triangle",.2); setTimeout(()=>beep(330,.18,"triangle",.2),160); setTimeout(()=>beep(262,.3,"triangle",.2),320); }
+  }
+  $("mute").addEventListener("click", () => {
+    muted = !muted;
+    $("mute").textContent = muted ? "🔇" : "🔊";
+  });
+
+  // ---------- High score ----------
+  function getBest() { return parseInt(localStorage.getItem("quizBlitzBest") || "0", 10); }
+  function setBest(v) { localStorage.setItem("quizBlitzBest", String(v)); }
+  function refreshBest() {
+    const b = getBest();
+    $("best-start").textContent = b;
+    $("best-over").textContent = b;
+  }
+
+  // ---------- Helpers ----------
+  function rand(n) { return Math.floor(Math.random() * n); }
+  function shuffle(a) { for (let i=a.length-1;i>0;i--){ const j=rand(i+1); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+  function makeMathQuestion(lvl) {
+    // difficulty scales with level
+    const ops = lvl < 2 ? ["+","-"] : lvl < 4 ? ["+","-","×"] : ["+","-","×","÷"];
+    const op = ops[rand(ops.length)];
+    let a, b, ans, text;
+    const max = 8 + lvl * 6;
+    if (op === "+") { a = rand(max)+1; b = rand(max)+1; ans = a+b; }
+    else if (op === "-") { a = rand(max)+1; b = rand(a)+1; ans = a-b; } // keep positive
+    else if (op === "×") { a = rand(Math.min(12, 4+lvl))+1; b = rand(Math.min(12, 4+lvl))+1; ans = a*b; }
+    else { b = rand(Math.min(10, 3+lvl))+1; ans = rand(Math.min(10,3+lvl))+1; a = b*ans; } // exact division
+    text = a + " " + op + " " + b;
+
+    // distractors near the answer
+    const opts = new Set([ans]);
+    let guard = 0;
+    while (opts.size < 4 && guard++ < 30) {
+      let delta = rand(7) - 3; if (delta === 0) delta = 1;
+      let d = ans + delta;
+      if (d < 0) d = ans + rand(5) + 1;
+      opts.add(d);
+    }
+    while (opts.size < 4) opts.add(ans + opts.size);
+    return { cat: "math", q: text, correct: String(ans), options: shuffle([...opts].map(String)) };
+  }
+
+  function makeBankQuestion(catKey) {
+    const arr = BANK[catKey];
+    const item = arr[rand(arr.length)];
+    const [q, correct, wrongs] = item;
+    const options = shuffle([correct, ...wrongs]);
+    return { cat: catKey, q, correct, options };
+  }
+
+  function nextQuestionData() {
+    let cat = mode;
+    if (mode === "all") {
+      const all = ["math","science","geo","words","facts"];
+      cat = all[rand(all.length)];
+    }
+    if (cat === "math") return makeMathQuestion(level);
+    return makeBankQuestion(cat);
+  }
+
+  // ---------- Game flow ----------
+  function startGame(selected) {
+    mode = selected;
+    score = 0; combo = 0; bestStreak = 0; correctCount = 0; totalCount = 0;
+    timeLeft = ROUND_TIME; level = 1;
+    updateHud();
+    show("game");
+    // resume audio on user gesture
+    if (!actx) { try { actx = new (window.AudioContext||window.webkitAudioContext)(); } catch(e){} }
+    clearInterval(gameTimer);
+    gameTimer = setInterval(tickRound, 1000);
+    nextQuestion();
+  }
+
+  function tickRound() {
+    timeLeft--;
+    if (timeLeft <= 5 && timeLeft > 0) playSound("tick");
+    $("clock").textContent = Math.max(0, timeLeft);
+    if (timeLeft <= 0) endGame();
+  }
+
+  function updateHud() {
+    $("score").textContent = score;
+    $("clock").textContent = timeLeft;
+    const c = $("combo");
+    c.textContent = "x" + Math.max(1, combo + 0 || 1);
+    c.classList.toggle("hot", combo >= 3);
+  }
+
+  function nextQuestion() {
+    accepting = true;
+    current = nextQuestionData();
+    $("qcat").textContent = CAT_LABEL[current.cat] || "QUIZ";
+    $("qtext").textContent = current.q;
+    $("cheer").textContent = "";
+
+    const wrap = $("answers");
+    wrap.innerHTML = "";
+    current.options.forEach(opt => {
+      const b = document.createElement("button");
+      b.className = "ans";
+      b.textContent = opt;
+      b.addEventListener("click", () => answer(b, opt));
+      wrap.appendChild(b);
+    });
+
+    // per-question timer (shrinks with level), drives the bar
+    const perQ = Math.max(3500, 9000 - level * 700);
+    qDeadline = Date.now() + perQ;
+    $("timebar").style.width = "100%";
+    clearInterval(qTimer);
+    qTimer = setInterval(() => {
+      const left = qDeadline - Date.now();
+      const pct = Math.max(0, (left / perQ) * 100);
+      $("timebar").style.width = pct + "%";
+      if (left <= 0) timeoutQuestion();
+    }, 80);
+  }
+
+  function lockAnswers() {
+    accepting = false;
+    clearInterval(qTimer);
+    [...$("answers").children].forEach(b => b.style.pointerEvents = "none");
+  }
+
+  function highlightCorrect() {
+    [...$("answers").children].forEach(b => {
+      if (b.textContent === current.correct) b.classList.add("correct");
+    });
+  }
+
+  function answer(btn, opt) {
+    if (!accepting) return;
+    totalCount++;
+    lockAnswers();
+    const timeBonus = Math.max(0, Math.ceil((qDeadline - Date.now()) / 1000));
+    if (opt === current.correct) {
+      correctCount++;
+      combo++;
+      bestStreak = Math.max(bestStreak, combo);
+      const mult = Math.min(5, 1 + Math.floor((combo - 1) / 1)); // grows with streak, capped x5
+      const gained = (10 + timeBonus * 2) * mult;
+      score += gained;
+      btn.classList.add("correct");
+      flash("✅");
+      playSound("correct");
+      $("cheer").textContent = CHEERS[Math.min(CHEERS.length-1, combo-1)] || "Awesome!";
+      // level up every 4 correct
+      if (correctCount % 4 === 0) { level++; playSound("level"); $("cheer").textContent = "LEVEL " + level + "! 🆙"; }
+    } else {
+      combo = 0;
+      timeLeft = Math.max(0, timeLeft - 2); // small penalty
+      btn.classList.add("wrong");
+      highlightCorrect();
+      flash("❌");
+      playSound("wrong");
+      $("cheer").textContent = "Oops! It was " + current.correct;
+    }
+    updateHud();
+    setTimeout(() => { if (timeLeft > 0) nextQuestion(); }, 750);
+  }
+
+  function timeoutQuestion() {
+    if (!accepting) return;
+    totalCount++;
+    combo = 0;
+    lockAnswers();
+    highlightCorrect();
+    flash("⏱️");
+    playSound("wrong");
+    $("cheer").textContent = "Too slow! It was " + current.correct;
+    updateHud();
+    setTimeout(() => { if (timeLeft > 0) nextQuestion(); }, 750);
+  }
+
+  function flash(emoji) {
+    const f = $("feedback");
+    f.textContent = emoji;
+    f.classList.remove("show"); void f.offsetWidth; f.classList.add("show");
+  }
+
+  function endGame() {
+    clearInterval(gameTimer);
+    clearInterval(qTimer);
+    accepting = false;
+    playSound("over");
+
+    const best = getBest();
+    const isNew = score > best;
+    if (isNew) { setBest(score); confetti(); }
+
+    $("final-score").textContent = score;
+    $("stat-correct").textContent = correctCount;
+    $("stat-streak").textContent = bestStreak;
+    $("stat-acc").textContent = (totalCount ? Math.round(correctCount/totalCount*100) : 0) + "%";
+    $("newbest").style.display = isNew ? "block" : "none";
+    $("over-title").textContent = isNew ? "Amazing! 🌟" : "Time's Up! ⏰";
+    refreshBest();
+    show("over");
+  }
+
+  function confetti() {
+    const app = $("app");
+    const emojis = ["🎉","⭐","🎊","🌟","✨","🏆","💥"];
+    for (let i = 0; i < 24; i++) {
+      const c = document.createElement("div");
+      c.className = "confetti";
+      c.textContent = emojis[rand(emojis.length)];
+      c.style.left = rand(100) + "%";
+      c.style.animationDuration = (1.5 + Math.random()*1.5) + "s";
+      c.style.animationDelay = (Math.random()*0.6) + "s";
+      app.appendChild(c);
+      setTimeout(() => c.remove(), 3500);
+    }
+  }
+
+  // ---------- Wire up ----------
+  document.querySelectorAll(".cat").forEach(btn => {
+    btn.addEventListener("click", () => startGame(btn.dataset.cat));
+  });
+  $("again").addEventListener("click", () => startGame(mode));
+  $("home").addEventListener("click", () => { refreshBest(); show("start"); });
+
+  refreshBest();
+})();
+</script>
+</body>
+</html>
