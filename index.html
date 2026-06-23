@@ -142,6 +142,30 @@
   .plan li{font-size:14px;color:var(--tx);display:flex;gap:9px;align-items:flex-start}
   .plan li.no{color:var(--mut)}
   .feat{color:#22d3ee;font-weight:800}
+  .scroll,.bar{max-width:1120px}
+  .nav{display:flex;align-items:center;gap:18px;max-width:1120px;width:100%;margin:0 auto;padding:4px 112px 16px 2px;border-bottom:1px solid var(--line)}
+  .navlinks{display:flex;gap:4px;align-items:center}
+  .navlink{background:none;border:none;color:var(--mut);font-weight:600;font-size:14.5px;cursor:pointer;padding:8px 13px;border-radius:8px;font-family:inherit;transition:background .15s,color .15s}
+  .navlink:hover{background:rgba(255,255,255,.06);color:var(--tx)}
+  body.light .navlink:hover{background:rgba(15,23,42,.05)}
+  .hero2{display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between;padding:30px 0 10px}
+  .herotext{min-width:240px;flex:1}
+  .welcome{color:var(--mut);font-weight:600;font-size:14px}
+  .htitle{font-size:clamp(28px,4.2vw,42px);font-weight:800;letter-spacing:-1.2px;margin:5px 0 8px;background:linear-gradient(90deg,#a5b4fc,#22d3ee);-webkit-background-clip:text;background-clip:text;color:transparent}
+  body.light .htitle{background:linear-gradient(90deg,#4f46e5,#0891b2);-webkit-background-clip:text;background-clip:text}
+  .hsub{color:var(--mut);font-size:15px;margin:0;max-width:440px}
+  .herocard{min-width:260px;flex:1;max-width:360px}
+  .sechead{font-size:19px;font-weight:800;color:var(--tx);margin:36px 2px 16px;letter-spacing:-.3px}
+  .subjectgrid,.toolgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(225px,1fr));gap:14px}
+  .subject{display:flex;align-items:center;gap:15px;background:var(--cardbg);border:1px solid var(--line);border-radius:16px;padding:18px;cursor:pointer;text-align:left;color:var(--tx);font-family:inherit;transition:transform .14s,border-color .14s,box-shadow .14s}
+  .subject:hover{transform:translateY(-2px);border-color:rgba(99,102,241,.5);box-shadow:0 16px 36px rgba(0,0,0,.34)}
+  body.light .subject{box-shadow:0 4px 14px rgba(15,23,42,.06)}
+  body.light .subject:hover{box-shadow:0 14px 30px rgba(15,23,42,.13)}
+  .subject .ic{flex:none;width:50px;height:50px;border-radius:14px;display:grid;place-items:center;font-size:24px;color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.2)}
+  .subject .meta{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .subject .nm{font-weight:700;font-size:16.5px}
+  .subject .sub{font-size:12.5px;color:var(--mut)}
+  .subject .chev{color:var(--mut);font-size:24px;font-weight:700;line-height:1}
 </style>
 </head>
 <body>
@@ -151,19 +175,18 @@
 
   <!-- HOME -->
   <section id="screen-home" class="screen active">
-    <div class="appbar"><div class="brand"><span class="dot"></span>Lumina<span class="badge" id="proBadge" style="display:none">PRO</span></div></div>
+    <nav class="nav"><div class="brand"><span class="dot"></span>Lumina<span class="badge" id="proBadge" style="display:none">PRO</span></div><div class="navlinks"><button class="navlink" onclick="openPricing('')">Plans</button><button class="navlink" onclick="openTeacher()">Teacher</button></div></nav>
     <div class="scroll">
-      <div class="hero">
-        <h1 class="title">Lumina</h1>
-        <p class="subtitle">Master any subject · Build your own study games · Track your progress</p>
+      <div class="hero2">
+        <div class="herotext"><div class="welcome">Welcome back 👋</div><h2 class="htitle">Ready to learn?</h2><p class="hsub">Choose a subject to quiz, play, or build your own study games.</p></div>
+        <div id="xpBox" class="herocard"></div>
       </div>
-      <div id="xpBox"></div>
       <div id="rewardBox"></div>
       <div id="proPromo"></div>
-      <div class="label">Subjects</div>
-      <div class="grid2" id="subjectGrid"></div>
-      <div class="label">Tools</div>
-      <div class="grid2" id="toolGrid">
+      <div class="sechead">Subjects</div>
+      <div class="subjectgrid" id="subjectGrid"></div>
+      <div class="sechead">Study tools</div>
+      <div class="toolgrid" id="toolGrid">
         <button class="tile" onclick="openBuilder()"><span class="ic">🪄</span><span class="tx"><span class="tt">Game Builder<span class="lock"> 🔒</span></span><span class="ts">Turn a lesson into a game</span></span></button>
         <button class="tile" onclick="openTimer()"><span class="ic">⏱️</span><span class="tx"><span class="tt">Study Timer</span><span class="ts">Focused study sessions</span></span></button>
         <button class="tile" onclick="openAllGuides()"><span class="ic">📒</span><span class="tx"><span class="tt">Study Guides<span class="lock"> 🔒</span></span><span class="ts">All your notes</span></span></button>
@@ -406,7 +429,8 @@ What is 6 x 7? : 42</div>
   function recordStudy(sec){progress.studySec+=sec;addXP(Math.floor(sec/60)*2);markDay();saveProg();}
 
   /* ---------- HOME ---------- */
-  function renderSubjects(){const w=$("subjectGrid");w.innerHTML="";SUBJECTS.forEach(s=>{const b=document.createElement("button");b.className="tile";b.innerHTML='<span class="ic">'+s.emoji+'</span><span class="tx"><span class="tt">'+s.name+'</span><span class="ts">Quiz · Game · Guides</span></span>';b.onclick=()=>openSubject(s.key);w.appendChild(b);});}
+  const SCOLOR={math:"linear-gradient(135deg,#3b82f6,#1e40af)",science:"linear-gradient(135deg,#10b981,#047857)",geo:"linear-gradient(135deg,#06b6d4,#0e7490)",shapes:"linear-gradient(135deg,#8b5cf6,#6d28d9)",words:"linear-gradient(135deg,#a855f7,#7e22ce)",facts:"linear-gradient(135deg,#f43f5e,#be123c)"};
+  function renderSubjects(){const w=$("subjectGrid");w.innerHTML="";SUBJECTS.forEach(s=>{const b=document.createElement("button");b.className="subject";b.innerHTML='<span class="ic" style="background:'+(SCOLOR[s.key]||"#6366f1")+'">'+s.emoji+'</span><span class="meta"><span class="nm">'+s.name+'</span><span class="sub">Quiz · Game · Practice</span></span><span class="chev">›</span>';b.onclick=()=>openSubject(s.key);w.appendChild(b);});}
   function renderXP(){const lv=level(),inLv=progress.xp%100;$("xpBox").innerHTML='<div class="xpwrap"><div class="xptop"><span>⭐ Level '+lv+'</span><span>'+progress.xp+' XP</span></div><div class="xpbar"><div class="xpfill" style="width:'+inLv+'%"></div></div></div>';}
   function rewardProgressText(r){if(r.type==="level")return"Level "+level()+" / "+r.target;if(r.type==="score")return"Best "+(progress.bestQuizPct||0)+"% / "+r.target+"%";if(r.type==="days")return dayStreak()+" / "+r.target+" days";return"";}
   function rewardMet(r){if(r.type==="level")return level()>=r.target;if(r.type==="score")return(progress.bestQuizPct||0)>=r.target;if(r.type==="days")return dayStreak()>=r.target;return false;}
