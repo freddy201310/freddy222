@@ -3,97 +3,100 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>🚀 StudyQuest — Learn Anything. Level Up Your Brain.</title>
+<title>Lumina — Learn Smarter</title>
 <style>
-  :root{--bg1:#6d28d9;--bg2:#2563eb;--card:#fff;--ink:#1e1b4b;--good:#22c55e;--bad:#ef4444;--gold:#f59e0b;--shadow:0 6px 0 rgba(0,0,0,.18)}
+  :root{--ink:#0f172a;--tx:#e8ecf6;--mut:#9aa6c2;--accent:#6366f1;--accent2:#22d3ee;--line:rgba(255,255,255,.10);--cardbg:#151d38}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{height:100%;margin:0}
-  body{font-family:"Trebuchet MS","Comic Sans MS",system-ui,sans-serif;color:var(--ink);
-    background:linear-gradient(135deg,var(--bg1),var(--bg2));background-size:200% 200%;animation:drift 14s ease infinite;
-    display:flex;align-items:center;justify-content:center;overflow:hidden;user-select:none}
-  @keyframes drift{0%{background-position:0 0}50%{background-position:100% 100%}100%{background-position:0 0}}
-  #app{width:min(560px,96vw);height:min(880px,98vh);background:rgba(255,255,255,.10);border:3px solid rgba(255,255,255,.35);
-    border-radius:26px;padding:14px;backdrop-filter:blur(6px);position:relative;overflow:hidden;display:flex;flex-direction:column}
-  .screen{display:none;flex:1;min-height:0;flex-direction:column}
-  .screen.active{display:flex;animation:pop .3s ease}
-  @keyframes pop{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
-  .scroll{overflow-y:auto;flex:1;min-height:0;padding:2px}
-  .bar{display:flex;align-items:center;gap:8px;color:#fff;margin-bottom:10px}
-  .back{background:rgba(0,0,0,.25);border:none;color:#fff;cursor:pointer;border-radius:12px;padding:8px 12px;font-size:16px;font-weight:bold}
-  .back:active{transform:translateY(2px)}
-  .bartitle{font-size:20px;font-weight:bold;flex:1}
-  #mute{background:rgba(0,0,0,.25);border:none;color:#fff;cursor:pointer;width:40px;height:40px;border-radius:11px;font-size:18px}
-  .title{text-align:center;color:#fff;margin:2px 0 0;font-size:clamp(32px,8.5vw,52px);text-shadow:0 4px 0 rgba(0,0,0,.25);animation:bob 2.6s ease-in-out infinite}
-  @keyframes bob{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-6px) rotate(1deg)}}
-  .subtitle{text-align:center;color:#fde68a;font-weight:bold;margin:2px 0 8px;font-size:clamp(12px,3.2vw,16px)}
-  .label{color:#e9d5ff;font-weight:bold;font-size:14px;margin:8px 2px 6px;letter-spacing:.5px}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .card{border:none;cursor:pointer;color:#fff;font-weight:bold;border-radius:18px;padding:15px 10px;font-size:17px;
-    box-shadow:var(--shadow);transition:transform .08s;display:flex;flex-direction:column;gap:4px;align-items:center;text-align:center}
+  body{font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--tx);
+    background:radial-gradient(900px 600px at 12% -5%,rgba(99,102,241,.22),transparent 60%),radial-gradient(900px 600px at 100% 0%,rgba(34,211,238,.15),transparent 55%),linear-gradient(160deg,#0a0f20,#0e1530 60%,#0a0f20);
+    background-attachment:fixed;overflow:hidden}
+  #app{width:100%;height:100%;position:relative;display:flex;flex-direction:column;overflow:hidden}
+  .screen{display:none;flex:1;min-height:0;flex-direction:column;padding:clamp(18px,3vw,34px) clamp(16px,4vw,44px)}
+  .screen.active{display:flex;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .scroll{overflow-y:auto;flex:1;min-height:0;width:100%;max-width:1080px;margin:0 auto;padding:2px 2px 24px}
+  .bar{display:flex;align-items:center;gap:10px;margin:0 auto 16px;width:100%;max-width:1080px}
+  .back{background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--tx);cursor:pointer;border-radius:10px;padding:9px 14px;font-size:15px;font-weight:600;transition:background .15s}
+  .back:hover{background:rgba(255,255,255,.12)}
+  .bartitle{font-size:clamp(18px,2.4vw,24px);font-weight:700;flex:1;color:var(--tx)}
+  #mute{position:absolute;top:14px;right:16px;z-index:5;background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--tx);cursor:pointer;width:40px;height:40px;border-radius:10px;font-size:17px}
+  #mute:hover{background:rgba(255,255,255,.12)}
+  .title{text-align:center;margin:clamp(8px,3vw,30px) 0 0;font-size:clamp(38px,7vw,68px);font-weight:800;letter-spacing:-2px;background:linear-gradient(90deg,#a5b4fc,#22d3ee);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .subtitle{text-align:center;color:var(--mut);font-weight:500;margin:10px 0 20px;font-size:clamp(13px,1.8vw,17px);letter-spacing:.2px}
+  .label{color:var(--mut);font-weight:700;font-size:12px;margin:20px 2px 12px;letter-spacing:1.6px;text-transform:uppercase}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  #subjectGrid,#toolGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+  .card{background:var(--cardbg);border:1px solid var(--line);cursor:pointer;color:var(--tx);font-weight:600;border-radius:16px;padding:20px 14px;font-size:16px;
+    transition:transform .15s,border-color .15s,box-shadow .15s,filter .15s;display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center}
   .card .emoji{font-size:30px}
-  .card:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.18)}
-  .c-math{background:#3b82f6}.c-science{background:#10b981}.c-geo{background:#06b6d4}.c-shapes{background:#8b5cf6}.c-words{background:#a855f7}.c-facts{background:#f43f5e}
-  .diffcard{border:none;cursor:pointer;color:#fff;font-weight:bold;border-radius:16px;padding:16px;box-shadow:var(--shadow);text-align:left;display:flex;align-items:center;gap:12px;font-size:18px}
-  .diffcard small{display:block;font-weight:normal;opacity:.92;font-size:13px;margin-top:2px}
-  .diffcard:active{transform:translateY(3px)}
-  .de{font-size:30px}
-  .btn{border:none;cursor:pointer;color:#fff;font-weight:bold;border-radius:16px;padding:15px;font-size:18px;box-shadow:var(--shadow);background:linear-gradient(90deg,#22c55e,#16a34a);width:100%}
-  .btn.alt{background:linear-gradient(90deg,#3b82f6,#6d28d9)}
-  .btn.warn{background:linear-gradient(90deg,#f59e0b,#ef4444)}
-  .btn:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.18)}
-  .btnrow{display:flex;gap:8px}
-  .panel{background:rgba(255,255,255,.94);border-radius:16px;padding:14px;margin-bottom:10px;color:var(--ink)}
-  .panel h3{margin:0 0 6px;font-size:18px}
-  .panel p{margin:4px 0;white-space:pre-wrap;line-height:1.4}
-  .muted{color:#fff;opacity:.85;text-align:center;margin:14px 4px}
-  input[type=text],input[type=number],input[type=password],textarea,select{width:100%;border:2px solid #c7c2e8;border-radius:12px;padding:10px;font-size:16px;font-family:inherit;margin:4px 0 8px;color:var(--ink);background:#fff}
+  .card small{opacity:.85;font-weight:500}
+  .card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.28);box-shadow:0 14px 34px rgba(0,0,0,.4);filter:brightness(1.05)}
+  .card:active{transform:translateY(-1px)}
+  .c-math{background:linear-gradient(160deg,#2563eb,#1e3a8a);border-color:transparent}.c-science{background:linear-gradient(160deg,#10b981,#065f46);border-color:transparent}
+  .c-geo{background:linear-gradient(160deg,#0891b2,#155e75);border-color:transparent}.c-shapes{background:linear-gradient(160deg,#8b5cf6,#5b21b6);border-color:transparent}
+  .c-words{background:linear-gradient(160deg,#a855f7,#7e22ce);border-color:transparent}.c-facts{background:linear-gradient(160deg,#f43f5e,#9f1239);border-color:transparent}
+  .diffcard{border:1px solid var(--line);cursor:pointer;color:#fff;font-weight:700;border-radius:14px;padding:16px 18px;text-align:left;display:flex;align-items:center;gap:14px;font-size:18px;transition:transform .12s,filter .15s;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+  .diffcard small{display:block;font-weight:500;opacity:.92;font-size:13px;margin-top:2px}
+  .diffcard:hover{filter:brightness(1.07)}.diffcard:active{transform:translateY(2px)}
+  .de{font-size:28px}
+  .btn{border:none;cursor:pointer;color:#fff;font-weight:700;border-radius:12px;padding:14px 18px;font-size:16px;width:100%;background:linear-gradient(90deg,#6366f1,#4f46e5);box-shadow:0 10px 26px rgba(79,70,229,.35);transition:filter .15s,transform .1s}
+  .btn:hover{filter:brightness(1.08)}.btn:active{transform:translateY(1px)}
+  .btn.alt{background:linear-gradient(90deg,#0ea5e9,#2563eb);box-shadow:0 10px 26px rgba(14,165,233,.3)}
+  .btn.warn{background:linear-gradient(90deg,#f59e0b,#ef4444);box-shadow:0 10px 26px rgba(239,68,68,.3)}
+  .btnrow{display:flex;gap:10px}
+  .panel{background:#fff;border-radius:14px;padding:16px;margin-bottom:12px;color:var(--ink);box-shadow:0 8px 24px rgba(0,0,0,.28)}
+  .panel h3{margin:0 0 6px;font-size:17px;font-weight:700}
+  .panel p{margin:4px 0;white-space:pre-wrap;line-height:1.45}
+  .muted{color:var(--mut);text-align:center;margin:18px 4px;line-height:1.5}
+  input[type=text],input[type=number],input[type=password],textarea,select{width:100%;border:1px solid rgba(15,23,42,.18);border-radius:10px;padding:11px 12px;font-size:15px;font-family:inherit;margin:4px 0 10px;color:var(--ink);background:#fff}
   textarea{min-height:150px;resize:vertical}
-  .field-label{color:#fff;font-weight:bold;font-size:14px;margin-top:6px}
-  .rowbtns{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
-  .mini{border:none;cursor:pointer;border-radius:10px;padding:8px 10px;font-weight:bold;font-size:13px;color:#fff}
+  .field-label{color:var(--mut);font-weight:600;font-size:13px;margin-top:8px}
+  .rowbtns{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+  .mini{border:none;cursor:pointer;border-radius:9px;padding:9px 12px;font-weight:700;font-size:13px;color:#fff;transition:filter .15s}
+  .mini:hover{filter:brightness(1.1)}
   .mini.edit{background:#3b82f6}.mini.del{background:#ef4444}.mini.play{background:#16a34a}.mini.quiz{background:#a855f7}
-  .guideimg{width:100%;border-radius:12px;margin:6px 0;display:block}
-  .best{text-align:center;color:#fff;font-weight:bold;font-size:15px}
+  .guideimg{width:100%;border-radius:12px;margin:8px 0;display:block}
+  .best{text-align:center;color:var(--mut);font-weight:600;font-size:14px}
   .best span{color:#fde047}
-  /* XP bar */
-  .xpwrap{background:rgba(0,0,0,.25);border-radius:14px;padding:10px 12px;color:#fff;margin-bottom:8px}
-  .xptop{display:flex;justify-content:space-between;font-weight:bold;font-size:15px}
-  .xpbar{height:12px;background:rgba(255,255,255,.25);border-radius:8px;overflow:hidden;margin-top:6px}
-  .xpfill{height:100%;background:linear-gradient(90deg,#fde047,#f59e0b);width:0%}
-  .reward{background:linear-gradient(90deg,#f59e0b,#ec4899);color:#fff;border-radius:14px;padding:10px 12px;margin-bottom:8px;font-weight:bold;font-size:14px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .xpwrap{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+  .xptop{display:flex;justify-content:space-between;font-weight:700;font-size:15px;color:var(--tx)}
+  .xpbar{height:10px;background:rgba(255,255,255,.12);border-radius:6px;overflow:hidden;margin-top:8px}
+  .xpfill{height:100%;background:linear-gradient(90deg,#22d3ee,#6366f1);width:0%}
+  .reward{background:linear-gradient(135deg,#7c3aed,#db2777);color:#fff;border-radius:12px;padding:12px 14px;margin-bottom:8px;font-weight:600;font-size:14px;box-shadow:0 8px 22px rgba(124,58,237,.28)}
   .reward .tick{font-size:20px}
-  /* HUD / game */
-  .hud{display:flex;justify-content:space-between;gap:8px;color:#fff}
-  .hudp{background:rgba(0,0,0,.22);border-radius:14px;padding:7px 10px;text-align:center;min-width:70px}
-  .hudp small{display:block;font-size:10px;opacity:.85;letter-spacing:1px}.hudp b{font-size:21px}
+  .hud{display:flex;justify-content:space-between;gap:10px}
+  .hudp{background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:12px;padding:8px 12px;text-align:center;min-width:78px;color:var(--tx)}
+  .hudp small{display:block;font-size:10px;opacity:.7;letter-spacing:1.5px}.hudp b{font-size:22px}
   .combo.hot{animation:shake .3s infinite;color:#fde047}
-  .timebar-wrap{height:14px;background:rgba(0,0,0,.25);border-radius:9px;margin:10px 0;overflow:hidden}
+  .timebar-wrap{height:8px;background:rgba(255,255,255,.12);border-radius:6px;margin:12px 0;overflow:hidden}
   #timebar,#quizbar{height:100%;width:100%;background:linear-gradient(90deg,#22c55e,#fde047,#ef4444)}
-  #quizbar{background:#fde047}
-  .qcard{background:var(--card);border-radius:22px;padding:20px 16px;text-align:center;box-shadow:var(--shadow);display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:140px;margin-bottom:12px;position:relative}
-  .qcat{font-size:13px;font-weight:bold;color:#7c3aed;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
-  .qtext{font-size:clamp(20px,5.6vw,34px);font-weight:bold;line-height:1.2}
-  .feedback{position:absolute;top:-12px;right:-4px;font-size:44px;opacity:0}
+  #quizbar{background:linear-gradient(90deg,#22d3ee,#6366f1)}
+  .qcard{background:#fff;border-radius:18px;padding:26px 20px;text-align:center;box-shadow:0 14px 36px rgba(0,0,0,.35);display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:150px;margin-bottom:14px;position:relative;color:var(--ink)}
+  .qcat{font-size:12px;font-weight:700;color:#6d28d9;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+  .qtext{font-size:clamp(22px,4vw,38px);font-weight:700;line-height:1.2;color:var(--ink)}
+  .feedback{position:absolute;top:-14px;right:-6px;font-size:44px;opacity:0}
   .feedback.show{animation:burst .6s ease}
   @keyframes burst{0%{transform:scale(0) rotate(-20deg);opacity:1}60%{transform:scale(1.3);opacity:1}100%{transform:scale(1);opacity:0}}
-  .answers{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:auto}
-  .ans{border:none;cursor:pointer;color:#fff;font-weight:bold;border-radius:16px;padding:18px 8px;font-size:clamp(16px,4.4vw,21px);background:#4f46e5;box-shadow:var(--shadow)}
+  .answers{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:auto}
+  .ans{border:none;cursor:pointer;color:#fff;font-weight:700;border-radius:14px;padding:18px 10px;font-size:clamp(16px,2.4vw,21px);background:#4f46e5;box-shadow:0 8px 20px rgba(0,0,0,.28);transition:filter .12s,transform .1s}
   .ans:nth-child(2){background:#0891b2}.ans:nth-child(3){background:#db2777}.ans:nth-child(4){background:#ea580c}
-  .ans:active{transform:translateY(3px)}
-  .ans.correct{background:var(--good)!important;animation:glow .5s}.ans.wrong{background:var(--bad)!important;animation:shake .35s}
+  .ans:hover{filter:brightness(1.08)}.ans:active{transform:translateY(1px)}
+  .ans.correct{background:#22c55e!important;animation:glow .5s}.ans.wrong{background:#ef4444!important;animation:shake .35s}
   @keyframes glow{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
   @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
-  .cheer{text-align:center;color:#fde047;font-weight:bold;height:24px;font-size:18px;margin-top:8px}
-  .big{text-align:center;color:#fff}
-  .big h2{font-size:clamp(30px,8vw,48px);margin:6px 0 0;text-shadow:0 4px 0 rgba(0,0,0,.25)}
-  .scorebig{font-size:clamp(56px,18vw,110px);color:#fde047;font-weight:bold;line-height:1;margin:4px 0}
-  .stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:10px 0}
-  .stat{background:rgba(0,0,0,.22);border-radius:14px;padding:10px 4px}
-  .stat b{display:block;font-size:24px}.stat small{font-size:10px;opacity:.85;letter-spacing:1px}
-  .clockbig{font-size:clamp(56px,18vw,110px);font-weight:bold;color:#fff;text-align:center;text-shadow:0 5px 0 rgba(0,0,0,.25);margin:10px 0}
-  .hint{color:#e9d5ff;font-size:13px;background:rgba(0,0,0,.18);border-radius:10px;padding:8px 10px;margin:4px 0;white-space:pre-wrap;line-height:1.4}
+  .cheer{text-align:center;color:#fde047;font-weight:600;height:24px;font-size:17px;margin-top:10px}
+  .big{text-align:center;color:var(--tx);max-width:720px;margin:0 auto;width:100%}
+  .big h2{font-size:clamp(28px,5vw,44px);margin:8px 0 0;font-weight:800}
+  .scorebig{font-size:clamp(56px,14vw,104px);font-weight:800;line-height:1;margin:6px 0;background:linear-gradient(90deg,#fde047,#f59e0b);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0}
+  .stat{background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:12px;padding:12px 4px}
+  .stat b{display:block;font-size:24px;color:var(--tx)}.stat small{font-size:10px;color:var(--mut);letter-spacing:1px}
+  .clockbig{font-size:clamp(56px,14vw,104px);font-weight:800;text-align:center;margin:14px 0;background:linear-gradient(90deg,#a5b4fc,#22d3ee);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hint{color:var(--mut);font-size:13px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;white-space:pre-wrap;line-height:1.5}
+  #screen-game>*,#screen-quiz>.qcard,#screen-quiz>.answers,#screen-quiz>.cheer,#screen-quiz>.timebar-wrap{max-width:720px;margin-left:auto;margin-right:auto;width:100%}
   .confetti{position:absolute;top:-40px;font-size:26px;animation:fall linear forwards;pointer-events:none}
-  @keyframes fall{to{transform:translateY(940px) rotate(720deg);opacity:0}}
+  @keyframes fall{to{transform:translateY(960px) rotate(720deg);opacity:0}}
 </style>
 </head>
 <body>
@@ -102,19 +105,19 @@
 
   <!-- HOME -->
   <section id="screen-home" class="screen active">
-    <h1 class="title">🚀 StudyQuest</h1>
-    <p class="subtitle">Learn anything. Level up your brain! 🧠⚡</p>
+    <h1 class="title">Lumina</h1>
+    <p class="subtitle">Master any subject · Build your own study games · Track your progress</p>
     <div class="scroll">
       <div id="xpBox"></div>
       <div id="rewardBox"></div>
-      <div class="label">🎯 Pick a subject:</div>
+      <div class="label">Subjects</div>
       <div class="grid2" id="subjectGrid"></div>
-      <div class="label" style="margin-top:12px">🛠️ Tools:</div>
-      <div class="grid2">
-        <button class="card" style="background:#f59e0b" onclick="openBuilder()"><span class="emoji">🪄</span>Game Builder</button>
-        <button class="card" style="background:#0ea5e9" onclick="openTimer()"><span class="emoji">⏱️</span>Study Timer</button>
-        <button class="card" style="background:#64748b" onclick="openAllGuides()"><span class="emoji">📒</span>Study Guides</button>
-        <button class="card" style="background:#14532d" onclick="openParent()"><span class="emoji">👨‍👩‍👧</span>Parent Zone</button>
+      <div class="label">Tools</div>
+      <div class="grid2" id="toolGrid">
+        <button class="card" style="background:linear-gradient(160deg,#f59e0b,#b45309);border-color:transparent" onclick="openBuilder()"><span class="emoji">🪄</span>Game Builder</button>
+        <button class="card" style="background:linear-gradient(160deg,#0ea5e9,#0369a1);border-color:transparent" onclick="openTimer()"><span class="emoji">⏱️</span>Study Timer</button>
+        <button class="card" style="background:linear-gradient(160deg,#475569,#1e293b);border-color:transparent" onclick="openAllGuides()"><span class="emoji">📒</span>Study Guides</button>
+        <button class="card" style="background:linear-gradient(160deg,#22c55e,#15803d);border-color:transparent" onclick="openParent()"><span class="emoji">👨‍👩‍👧</span>Parent Zone</button>
       </div>
     </div>
   </section>
