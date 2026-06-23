@@ -451,13 +451,13 @@ What is 6 x 7? : 42</div>
     const free=planCard({name:"Free",price:"$0",feats:[["Unlimited mock quizzes",true],["Play 5 games total ("+left+" left)",true],["Levels, XP &amp; study timer",true],["Study guides",false],["Build your own questions",false],["Game Builder",false]]});
     const propl=planCard({name:"Pro",price:"$4.99",per:"/mo",tag:"MOST POPULAR",hi:true,note:"For one student",feats:[["Everything in Free",true],["Unlimited games",true],["Study guides with photos",true],["Build your own questions",true],["Game Builder (lessons → games)",true]],btn:pro?"":"Get Pro",act:"getPlan('Pro')"});
     const prem=planCard({name:"Premium",price:"$9.99",per:"/mo",note:"For families",feats:[["Everything in Pro",true],["Up to 5 student profiles",true],["Advanced teacher analytics",true],["Printable progress reports",true],["Priority support",true]],btn:pro?"":"Get Premium",act:"getPlan('Premium')"});
-    const school='<div class="promo" style="margin-top:16px;flex-direction:column;align-items:flex-start"><h4>🏫 Schools &amp; Districts</h4><p>Volume licensing from <b>$2 / student / year</b> — everything in Premium for every student, plus an admin dashboard, class rostering, and onboarding help. The more students, the lower the price each.</p><button class="btn" style="width:auto;margin-top:10px" onclick="contactSales()">Contact sales</button></div>';
+    const school='<div class="promo" style="margin-top:16px;flex-direction:column;align-items:flex-start"><h4>🏫 Schools &amp; Districts</h4><p>Volume licensing at <b>$12 / student / year</b> — everything in Premium for every student, plus an admin dashboard, class rostering, and onboarding help. The more students, the lower the price each.</p><button class="btn" style="width:auto;margin-top:10px" onclick="contactSales()">Contact sales</button></div>';
     $("priceBody").innerHTML=banner+status+'<div class="plans">'+free+propl+prem+'</div>'+school+'<p class="hint" style="margin-top:14px">Demo build: choosing a plan unlocks features on this device only — no payment is taken, and Lumina never handles money. Real billing would connect here for individuals and for school / district licenses.</p>';
     showScreen("screen-pricing");}
   window.openPricing=openPricing;
   function getPlan(name){setPro(true);LS.set("sq_tier",name);snd("win");confetti();renderHome();}
   window.getPlan=getPlan;
-  function contactSales(){alert("🏫 Thanks for your interest in Lumina for schools!\n\nFor district & bulk pricing (from $2 per student / year), a sales rep would follow up here.\n\n(Demo — no email is actually sent.)");}
+  function contactSales(){alert("🏫 Thanks for your interest in Lumina for schools!\n\nFor district & bulk pricing ($12 per student / year, with volume discounts), a sales rep would follow up here.\n\n(Demo — no email is actually sent.)");}
   window.contactSales=contactSales;
   function deactivatePro(){setPro(false);LS.set("sq_tier",null);openPricing("");}
   window.deactivatePro=deactivatePro;
