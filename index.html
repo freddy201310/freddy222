@@ -142,6 +142,8 @@
   .plan li{font-size:14px;color:var(--tx);display:flex;gap:9px;align-items:flex-start}
   .plan li.no{color:var(--mut)}
   .feat{color:#22d3ee;font-weight:800}
+  .ptag{display:inline-block;font-size:10px;font-weight:800;letter-spacing:1px;color:#fff;background:linear-gradient(135deg,#6366f1,#22d3ee);padding:3px 8px;border-radius:6px;margin-bottom:8px}
+  .pnote{font-size:12px;color:var(--mut);margin-top:2px}
   .scroll,.bar{max-width:1120px}
   .nav{display:flex;align-items:center;gap:18px;max-width:1120px;width:100%;margin:0 auto;padding:4px 112px 16px 2px;border-bottom:1px solid var(--line)}
   .navlinks{display:flex;gap:4px;align-items:center}
@@ -442,17 +444,22 @@ What is 6 x 7? : 42</div>
   function canStartGame(){if(pro)return true;if((progress.gamesStarted||0)>=FREE_GAMES){openPricing("Unlimited games");return false;}return true;}
   function renderPromo(){const box=$("proPromo");if(!box)return;if(pro){box.innerHTML='';return;}const left=gamesLeft();box.innerHTML='<div class="promo"><div><h4>🔓 Unlock Lumina Pro</h4><p>Study guides, custom questions &amp; unlimited games — '+left+' free game'+(left===1?"":"s")+' left.</p></div><button class="btn" style="width:auto" onclick="openPricing(\'\')">See plans</button></div>';}
   function planFeature(t,on){return'<li class="'+(on?"":"no")+'"><span class="'+(on?"feat":"")+'">'+(on?"✓":"–")+'</span> '+t+'</li>';}
+  function planCard(o){return'<div class="plan'+(o.hi?" pro":"")+'">'+(o.tag?'<div class="ptag">'+o.tag+'</div>':'')+'<h3>'+o.name+'</h3><div class="price">'+o.price+(o.per?'<small>'+o.per+'</small>':'')+'</div>'+(o.note?'<div class="pnote">'+o.note+'</div>':'')+'<ul>'+o.feats.map(f=>planFeature(f[0],f[1])).join("")+'</ul>'+(o.btn?'<button class="btn'+(o.hi?'':' alt')+'" style="margin-top:16px" onclick="'+o.act+'">'+o.btn+'</button>':'')+'</div>';}
   function openPricing(reason){const left=gamesLeft();
-    const banner=reason?'<div class="hint" style="border-color:rgba(99,102,241,.5)">🔒 <b>'+esc(reason)+'</b> is part of Lumina Pro.</div>':'';
-    const status=pro?'<div class="promo"><div><h4>✓ Pro is active</h4><p>All features are unlocked on this device.</p></div><button class="btn warn" style="width:auto" onclick="deactivatePro()">Turn off (demo)</button></div>':'';
-    const free='<div class="plan"><h3>Free</h3><div class="price">$0</div><ul>'+planFeature("Mock quizzes — unlimited",true)+planFeature("Play games — 5 total ("+left+" left)",true)+planFeature("Levels, XP &amp; study timer",true)+planFeature("Study guides",false)+planFeature("Build your own questions",false)+planFeature("Game Builder (lessons → games)",false)+'</ul></div>';
-    const propl='<div class="plan pro"><h3>Lumina Pro <span class="badge">POPULAR</span></h3><div class="price">$4.99<small>/mo</small></div><ul>'+planFeature("Everything in Free",true)+planFeature("Unlimited games",true)+planFeature("Study guides with photos",true)+planFeature("Build your own questions",true)+planFeature("Game Builder (lessons → games)",true)+'</ul>'+(pro?'':'<button class="btn" style="margin-top:16px" onclick="getPro()">Get Pro</button>')+'</div>';
-    $("priceBody").innerHTML=banner+status+'<div class="plans">'+free+propl+'</div><p class="hint" style="margin-top:14px">Demo build: activating Pro unlocks features on this device only — no payment is taken, and Lumina never handles money. A school or district license would connect real billing here.</p>';
+    const banner=reason?'<div class="hint" style="border-color:rgba(99,102,241,.5)">🔒 <b>'+esc(reason)+'</b> is part of Lumina Pro or higher.</div>':'';
+    const status=pro?'<div class="promo"><div><h4>✓ '+esc(LS.get("sq_tier","Pro")||"Pro")+' is active</h4><p>All Pro features are unlocked on this device.</p></div><button class="btn warn" style="width:auto" onclick="deactivatePro()">Turn off (demo)</button></div>':'';
+    const free=planCard({name:"Free",price:"$0",feats:[["Unlimited mock quizzes",true],["Play 5 games total ("+left+" left)",true],["Levels, XP &amp; study timer",true],["Study guides",false],["Build your own questions",false],["Game Builder",false]]});
+    const propl=planCard({name:"Pro",price:"$4.99",per:"/mo",tag:"MOST POPULAR",hi:true,note:"For one student",feats:[["Everything in Free",true],["Unlimited games",true],["Study guides with photos",true],["Build your own questions",true],["Game Builder (lessons → games)",true]],btn:pro?"":"Get Pro",act:"getPlan('Pro')"});
+    const prem=planCard({name:"Premium",price:"$9.99",per:"/mo",note:"For families",feats:[["Everything in Pro",true],["Up to 5 student profiles",true],["Advanced teacher analytics",true],["Printable progress reports",true],["Priority support",true]],btn:pro?"":"Get Premium",act:"getPlan('Premium')"});
+    const school='<div class="promo" style="margin-top:16px;flex-direction:column;align-items:flex-start"><h4>🏫 Schools &amp; Districts</h4><p>Volume licensing from <b>$2 / student / year</b> — everything in Premium for every student, plus an admin dashboard, class rostering, and onboarding help. The more students, the lower the price each.</p><button class="btn" style="width:auto;margin-top:10px" onclick="contactSales()">Contact sales</button></div>';
+    $("priceBody").innerHTML=banner+status+'<div class="plans">'+free+propl+prem+'</div>'+school+'<p class="hint" style="margin-top:14px">Demo build: choosing a plan unlocks features on this device only — no payment is taken, and Lumina never handles money. Real billing would connect here for individuals and for school / district licenses.</p>';
     showScreen("screen-pricing");}
   window.openPricing=openPricing;
-  function getPro(){setPro(true);snd("win");confetti();renderHome();}
-  window.getPro=getPro;
-  function deactivatePro(){setPro(false);openPricing("");}
+  function getPlan(name){setPro(true);LS.set("sq_tier",name);snd("win");confetti();renderHome();}
+  window.getPlan=getPlan;
+  function contactSales(){alert("🏫 Thanks for your interest in Lumina for schools!\n\nFor district & bulk pricing (from $2 per student / year), a sales rep would follow up here.\n\n(Demo — no email is actually sent.)");}
+  window.contactSales=contactSales;
+  function deactivatePro(){setPro(false);LS.set("sq_tier",null);openPricing("");}
   window.deactivatePro=deactivatePro;
 
   /* ---------- SUBJECT MENU ---------- */
