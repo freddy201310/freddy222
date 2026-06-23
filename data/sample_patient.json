@@ -1,0 +1,10 @@
+{
+  "id": "NEW-2025-001",
+  "age": 70,
+  "sex": "F",
+  "height_cm": 162,
+  "weight_kg": 60,
+  "diagnoses": ["type 2 diabetes", "chronic kidney disease stage 3", "hypertension"],
+  "allergies": ["shellfish"],
+  "notes": "eGFR 38, A1c 7.9, BP 150/90, mild ankle edema. Eats independently, normal swallow. Lives alone, limited cooking ability."
+}
