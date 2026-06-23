@@ -99,12 +99,23 @@
   @keyframes fall{to{transform:translateY(960px) rotate(720deg);opacity:0}}
   #theme{position:absolute;top:14px;right:64px;z-index:5;background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--tx);cursor:pointer;width:40px;height:40px;border-radius:10px;font-size:17px}
   #theme:hover{background:rgba(255,255,255,.12)}
-  body.light{--tx:#0f172a;--mut:#52617f;--line:rgba(15,23,42,.12);background:radial-gradient(900px 600px at 12% -5%,rgba(99,102,241,.14),transparent 60%),radial-gradient(900px 600px at 100% 0%,rgba(34,211,238,.12),transparent 55%),linear-gradient(160deg,#eef2f7,#dbe3ee 60%,#eef2f7);background-attachment:fixed}
+  body.light{--tx:#0f172a;--mut:#52617f;--line:rgba(15,23,42,.12);--cardbg:#ffffff;background:radial-gradient(900px 600px at 12% -5%,rgba(99,102,241,.14),transparent 60%),radial-gradient(900px 600px at 100% 0%,rgba(34,211,238,.12),transparent 55%),linear-gradient(160deg,#eef2f7,#dbe3ee 60%,#eef2f7);background-attachment:fixed}
   body.light .title,body.light .clockbig{background:linear-gradient(90deg,#4f46e5,#0891b2);-webkit-background-clip:text;background-clip:text;color:transparent}
   body.light .back,body.light #mute,body.light #theme{background:rgba(15,23,42,.05);color:#0f172a}
   body.light .back:hover,body.light #mute:hover,body.light #theme:hover{background:rgba(15,23,42,.1)}
   body.light .hudp,body.light .stat,body.light .xpwrap,body.light .hint{background:rgba(15,23,42,.04)}
   body.light .xpbar,body.light .timebar-wrap{background:rgba(15,23,42,.1)}
+  #modeGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+  .tile{display:flex;align-items:center;gap:14px;background:var(--cardbg);border:1px solid var(--line);border-radius:12px;padding:15px 16px;cursor:pointer;text-align:left;color:var(--tx);width:100%;font-family:inherit;transition:transform .14s,border-color .14s,background .14s,box-shadow .14s}
+  .tile:hover{transform:translateY(-1px);border-color:rgba(99,102,241,.55);box-shadow:0 10px 26px rgba(0,0,0,.32)}
+  .tile:active{transform:none}
+  .tile .ic{flex:none;width:42px;height:42px;border-radius:10px;display:grid;place-items:center;font-size:20px;background:rgba(99,102,241,.16);color:#c7d2fe}
+  .tile .tx{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .tile .tt{font-size:15.5px;font-weight:600;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tile .ts{font-size:12.5px;color:var(--mut);font-weight:500}
+  body.light .tile{box-shadow:0 4px 14px rgba(15,23,42,.06)}
+  body.light .tile:hover{box-shadow:0 10px 24px rgba(15,23,42,.12);background:rgba(99,102,241,.04)}
+  body.light .tile .ic{background:rgba(79,70,229,.12);color:#4f46e5}
 </style>
 </head>
 <body>
@@ -123,10 +134,10 @@
       <div class="grid2" id="subjectGrid"></div>
       <div class="label">Tools</div>
       <div class="grid2" id="toolGrid">
-        <button class="card" style="background:linear-gradient(160deg,#f59e0b,#b45309);border-color:transparent" onclick="openBuilder()"><span class="emoji">🪄</span>Game Builder</button>
-        <button class="card" style="background:linear-gradient(160deg,#0ea5e9,#0369a1);border-color:transparent" onclick="openTimer()"><span class="emoji">⏱️</span>Study Timer</button>
-        <button class="card" style="background:linear-gradient(160deg,#475569,#1e293b);border-color:transparent" onclick="openAllGuides()"><span class="emoji">📒</span>Study Guides</button>
-        <button class="card" style="background:linear-gradient(160deg,#22c55e,#15803d);border-color:transparent" onclick="openParent()"><span class="emoji">👨‍👩‍👧</span>Parent Zone</button>
+        <button class="tile" onclick="openBuilder()"><span class="ic">🪄</span><span class="tx"><span class="tt">Game Builder</span><span class="ts">Turn a lesson into a game</span></span></button>
+        <button class="tile" onclick="openTimer()"><span class="ic">⏱️</span><span class="tx"><span class="tt">Study Timer</span><span class="ts">Focused study sessions</span></span></button>
+        <button class="tile" onclick="openAllGuides()"><span class="ic">📒</span><span class="tx"><span class="tt">Study Guides</span><span class="ts">All your notes</span></span></button>
+        <button class="tile" onclick="openTeacher()"><span class="ic">🧑‍🏫</span><span class="tx"><span class="tt">Teacher Zone</span><span class="ts">Track progress &amp; goals</span></span></button>
       </div>
     </div>
   </section>
@@ -258,12 +269,12 @@ What is 6 x 7? : 42</div>
 
   <!-- PARENT GATE -->
   <section id="screen-parent" class="screen">
-    <div class="bar"><button class="back" onclick="showScreen('screen-home')">← Home</button><div class="bartitle">👨‍👩‍👧 Parent Zone</div></div>
+    <div class="bar"><button class="back" onclick="showScreen('screen-home')">← Home</button><div class="bartitle">🧑‍🏫 Teacher Zone</div></div>
     <div class="scroll" id="parentBody"></div>
   </section>
   <!-- PARENT DASHBOARD -->
   <section id="screen-parentdash" class="screen">
-    <div class="bar"><button class="back" onclick="showScreen('screen-home')">← Exit</button><div class="bartitle">👨‍👩‍👧 Parent Dashboard</div></div>
+    <div class="bar"><button class="back" onclick="showScreen('screen-home')">← Exit</button><div class="bartitle">🧑‍🏫 Teacher Dashboard</div></div>
     <div class="scroll" id="pdBody"></div>
   </section>
 </div>
@@ -314,7 +325,7 @@ What is 6 x 7? : 42</div>
   let guides=LS.get("sq_guides",[]);
   let builtGames=LS.get("sq_games",[]);
   let progress=LS.get("sq_progress",{xp:0,quizzes:0,scoreSum:0,games:0,bestGame:0,studySec:0,bestQuizPct:0,days:{},perSubject:{}});
-  let parent=LS.get("sq_parent",null);   // {pin}
+  let teacher=LS.get("sq_teacher",null);   // {pin}
   let rewards=LS.get("sq_rewards",[]);
   let muted=false;
   const saveProg=()=>LS.set("sq_progress",progress);
@@ -354,19 +365,19 @@ What is 6 x 7? : 42</div>
   function recordStudy(sec){progress.studySec+=sec;addXP(Math.floor(sec/60)*2);markDay();saveProg();}
 
   /* ---------- HOME ---------- */
-  function renderSubjects(){const w=$("subjectGrid");w.innerHTML="";SUBJECTS.forEach(s=>{const b=document.createElement("button");b.className="card "+s.cls;b.innerHTML='<span class="emoji">'+s.emoji+'</span>'+s.name;b.onclick=()=>openSubject(s.key);w.appendChild(b);});}
+  function renderSubjects(){const w=$("subjectGrid");w.innerHTML="";SUBJECTS.forEach(s=>{const b=document.createElement("button");b.className="tile";b.innerHTML='<span class="ic">'+s.emoji+'</span><span class="tx"><span class="tt">'+s.name+'</span><span class="ts">Quiz · Game · Guides</span></span>';b.onclick=()=>openSubject(s.key);w.appendChild(b);});}
   function renderXP(){const lv=level(),inLv=progress.xp%100;$("xpBox").innerHTML='<div class="xpwrap"><div class="xptop"><span>⭐ Level '+lv+'</span><span>'+progress.xp+' XP</span></div><div class="xpbar"><div class="xpfill" style="width:'+inLv+'%"></div></div></div>';}
   function rewardProgressText(r){if(r.type==="level")return"Level "+level()+" / "+r.target;if(r.type==="score")return"Best "+(progress.bestQuizPct||0)+"% / "+r.target+"%";if(r.type==="days")return dayStreak()+" / "+r.target+" days";return"";}
   function rewardMet(r){if(r.type==="level")return level()>=r.target;if(r.type==="score")return(progress.bestQuizPct||0)>=r.target;if(r.type==="days")return dayStreak()>=r.target;return false;}
   function renderRewards(){const box=$("rewardBox");const active=rewards.filter(r=>!r.done);if(!active.length){box.innerHTML="";return;}
-    box.innerHTML='<div class="label">🎁 Goals from your parent:</div>'+active.map(r=>{const met=rewardMet(r);return'<div class="reward"><span>'+(met?"✅ ":"🎯 ")+esc(r.goal)+' → <b>'+esc(r.text)+'</b><br><small style="opacity:.9">'+rewardProgressText(r)+(met?" — reached! 🎉":"")+'</small></span></div>';}).join("");}
+    box.innerHTML='<div class="label">Goals from your teacher</div>'+active.map(r=>{const met=rewardMet(r);return'<div class="reward"><span>'+(met?"✅ ":"🎯 ")+esc(r.goal)+' → <b>'+esc(r.text)+'</b><br><small style="opacity:.9">'+rewardProgressText(r)+(met?" — reached! 🎉":"")+'</small></span></div>';}).join("");}
   function renderHome(){renderSubjects();renderXP();renderRewards();showScreen("screen-home");}
 
   /* ---------- SUBJECT MENU ---------- */
   let curSubject=null;
   function openSubject(key){curSubject=key;const s=SUBJ[key];$("subjTitle").textContent=s.emoji+" "+s.name;
-    const modes=[{t:"📝 Mock Quiz",d:"Practice & get graded",bg:"#3b82f6",fn:()=>chooseDiff("quiz")},{t:"🎮 Play Game",d:"Fast 60-sec challenge",bg:"#16a34a",fn:()=>chooseDiff("game")},{t:"📖 Study Guide",d:"Notes for this subject",bg:"#0ea5e9",fn:()=>openGuides(key)},{t:"✏️ My Questions",d:"Make your own",bg:"#a855f7",fn:()=>openQuestions(key)}];
-    const w=$("modeGrid");w.innerHTML="";modes.forEach(m=>{const b=document.createElement("button");b.className="card";b.style.background=m.bg;b.innerHTML='<span style="font-size:19px">'+m.t+'</span><small style="opacity:.9;font-weight:normal">'+m.d+'</small>';b.onclick=m.fn;w.appendChild(b);});
+    const modes=[{ic:"📝",t:"Mock Quiz",d:"Practice & get graded",fn:()=>chooseDiff("quiz")},{ic:"🎮",t:"Play Game",d:"Fast 60-second challenge",fn:()=>chooseDiff("game")},{ic:"📖",t:"Study Guide",d:"Notes for this subject",fn:()=>openGuides(key)},{ic:"✏️",t:"My Questions",d:"Write your own",fn:()=>openQuestions(key)}];
+    const w=$("modeGrid");w.innerHTML="";modes.forEach(m=>{const b=document.createElement("button");b.className="tile";b.innerHTML='<span class="ic">'+m.ic+'</span><span class="tx"><span class="tt">'+m.t+'</span><span class="ts">'+m.d+'</span></span>';b.onclick=m.fn;w.appendChild(b);});
     showScreen("screen-subject");}
 
   /* ---------- DIFFICULTY ---------- */
@@ -462,12 +473,12 @@ What is 6 x 7? : 42</div>
   $("tStart").addEventListener("click",()=>{if(tRun){stopT();$("tStart").textContent="▶ Start";return;}ensureAudio();tRun=true;$("tStart").textContent="⏸ Pause";tInt=setInterval(()=>{tLeft--;renderT();if(tLeft<=0){stopT();$("tStart").textContent="▶ Start";recordStudy(tTotal);snd("alarm");setTimeout(()=>alert("⏰ Time's up! Great studying — you earned XP. Take a break!"),100);tLeft=tTotal;}},1000);});
   $("tReset").addEventListener("click",()=>{stopT();tLeft=tTotal;renderT();$("tStart").textContent="▶ Start";});
 
-  /* ---------- PARENT ZONE ---------- */
-  function openParent(){const w=$("parentBody");
-    if(!parent){w.innerHTML='<p class="muted">Set a 4-digit Parent PIN to protect this area.</p><div class="field-label" style="color:#fff">Create PIN</div><input type="password" id="pPin1" inputmode="numeric" maxlength="4" placeholder="••••"><div class="field-label" style="color:#fff">Confirm PIN</div><input type="password" id="pPin2" inputmode="numeric" maxlength="4" placeholder="••••"><button class="btn" id="pSet" style="margin-top:8px">Save PIN</button><p class="hint" style="margin-top:10px">Note: this PIN is saved only on this device. It is a simple family lock, not a real bank-style login.</p>';
-      showScreen("screen-parent");$("pSet").onclick=()=>{const a=$("pPin1").value,b=$("pPin2").value;if(!/^\d{4}$/.test(a)){alert("PIN must be 4 digits.");return;}if(a!==b){alert("PINs do not match.");return;}parent={pin:a};LS.set("sq_parent",parent);openDash();};}
-    else{w.innerHTML='<p class="muted">Enter your Parent PIN</p><input type="password" id="pPinIn" inputmode="numeric" maxlength="4" placeholder="••••"><button class="btn" id="pGo" style="margin-top:8px">Enter</button>';showScreen("screen-parent");$("pGo").onclick=()=>{if($("pPinIn").value===parent.pin)openDash();else alert("Wrong PIN.");};}}
-  window.openParent=openParent;
+  /* ---------- TEACHER ZONE ---------- */
+  function openTeacher(){const w=$("parentBody");
+    if(!teacher){w.innerHTML='<p class="muted">Set a 4-digit Teacher PIN to protect this area.</p><div class="field-label">Create PIN</div><input type="password" id="pPin1" inputmode="numeric" maxlength="4" placeholder="••••"><div class="field-label">Confirm PIN</div><input type="password" id="pPin2" inputmode="numeric" maxlength="4" placeholder="••••"><button class="btn" id="pSet" style="margin-top:8px">Save PIN</button><p class="hint" style="margin-top:10px">This PIN is stored only on this device — a simple lock for the teacher area, not a bank-style login.</p>';
+      showScreen("screen-parent");$("pSet").onclick=()=>{const a=$("pPin1").value,b=$("pPin2").value;if(!/^\d{4}$/.test(a)){alert("PIN must be 4 digits.");return;}if(a!==b){alert("PINs do not match.");return;}teacher={pin:a};LS.set("sq_teacher",teacher);openDash();};}
+    else{w.innerHTML='<p class="muted">Enter your Teacher PIN</p><input type="password" id="pPinIn" inputmode="numeric" maxlength="4" placeholder="••••"><button class="btn" id="pGo" style="margin-top:8px">Enter</button>';showScreen("screen-parent");$("pGo").onclick=()=>{if($("pPinIn").value===teacher.pin)openDash();else alert("Wrong PIN.");};}}
+  window.openTeacher=openTeacher;
   function openDash(){renderDash();showScreen("screen-parentdash");}
   function renderDash(){const avg=progress.quizzes?Math.round(progress.scoreSum/progress.quizzes):0;const mins=Math.round(progress.studySec/60);
     let perS=SUBJECTS.filter(s=>progress.perSubject[s.key]).map(s=>'<div class="panel" style="padding:8px 12px"><b>'+s.emoji+" "+s.name+'</b><p style="margin:2px 0;font-size:13px">Best quiz: '+progress.perSubject[s.key].best+'% · '+progress.perSubject[s.key].quizzes+' quizzes</p></div>').join("");
@@ -480,9 +491,9 @@ What is 6 x 7? : 42</div>
       '<p>🏅 Best quiz: <b>'+(progress.bestQuizPct||0)+'%</b> · Best game: <b>'+progress.bestGame+'</b></p>'+
       '<p>🎮 Games played: <b>'+progress.games+'</b></p>'+
       '<p>⏱️ Study time: <b>'+mins+'</b> min · 🔥 Day streak: <b>'+dayStreak()+'</b></p></div>'+
-      '<div class="label" style="color:#fff">Per subject</div>'+perS+
-      '<div class="label" style="color:#fff;margin-top:8px">🎁 Reward goals</div>'+
-      '<p class="hint">Set a goal and a reward (like "$10"). This is just a promise you make to your child — the app does NOT handle any money or payments.</p>'+
+      '<div class="label">Per subject</div>'+perS+
+      '<div class="label" style="margin-top:8px">Reward goals</div>'+
+      '<p class="hint">Set a goal and a reward (like "$10"). This is just a promise you make to your student — the app does NOT handle any money or payments.</p>'+
       rw+
       '<div class="panel"><h3>➕ Add a goal</h3>'+
       '<div class="field-label" style="color:var(--ink)">Goal type</div><select id="rType"><option value="level">Reach a Level</option><option value="score">Get a quiz score %</option><option value="days">Study a day streak</option></select>'+
@@ -491,7 +502,7 @@ What is 6 x 7? : 42</div>
       '<button class="btn" id="rAdd" style="margin-top:6px">Add Goal</button></div>'+
       '<button class="btn warn" id="pPinChange" style="margin-top:6px">Change PIN</button>';
     $("rAdd").onclick=()=>{const t=$("rType").value,n=parseInt($("rTarget").value,10),txt=$("rText").value.trim();if(!n||!txt){alert("Enter a target number and a reward.");return;}const goal=t==="level"?("Reach Level "+n):t==="score"?("Score "+n+"% on a quiz"):("Study "+n+" days in a row");rewards.push({id:Date.now(),type:t,target:n,text:txt,goal,done:false});LS.set("sq_rewards",rewards);renderDash();};
-    $("pPinChange").onclick=()=>{const p=prompt("Enter a new 4-digit PIN:");if(p&&/^\d{4}$/.test(p)){parent={pin:p};LS.set("sq_parent",parent);alert("PIN updated.");}else if(p!==null)alert("PIN must be 4 digits.");};
+    $("pPinChange").onclick=()=>{const p=prompt("Enter a new 4-digit PIN:");if(p&&/^\d{4}$/.test(p)){teacher={pin:p};LS.set("sq_teacher",teacher);alert("PIN updated.");}else if(p!==null)alert("PIN must be 4 digits.");};
   }
   window.toggleReward=id=>{const r=rewards.find(x=>x.id===id);if(r){r.done=!r.done;LS.set("sq_rewards",rewards);renderDash();}};
   window.delReward=id=>{if(confirm("Delete this goal?")){rewards=rewards.filter(x=>x.id!==id);LS.set("sq_rewards",rewards);renderDash();}};
