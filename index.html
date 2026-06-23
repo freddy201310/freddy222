@@ -3,536 +3,774 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>🚀 Quiz Blitz! — Brain Power Game</title>
+<title>🚀 StudyQuest — Study. Quiz. Play. Level Up.</title>
 <style>
-  :root {
-    --bg1: #6d28d9;
-    --bg2: #2563eb;
-    --card: #ffffff;
-    --ink: #1e1b4b;
-    --good: #22c55e;
-    --bad: #ef4444;
-    --gold: #f59e0b;
-    --shadow: 0 8px 0 rgba(0,0,0,.18);
+  :root{
+    --bg1:#6d28d9; --bg2:#2563eb; --card:#fff; --ink:#1e1b4b;
+    --good:#22c55e; --bad:#ef4444; --gold:#f59e0b; --shadow:0 6px 0 rgba(0,0,0,.18);
   }
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body { height: 100%; margin: 0; }
-  body {
-    font-family: "Trebuchet MS", "Comic Sans MS", system-ui, sans-serif;
-    color: var(--ink);
-    background: linear-gradient(135deg, var(--bg1), var(--bg2));
-    background-size: 200% 200%;
-    animation: drift 12s ease infinite;
-    overflow: hidden;
-    display: flex; align-items: center; justify-content: center;
-    user-select: none;
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;margin:0}
+  body{
+    font-family:"Trebuchet MS","Comic Sans MS",system-ui,sans-serif;color:var(--ink);
+    background:linear-gradient(135deg,var(--bg1),var(--bg2));background-size:200% 200%;
+    animation:drift 14s ease infinite;display:flex;align-items:center;justify-content:center;
+    overflow:hidden;user-select:none;
   }
-  @keyframes drift { 0%{background-position:0 0} 50%{background-position:100% 100%} 100%{background-position:0 0} }
-
-  #app {
-    width: min(560px, 94vw);
-    height: min(820px, 96vh);
-    background: rgba(255,255,255,.10);
-    border: 3px solid rgba(255,255,255,.35);
-    border-radius: 28px;
-    padding: 18px;
-    backdrop-filter: blur(6px);
-    display: flex; flex-direction: column;
-    position: relative;
-    overflow: hidden;
+  @keyframes drift{0%{background-position:0 0}50%{background-position:100% 100%}100%{background-position:0 0}}
+  #app{
+    width:min(560px,96vw);height:min(860px,97vh);background:rgba(255,255,255,.10);
+    border:3px solid rgba(255,255,255,.35);border-radius:26px;padding:14px;
+    backdrop-filter:blur(6px);position:relative;overflow:hidden;display:flex;flex-direction:column;
   }
+  .screen{display:none;flex:1;min-height:0;flex-direction:column}
+  .screen.active{display:flex;animation:pop .3s ease}
+  @keyframes pop{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
+  .scroll{overflow-y:auto;flex:1;min-height:0;padding:2px}
 
-  .screen { display: none; flex: 1; flex-direction: column; min-height: 0; }
-  .screen.active { display: flex; animation: pop .35s ease; }
-  @keyframes pop { from{transform:scale(.92);opacity:0} to{transform:scale(1);opacity:1} }
+  /* top bar */
+  .bar{display:flex;align-items:center;gap:8px;color:#fff;margin-bottom:10px}
+  .back{background:rgba(0,0,0,.25);border:none;color:#fff;cursor:pointer;border-radius:12px;
+    padding:8px 12px;font-size:16px;font-weight:bold}
+  .back:active{transform:translateY(2px)}
+  .bartitle{font-size:20px;font-weight:bold;flex:1}
+  #mute{background:rgba(0,0,0,.25);border:none;color:#fff;cursor:pointer;width:40px;height:40px;
+    border-radius:11px;font-size:18px}
 
-  /* ---------- START ---------- */
-  .title {
-    text-align: center; color: #fff; margin: 6px 0 2px;
-    font-size: clamp(34px, 9vw, 56px); letter-spacing: 1px;
-    text-shadow: 0 4px 0 rgba(0,0,0,.25);
-    animation: bob 2.4s ease-in-out infinite;
-  }
-  @keyframes bob { 0%,100%{transform:translateY(0) rotate(-1deg)} 50%{transform:translateY(-8px) rotate(1deg)} }
-  .subtitle { text-align:center; color:#fde68a; font-weight:bold; margin: 0 0 8px; font-size: clamp(14px,3.6vw,18px); }
-  .hint { text-align:center; color:#e9d5ff; font-size: 14px; margin: 2px 0 14px; }
+  .title{text-align:center;color:#fff;margin:4px 0 0;font-size:clamp(34px,9vw,54px);
+    text-shadow:0 4px 0 rgba(0,0,0,.25);animation:bob 2.6s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-7px) rotate(1deg)}}
+  .subtitle{text-align:center;color:#fde68a;font-weight:bold;margin:2px 0 10px;font-size:clamp(13px,3.4vw,17px)}
+  .label{color:#e9d5ff;font-weight:bold;font-size:14px;margin:6px 2px 6px;letter-spacing:.5px}
 
-  .cats { display:grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 4px; overflow:auto; }
-  .cat {
-    border:none; cursor:pointer; color:#fff; font-weight:bold;
-    border-radius: 20px; padding: 18px 10px; font-size: 18px;
-    box-shadow: var(--shadow); transition: transform .08s;
-    display:flex; flex-direction:column; gap:6px; align-items:center;
-  }
-  .cat .emoji { font-size: 38px; }
-  .cat:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,.18); }
-  .cat.surprise { grid-column: 1 / -1; background: linear-gradient(90deg,#f59e0b,#ec4899,#8b5cf6); font-size: 22px; }
-  .cat.c-math { background:#3b82f6; } .cat.c-science { background:#10b981; }
-  .cat.c-geo { background:#06b6d4; } .cat.c-words { background:#a855f7; }
-  .cat.c-facts { background:#f43f5e; }
+  /* generic buttons / cards */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .card{border:none;cursor:pointer;color:#fff;font-weight:bold;border-radius:18px;padding:16px 10px;
+    font-size:17px;box-shadow:var(--shadow);transition:transform .08s;display:flex;flex-direction:column;
+    gap:5px;align-items:center;text-align:center}
+  .card .emoji{font-size:32px}
+  .card:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.18)}
+  .c-math{background:#3b82f6}.c-science{background:#10b981}.c-geo{background:#06b6d4}
+  .c-shapes{background:#8b5cf6}.c-words{background:#a855f7}.c-facts{background:#f43f5e}
+  .wide{grid-column:1/-1}
 
-  .best { text-align:center; color:#fff; margin-top: auto; font-weight:bold; font-size: 16px; padding-top:10px; }
-  .best span { color:#fde047; }
+  .pillrow{display:flex;flex-wrap:wrap;gap:6px}
+  .pill{border:none;cursor:pointer;background:rgba(0,0,0,.22);color:#fff;font-weight:bold;
+    border-radius:13px;padding:9px 12px;font-size:15px}
+  .pill.on{background:#fde047;color:#1e1b4b}
+  .pill:active{transform:translateY(2px)}
 
-  /* ---------- GAME ---------- */
-  .hud { display:flex; justify-content:space-between; align-items:center; gap:8px; color:#fff; }
-  .pill { background: rgba(0,0,0,.22); border-radius:16px; padding:8px 12px; font-weight:bold; font-size:16px; text-align:center; min-width:74px; }
-  .pill small { display:block; font-size:10px; opacity:.8; letter-spacing:1px; }
-  .pill b { font-size: 22px; }
-  .combo { color:#fde047; }
-  .combo.hot { animation: shake .3s infinite; }
+  .diffcard{border:none;cursor:pointer;color:#fff;font-weight:bold;border-radius:16px;padding:16px;
+    box-shadow:var(--shadow);text-align:left;display:flex;align-items:center;gap:12px;font-size:18px}
+  .diffcard small{display:block;font-weight:normal;opacity:.92;font-size:13px;margin-top:2px}
+  .diffcard:active{transform:translateY(3px)}
+  .de{font-size:30px}
 
-  .timebar-wrap { height: 16px; background: rgba(0,0,0,.25); border-radius: 10px; margin: 12px 0; overflow:hidden; }
-  #timebar { height:100%; width:100%; background: linear-gradient(90deg,#22c55e,#fde047,#ef4444); background-size:300% 100%; background-position:0 0; transition: width .2s linear; }
+  .btn{border:none;cursor:pointer;color:#fff;font-weight:bold;border-radius:16px;padding:15px;
+    font-size:18px;box-shadow:var(--shadow);background:linear-gradient(90deg,#22c55e,#16a34a);width:100%}
+  .btn.alt{background:linear-gradient(90deg,#3b82f6,#6d28d9)}
+  .btn.warn{background:linear-gradient(90deg,#f59e0b,#ef4444)}
+  .btn:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.18)}
+  .btnrow{display:flex;gap:8px}
 
-  .qcard {
-    background: var(--card); border-radius: 24px; padding: 22px 18px;
-    text-align:center; box-shadow: var(--shadow);
-    display:flex; flex-direction:column; justify-content:center; align-items:center;
-    min-height: 150px; margin-bottom: 14px; position: relative;
-  }
-  .qcat { font-size: 14px; font-weight:bold; color:#7c3aed; letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; }
-  .qtext { font-size: clamp(26px, 7vw, 40px); font-weight: bold; line-height:1.2; }
-  .feedback { position:absolute; top:-14px; right:-6px; font-size:46px; opacity:0; }
-  .feedback.show { animation: burst .6s ease; }
-  @keyframes burst { 0%{transform:scale(0) rotate(-20deg);opacity:1} 60%{transform:scale(1.3) rotate(10deg);opacity:1} 100%{transform:scale(1) rotate(0);opacity:0} }
+  .panel{background:rgba(255,255,255,.92);border-radius:16px;padding:14px;margin-bottom:10px;color:var(--ink)}
+  .panel h3{margin:0 0 6px;font-size:18px}
+  .panel p{margin:4px 0;white-space:pre-wrap;line-height:1.4}
+  .muted{color:#fff;opacity:.85;text-align:center;margin:14px 4px}
+  input[type=text],textarea{width:100%;border:2px solid #c7c2e8;border-radius:12px;padding:10px;
+    font-size:16px;font-family:inherit;margin:4px 0 8px;color:var(--ink)}
+  textarea{min-height:120px;resize:vertical}
+  .field-label{color:#fff;font-weight:bold;font-size:14px;margin-top:6px}
+  .rowbtns{display:flex;gap:6px;margin-top:6px}
+  .mini{border:none;cursor:pointer;border-radius:10px;padding:8px 10px;font-weight:bold;font-size:13px;color:#fff}
+  .mini.edit{background:#3b82f6}.mini.del{background:#ef4444}.mini.play{background:#16a34a}
+  .guideimg{width:100%;border-radius:12px;margin:6px 0;display:block}
 
-  .answers { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:auto; }
-  .ans {
-    border:none; cursor:pointer; color:#fff; font-weight:bold;
-    border-radius:18px; padding:22px 8px; font-size: clamp(18px,5vw,24px);
-    background:#4f46e5; box-shadow: var(--shadow); transition: transform .07s;
-  }
+  .best{text-align:center;color:#fff;font-weight:bold;font-size:15px;margin-top:8px}
+  .best span{color:#fde047}
+
+  /* GAME */
+  .hud{display:flex;justify-content:space-between;gap:8px;color:#fff}
+  .hudp{background:rgba(0,0,0,.22);border-radius:14px;padding:7px 10px;text-align:center;min-width:70px}
+  .hudp small{display:block;font-size:10px;opacity:.85;letter-spacing:1px}
+  .hudp b{font-size:21px}
+  .combo.hot{animation:shake .3s infinite;color:#fde047}
+  .timebar-wrap{height:14px;background:rgba(0,0,0,.25);border-radius:9px;margin:10px 0;overflow:hidden}
+  #timebar{height:100%;width:100%;background:linear-gradient(90deg,#22c55e,#fde047,#ef4444)}
+  .qcard{background:var(--card);border-radius:22px;padding:20px 16px;text-align:center;box-shadow:var(--shadow);
+    display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:140px;
+    margin-bottom:12px;position:relative}
+  .qcat{font-size:13px;font-weight:bold;color:#7c3aed;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+  .qtext{font-size:clamp(22px,6vw,36px);font-weight:bold;line-height:1.2}
+  .feedback{position:absolute;top:-12px;right:-4px;font-size:44px;opacity:0}
+  .feedback.show{animation:burst .6s ease}
+  @keyframes burst{0%{transform:scale(0) rotate(-20deg);opacity:1}60%{transform:scale(1.3);opacity:1}100%{transform:scale(1);opacity:0}}
+  .answers{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:auto}
+  .ans{border:none;cursor:pointer;color:#fff;font-weight:bold;border-radius:16px;padding:20px 8px;
+    font-size:clamp(17px,4.6vw,22px);background:#4f46e5;box-shadow:var(--shadow)}
   .ans:nth-child(2){background:#0891b2}.ans:nth-child(3){background:#db2777}.ans:nth-child(4){background:#ea580c}
-  .ans:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,.18); }
-  .ans.correct { background: var(--good) !important; animation: glow .5s; }
-  .ans.wrong { background: var(--bad) !important; animation: shake .35s; }
-  @keyframes glow { 0%{transform:scale(1)} 50%{transform:scale(1.06)} 100%{transform:scale(1)} }
-  @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-6px)} 80%{transform:translateX(6px)} }
+  .ans:active{transform:translateY(3px)}
+  .ans.correct{background:var(--good)!important;animation:glow .5s}
+  .ans.wrong{background:var(--bad)!important;animation:shake .35s}
+  @keyframes glow{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+  .cheer{text-align:center;color:#fde047;font-weight:bold;height:24px;font-size:18px;margin-top:8px}
 
-  .cheer { text-align:center; color:#fde047; font-weight:bold; height: 26px; font-size: 20px; margin-top:8px; }
+  /* results */
+  .big{text-align:center;color:#fff}
+  .big h2{font-size:clamp(32px,9vw,52px);margin:6px 0 0;text-shadow:0 4px 0 rgba(0,0,0,.25)}
+  .scorebig{font-size:clamp(60px,20vw,120px);color:#fde047;font-weight:bold;line-height:1;margin:4px 0}
+  .stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:10px 0}
+  .stat{background:rgba(0,0,0,.22);border-radius:14px;padding:10px 4px}
+  .stat b{display:block;font-size:24px}.stat small{font-size:10px;opacity:.85;letter-spacing:1px}
 
-  /* ---------- GAME OVER ---------- */
-  .over { text-align:center; color:#fff; display:flex; flex-direction:column; height:100%; }
-  .over h2 { font-size: clamp(40px,11vw,64px); margin: 10px 0 0; text-shadow:0 4px 0 rgba(0,0,0,.25); }
-  .scorebig { font-size: clamp(70px, 22vw, 130px); color:#fde047; font-weight:bold; line-height:1; margin: 6px 0; text-shadow:0 5px 0 rgba(0,0,0,.25); }
-  .stats { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin: 14px 0; }
-  .stat { background: rgba(0,0,0,.22); border-radius:16px; padding:12px 6px; }
-  .stat b { display:block; font-size: 26px; color:#fff; }
-  .stat small { font-size:11px; opacity:.85; letter-spacing:1px; }
-  .newbest { color:#fde047; font-size:22px; font-weight:bold; animation: bob 1s ease-in-out infinite; }
+  /* timer */
+  .clockbig{font-size:clamp(56px,18vw,110px);font-weight:bold;color:#fff;text-align:center;
+    text-shadow:0 5px 0 rgba(0,0,0,.25);margin:10px 0}
 
-  .bigbtn {
-    border:none; cursor:pointer; color:#fff; font-weight:bold;
-    border-radius:22px; padding:20px; font-size:26px; margin-top:auto;
-    background: linear-gradient(90deg,#22c55e,#16a34a); box-shadow: var(--shadow);
-  }
-  .bigbtn:active{ transform: translateY(4px); box-shadow:0 2px 0 rgba(0,0,0,.18); }
-  .linkbtn { background:none;border:none;color:#e9d5ff;cursor:pointer;font-size:15px;margin-top:10px;text-decoration:underline; }
-
-  #mute {
-    position:absolute; top:14px; right:14px; z-index:5;
-    background: rgba(0,0,0,.25); border:none; color:#fff; cursor:pointer;
-    width:42px;height:42px;border-radius:12px;font-size:20px;
-  }
-
-  /* floating confetti emojis on win */
-  .confetti { position:absolute; top:-40px; font-size:28px; animation: fall linear forwards; pointer-events:none; }
-  @keyframes fall { to { transform: translateY(900px) rotate(720deg); opacity:0; } }
+  .confetti{position:absolute;top:-40px;font-size:26px;animation:fall linear forwards;pointer-events:none}
+  @keyframes fall{to{transform:translateY(920px) rotate(720deg);opacity:0}}
 </style>
 </head>
 <body>
 <div id="app">
   <button id="mute" title="Sound on/off">🔊</button>
 
-  <!-- START SCREEN -->
-  <section id="screen-start" class="screen active">
-    <h1 class="title">🚀 Quiz Blitz!</h1>
-    <p class="subtitle">Answer fast. Build streaks. Power up your brain! 🧠⚡</p>
-    <p class="hint">Pick a topic to start a 60-second challenge:</p>
-    <div class="cats">
-      <button class="cat surprise" data-cat="all"><span class="emoji">🎲</span>Surprise Me!</button>
-      <button class="cat c-math" data-cat="math"><span class="emoji">➕</span>Math</button>
-      <button class="cat c-science" data-cat="science"><span class="emoji">🔬</span>Science</button>
-      <button class="cat c-geo" data-cat="geo"><span class="emoji">🌍</span>Geography</button>
-      <button class="cat c-words" data-cat="words"><span class="emoji">📖</span>Words</button>
-      <button class="cat c-facts" data-cat="facts"><span class="emoji">💡</span>Fun Facts</button>
+  <!-- HOME -->
+  <section id="screen-home" class="screen active">
+    <h1 class="title">🚀 StudyQuest</h1>
+    <p class="subtitle">Study. Quiz. Play. Level up! 🧠⚡</p>
+    <div class="scroll">
+      <div class="label">📚 I am in grade:</div>
+      <div class="pillrow" id="gradePills"></div>
+      <div class="label" style="margin-top:12px">🎯 Pick a subject:</div>
+      <div class="grid2" id="subjectGrid"></div>
+      <div class="label" style="margin-top:12px">🛠️ Tools:</div>
+      <div class="grid2">
+        <button class="card" style="background:#0ea5e9" onclick="openTimer()"><span class="emoji">⏱️</span>Study Timer</button>
+        <button class="card" style="background:#64748b" onclick="openAllGuides()"><span class="emoji">📒</span>My Study Guides</button>
+      </div>
+      <p class="best" style="margin-top:14px">🏆 Top Game Score: <span id="homeBest">0</span></p>
     </div>
-    <p class="best">🏆 Best Score: <span id="best-start">0</span></p>
   </section>
 
-  <!-- GAME SCREEN -->
+  <!-- SUBJECT MENU -->
+  <section id="screen-subject" class="screen">
+    <div class="bar"><button class="back" onclick="showScreen('screen-home')">← Home</button><div class="bartitle" id="subjTitle"></div></div>
+    <div class="scroll">
+      <div class="label">What do you want to do?</div>
+      <div class="grid2" id="modeGrid"></div>
+    </div>
+  </section>
+
+  <!-- DIFFICULTY -->
+  <section id="screen-difficulty" class="screen">
+    <div class="bar"><button class="back" id="diffBack">←</button><div class="bartitle" id="diffTitle"></div></div>
+    <div class="scroll">
+      <div class="label">Choose your level:</div>
+      <div id="diffList" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+  </section>
+
+  <!-- GAME -->
   <section id="screen-game" class="screen">
     <div class="hud">
-      <div class="pill"><small>SCORE</small><b id="score">0</b></div>
-      <div class="pill"><small>STREAK</small><b id="combo" class="combo">x1</b></div>
-      <div class="pill"><small>TIME</small><b id="clock">60</b></div>
+      <div class="hudp"><small>SCORE</small><b id="gScore">0</b></div>
+      <div class="hudp"><small>STREAK</small><b id="gCombo" class="combo">x1</b></div>
+      <div class="hudp"><small>TIME</small><b id="gClock">60</b></div>
     </div>
     <div class="timebar-wrap"><div id="timebar"></div></div>
-    <div class="qcard">
-      <div class="qcat" id="qcat">MATH</div>
-      <div class="qtext" id="qtext">Ready?</div>
-      <div class="feedback" id="feedback">✅</div>
-    </div>
-    <div class="answers" id="answers"></div>
-    <div class="cheer" id="cheer"></div>
+    <div class="qcard"><div class="qcat" id="gCat">MATH</div><div class="qtext" id="gQ">Ready?</div><div class="feedback" id="gFb">✅</div></div>
+    <div class="answers" id="gAns"></div>
+    <div class="cheer" id="gCheer"></div>
   </section>
 
-  <!-- GAME OVER SCREEN -->
-  <section id="screen-over" class="screen">
-    <div class="over">
-      <h2 id="over-title">Time's Up! ⏰</h2>
-      <div class="scorebig" id="final-score">0</div>
-      <div class="newbest" id="newbest" style="display:none">🎉 NEW HIGH SCORE! 🎉</div>
+  <!-- GAME OVER -->
+  <section id="screen-gameover" class="screen">
+    <div class="big" style="flex:1;display:flex;flex-direction:column">
+      <h2 id="goTitle">Time's Up! ⏰</h2>
+      <div class="scorebig" id="goScore">0</div>
+      <div id="goNew" style="display:none;color:#fde047;font-size:20px;font-weight:bold" class="">🎉 NEW HIGH SCORE! 🎉</div>
       <div class="stats">
-        <div class="stat"><b id="stat-correct">0</b><small>CORRECT</small></div>
-        <div class="stat"><b id="stat-streak">0</b><small>BEST STREAK</small></div>
-        <div class="stat"><b id="stat-acc">0%</b><small>ACCURACY</small></div>
+        <div class="stat"><b id="goCorrect">0</b><small>CORRECT</small></div>
+        <div class="stat"><b id="goStreak">0</b><small>BEST STREAK</small></div>
+        <div class="stat"><b id="goAcc">0%</b><small>ACCURACY</small></div>
       </div>
-      <p class="best">🏆 Best Score: <span id="best-over">0</span></p>
-      <button class="bigbtn" id="again">Play Again ▶</button>
-      <button class="linkbtn" id="home">⬅ Pick another topic</button>
+      <div style="margin-top:auto;display:flex;flex-direction:column;gap:8px">
+        <button class="btn" onclick="startGame(curSubject,curDiff)">Play Again ▶</button>
+        <button class="btn alt" id="goBackMenu">⬅ Back</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="screen-quiz" class="screen">
+    <div class="bar"><button class="back" id="quizBack">←</button><div class="bartitle" id="quizProg">Question 1</div></div>
+    <div class="timebar-wrap"><div id="quizbar" style="height:100%;background:#fde047"></div></div>
+    <div class="qcard"><div class="qcat" id="qzCat"></div><div class="qtext" id="qzQ"></div></div>
+    <div class="answers" id="qzAns"></div>
+    <div class="cheer" id="qzCheer"></div>
+  </section>
+
+  <!-- QUIZ RESULT -->
+  <section id="screen-quizresult" class="screen">
+    <div class="big" style="flex:1;display:flex;flex-direction:column">
+      <h2 id="qrTitle">Quiz Done!</h2>
+      <div class="scorebig" id="qrGrade">A</div>
+      <div id="qrScore" style="color:#fff;font-size:20px;font-weight:bold"></div>
+      <div class="scroll" style="margin-top:10px" id="qrReview"></div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+        <button class="btn" id="qrAgain">Try Again ▶</button>
+        <button class="btn alt" id="qrBack">⬅ Back</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- GUIDES LIST -->
+  <section id="screen-guides" class="screen">
+    <div class="bar"><button class="back" id="guidesBack">←</button><div class="bartitle" id="guidesTitle">Study Guides</div></div>
+    <div class="scroll" id="guidesList"></div>
+    <button class="btn" style="margin-top:8px" id="guideNew">➕ New Study Guide</button>
+  </section>
+
+  <!-- GUIDE EDIT -->
+  <section id="screen-guideedit" class="screen">
+    <div class="bar"><button class="back" id="geBack">←</button><div class="bartitle">Study Guide</div></div>
+    <div class="scroll">
+      <div class="field-label">Title</div>
+      <input type="text" id="geTitle" placeholder="e.g. Math Test Friday" />
+      <div class="field-label">Notes (write anything you need to study)</div>
+      <textarea id="geText" placeholder="Type your study notes here..."></textarea>
+      <div class="field-label">Add a photo of your notes (optional)</div>
+      <input type="file" id="geImg" accept="image/*" style="color:#fff;margin:6px 0" />
+      <img id="gePreview" class="guideimg" style="display:none" />
+    </div>
+    <button class="btn" style="margin-top:8px" id="geSave">💾 Save Study Guide</button>
+  </section>
+
+  <!-- GUIDE VIEW -->
+  <section id="screen-guideview" class="screen">
+    <div class="bar"><button class="back" id="gvBack">←</button><div class="bartitle">Study Guide</div></div>
+    <div class="scroll" id="gvBody"></div>
+    <div class="rowbtns" style="margin-top:8px">
+      <button class="btn alt" id="gvEdit" style="flex:1">✏️ Edit</button>
+      <button class="btn warn" id="gvDel" style="flex:1">🗑️ Delete</button>
+    </div>
+  </section>
+
+  <!-- MY QUESTIONS LIST -->
+  <section id="screen-questions" class="screen">
+    <div class="bar"><button class="back" id="qBack">←</button><div class="bartitle" id="qTitle">My Questions</div></div>
+    <div class="scroll" id="qList"></div>
+    <button class="btn" style="margin-top:8px" id="qNew">➕ New Question</button>
+  </section>
+
+  <!-- QUESTION EDIT -->
+  <section id="screen-questionedit" class="screen">
+    <div class="bar"><button class="back" id="qeBack">←</button><div class="bartitle">Make a Question</div></div>
+    <div class="scroll">
+      <div class="field-label">Question</div>
+      <input type="text" id="qeQ" placeholder="e.g. What is 5 + 5?" />
+      <div class="field-label">✅ Correct answer</div>
+      <input type="text" id="qeC" placeholder="e.g. 10" />
+      <div class="field-label">❌ Wrong answer 1</div>
+      <input type="text" id="qeW1" placeholder="e.g. 8" />
+      <div class="field-label">❌ Wrong answer 2</div>
+      <input type="text" id="qeW2" placeholder="e.g. 11" />
+      <div class="field-label">❌ Wrong answer 3</div>
+      <input type="text" id="qeW3" placeholder="e.g. 9" />
+    </div>
+    <button class="btn" style="margin-top:8px" id="qeSave">💾 Save Question</button>
+  </section>
+
+  <!-- TIMER -->
+  <section id="screen-timer" class="screen">
+    <div class="bar"><button class="back" onclick="showScreen('screen-home')">← Home</button><div class="bartitle">⏱️ Study Timer</div></div>
+    <div class="scroll" style="display:flex;flex-direction:column;align-items:center;justify-content:center">
+      <p class="muted">Focus for a set time, then take a break!</p>
+      <div class="clockbig" id="tClock">25:00</div>
+      <div class="pillrow" style="justify-content:center" id="tPresets"></div>
+      <div class="btnrow" style="margin-top:16px;width:100%">
+        <button class="btn" id="tStart" style="flex:1">▶ Start</button>
+        <button class="btn alt" id="tReset" style="flex:1">↺ Reset</button>
+      </div>
     </div>
   </section>
 </div>
 
 <script>
-(function () {
+(function(){
   "use strict";
 
-  // ---------- Question bank (non-math categories) ----------
-  const BANK = {
-    science: [
-      ["What planet is known as the Red Planet?", "Mars", ["Venus","Jupiter","Mercury"]],
-      ["What gas do plants breathe in?", "Carbon dioxide", ["Oxygen","Helium","Nitrogen"]],
-      ["How many legs does an insect have?", "6", ["4","8","10"]],
-      ["What is H2O better known as?", "Water", ["Salt","Air","Gold"]],
-      ["What is the center of an atom called?", "Nucleus", ["Electron","Shell","Cell"]],
-      ["Which animal is a mammal?", "Whale", ["Shark","Octopus","Crocodile"]],
-      ["What force pulls things to the ground?", "Gravity", ["Magnetism","Friction","Wind"]],
-      ["What part of the body pumps blood?", "Heart", ["Lungs","Brain","Liver"]],
-      ["What do bees make?", "Honey", ["Milk","Silk","Web"]],
-      ["What is the closest star to Earth?", "The Sun", ["The Moon","Mars","Polaris"]],
-      ["Which is the largest planet?", "Jupiter", ["Earth","Saturn","Neptune"]],
-      ["What do we call frozen rain?", "Hail", ["Fog","Steam","Dew"]],
-      ["What state is ice?", "Solid", ["Liquid","Gas","Plasma"]],
-      ["What do caterpillars turn into?", "Butterflies", ["Spiders","Bees","Ants"]],
-      ["Which gas do humans need to breathe?", "Oxygen", ["Carbon dioxide","Hydrogen","Neon"]],
-    ],
-    geo: [
-      ["What is the largest ocean?", "Pacific", ["Atlantic","Indian","Arctic"]],
-      ["Which continent is Egypt in?", "Africa", ["Asia","Europe","Australia"]],
-      ["What is the capital of France?", "Paris", ["London","Rome","Berlin"]],
-      ["What is the longest river?", "Nile", ["Amazon","Yangtze","Thames"]],
-      ["Which country has the Great Wall?", "China", ["Japan","India","Korea"]],
-      ["What is the capital of the USA?", "Washington, D.C.", ["New York","Los Angeles","Chicago"]],
-      ["The Sahara is a huge what?", "Desert", ["Forest","Ocean","Mountain"]],
-      ["How many continents are there?", "7", ["5","6","8"]],
-      ["Which is the tallest mountain?", "Everest", ["K2","Kilimanjaro","Alps"]],
-      ["What is the capital of Japan?", "Tokyo", ["Beijing","Seoul","Bangkok"]],
-      ["Which country is shaped like a boot?", "Italy", ["Spain","Greece","Brazil"]],
-      ["What is the smallest continent?", "Australia", ["Europe","Antarctica","Asia"]],
-      ["The Amazon rainforest is mostly in which country?", "Brazil", ["Peru","Mexico","Chile"]],
-      ["Which ocean is the coldest?", "Arctic", ["Indian","Pacific","Atlantic"]],
-    ],
-    words: [
-      ["Which word is spelled correctly?", "Friend", ["Freind","Frend","Friende"]],
-      ["What is the opposite of 'happy'?", "Sad", ["Glad","Tall","Fast"]],
-      ["What is a group of wolves called?", "Pack", ["Herd","Flock","School"]],
-      ["Which word is a noun?", "Dog", ["Run","Jump","Quickly"]],
-      ["What is the plural of 'mouse'?", "Mice", ["Mouses","Mouse","Mices"]],
-      ["Which word rhymes with 'cat'?", "Hat", ["Dog","Cup","Pen"]],
-      ["What is the opposite of 'begin'?", "End", ["Start","Open","Go"]],
-      ["Which is spelled correctly?", "Because", ["Becuase","Becouse","Becase"]],
-      ["A word that means 'big'?", "Huge", ["Tiny","Slow","Soft"]],
-      ["What is the past tense of 'run'?", "Ran", ["Runned","Running","Runs"]],
-      ["Which word is an action (verb)?", "Swim", ["Blue","Happy","Table"]],
-      ["What is the opposite of 'day'?", "Night", ["Noon","Sun","Morning"]],
-      ["Plural of 'child'?", "Children", ["Childs","Childes","Childern"]],
-      ["Which is a synonym for 'fast'?", "Quick", ["Slow","Heavy","Loud"]],
-    ],
-    facts: [
-      ["How many days are in a leap year?", "366", ["365","364","367"]],
-      ["What color do you get mixing blue and yellow?", "Green", ["Purple","Orange","Brown"]],
-      ["How many sides does a triangle have?", "3", ["4","5","6"]],
-      ["What is the first month of the year?", "January", ["March","December","June"]],
-      ["How many minutes are in an hour?", "60", ["30","100","24"]],
-      ["What do you call a baby dog?", "Puppy", ["Kitten","Cub","Calf"]],
-      ["How many colors are in a rainbow?", "7", ["5","6","8"]],
-      ["What shape is a stop sign?", "Octagon", ["Square","Circle","Hexagon"]],
-      ["How many hours are in a day?", "24", ["12","48","60"]],
-      ["What do you call a baby cat?", "Kitten", ["Puppy","Foal","Chick"]],
-      ["How many sides does a square have?", "4", ["3","5","6"]],
-      ["Which is the largest: km, m, or cm?", "km", ["m","cm","mm"]],
-      ["What season comes after winter?", "Spring", ["Summer","Fall","Autumn"]],
-      ["How many wheels does a tricycle have?", "3", ["2","4","1"]],
-    ],
+  /* ---------------- DATA ---------------- */
+  const SUBJECTS=[
+    {key:"math",name:"Math",emoji:"➕",cls:"c-math"},
+    {key:"science",name:"Science",emoji:"🔬",cls:"c-science"},
+    {key:"geo",name:"Geography",emoji:"🌍",cls:"c-geo"},
+    {key:"shapes",name:"Shapes",emoji:"🔷",cls:"c-shapes"},
+    {key:"words",name:"Words",emoji:"📖",cls:"c-words"},
+    {key:"facts",name:"Fun Facts",emoji:"💡",cls:"c-facts"},
+  ];
+  const SUBJ=Object.fromEntries(SUBJECTS.map(s=>[s.key,s]));
+
+  const DIFFS=[
+    {key:"easy",name:"Easy",emoji:"🟢",desc:"Very easy — a warm up!",bg:"#22c55e",time:11000},
+    {key:"medium",name:"Medium",emoji:"🟡",desc:"A fair, medium challenge.",bg:"#eab308",time:8500},
+    {key:"intermediate",name:"Intermediate",emoji:"🟠",desc:"Getting tricky now!",bg:"#f97316",time:6500},
+    {key:"hard",name:"Hard",emoji:"🔴",desc:"Very hard — expert mode!",bg:"#ef4444",time:5000},
+  ];
+  const DIFF=Object.fromEntries(DIFFS.map(d=>[d.key,d]));
+
+  const GRADES=["1","2","3","4","5","6","7","8","Higher"];
+
+  // Question bank: BANK[subject][difficulty] = [ [question, correct, [wrong,wrong,wrong]] ]
+  const BANK={
+    science:{
+      easy:[
+        ["Which animal says moo?","Cow",["Dog","Cat","Duck"]],
+        ["What do bees make?","Honey",["Milk","Bread","Juice"]],
+        ["What do fish use to breathe?","Gills",["Lungs","Wings","Nose"]],
+        ["A baby dog is called a?","Puppy",["Kitten","Cub","Chick"]],
+        ["The sun gives us light and?","Heat",["Rain","Snow","Ice"]],
+      ],
+      medium:[
+        ["What planet is the Red Planet?","Mars",["Venus","Jupiter","Mercury"]],
+        ["How many legs does an insect have?","6",["4","8","10"]],
+        ["What part of the body pumps blood?","Heart",["Lungs","Brain","Liver"]],
+        ["What force pulls things down?","Gravity",["Magnetism","Wind","Friction"]],
+        ["What gas do plants breathe in?","Carbon dioxide",["Oxygen","Helium","Nitrogen"]],
+      ],
+      intermediate:[
+        ["What is the center of an atom called?","Nucleus",["Electron","Shell","Proton"]],
+        ["Largest planet in our solar system?","Jupiter",["Saturn","Earth","Neptune"]],
+        ["Water is made of hydrogen and?","Oxygen",["Carbon","Nitrogen","Helium"]],
+        ["How do plants make their food?","Photosynthesis",["Digestion","Respiration","Evaporation"]],
+        ["Which animal is a mammal?","Whale",["Shark","Octopus","Crocodile"]],
+      ],
+      hard:[
+        ["What is the powerhouse of the cell?","Mitochondria",["Nucleus","Ribosome","Membrane"]],
+        ["Chemical symbol for gold?","Au",["Gd","Go","Ag"]],
+        ["How many bones in an adult human body?","206",["201","150","300"]],
+        ["Planet closest to the Sun?","Mercury",["Venus","Mars","Earth"]],
+        ["Light travels about 300,000 km per?","Second",["Hour","Minute","Day"]],
+      ],
+    },
+    geo:{
+      easy:[
+        ["Which is bigger, a city or a country?","Country",["City","Town","Village"]],
+        ["What do we use to find places?","Map",["Spoon","Clock","Book"]],
+        ["The Earth is shaped like a?","Ball",["Box","Cone","Star"]],
+        ["What falls from clouds?","Rain",["Rocks","Toys","Leaves"]],
+        ["A very big area of salty water is an?","Ocean",["Pond","Cup","Puddle"]],
+      ],
+      medium:[
+        ["What is the largest ocean?","Pacific",["Atlantic","Indian","Arctic"]],
+        ["Capital of France?","Paris",["London","Rome","Berlin"]],
+        ["How many continents are there?","7",["5","6","8"]],
+        ["Which continent is Egypt in?","Africa",["Asia","Europe","Australia"]],
+        ["Tallest mountain on Earth?","Everest",["K2","Alps","Andes"]],
+      ],
+      intermediate:[
+        ["Longest river in the world?","Nile",["Amazon","Yangtze","Thames"]],
+        ["Capital of Japan?","Tokyo",["Beijing","Seoul","Bangkok"]],
+        ["Smallest continent?","Australia",["Europe","Antarctica","Asia"]],
+        ["Which country is shaped like a boot?","Italy",["Spain","Greece","Brazil"]],
+        ["The Sahara is a huge?","Desert",["Forest","Ocean","Lake"]],
+      ],
+      hard:[
+        ["Capital of Australia?","Canberra",["Sydney","Melbourne","Perth"]],
+        ["Largest country by area?","Russia",["Canada","China","USA"]],
+        ["Capital of Canada?","Ottawa",["Toronto","Vancouver","Montreal"]],
+        ["Smallest country in the world?","Vatican City",["Monaco","Malta","Nauru"]],
+        ["The line that splits Earth N and S?","Equator",["Axis","Meridian","Tropic"]],
+      ],
+    },
+    shapes:{
+      easy:[
+        ["How many sides does a triangle have?","3",["2","4","5"]],
+        ["How many sides does a square have?","4",["3","5","6"]],
+        ["Which shape is round?","Circle",["Square","Triangle","Rectangle"]],
+        ["How many corners does a square have?","4",["3","2","5"]],
+        ["A shape with 3 corners is a?","Triangle",["Square","Circle","Star"]],
+      ],
+      medium:[
+        ["How many sides does a pentagon have?","5",["4","6","7"]],
+        ["How many sides does a hexagon have?","6",["5","7","8"]],
+        ["A shape with 4 equal sides?","Square",["Rectangle","Triangle","Pentagon"]],
+        ["Which shape has no corners?","Circle",["Square","Hexagon","Triangle"]],
+        ["How many corners does a triangle have?","3",["4","2","5"]],
+      ],
+      intermediate:[
+        ["How many sides does an octagon have?","8",["6","7","9"]],
+        ["How many sides does a heptagon have?","7",["6","8","9"]],
+        ["A 3D shape like a dice is a?","Cube",["Sphere","Cone","Cylinder"]],
+        ["How many faces does a cube have?","6",["4","8","12"]],
+        ["A 4-sided shape is also called a?","Quadrilateral",["Triangle","Pentagon","Polygon"]],
+      ],
+      hard:[
+        ["How many sides does a decagon have?","10",["9","11","12"]],
+        ["How many edges does a cube have?","12",["6","8","10"]],
+        ["How many corners (vertices) does a cube have?","8",["6","10","12"]],
+        ["The angles in a triangle add up to?","180°",["90°","360°","270°"]],
+        ["A shape with 12 sides is a?","Dodecagon",["Decagon","Nonagon","Hexagon"]],
+      ],
+    },
+    words:{
+      easy:[
+        ["Opposite of hot?","Cold",["Warm","Big","Fast"]],
+        ["Opposite of up?","Down",["Left","Top","Side"]],
+        ["Which word rhymes with cat?","Hat",["Dog","Sun","Cup"]],
+        ["A baby cat is a?","Kitten",["Puppy","Cub","Foal"]],
+        ["Opposite of big?","Small",["Tall","Wide","Long"]],
+      ],
+      medium:[
+        ["Opposite of happy?","Sad",["Glad","Tall","Fast"]],
+        ["Plural of mouse?","Mice",["Mouses","Mouse","Mices"]],
+        ["Which word is a noun?","Dog",["Run","Quickly","Jump"]],
+        ["Which is spelled correctly?","Friend",["Freind","Frend","Friende"]],
+        ["Past tense of run?","Ran",["Runned","Running","Runs"]],
+      ],
+      intermediate:[
+        ["A group of wolves is a?","Pack",["Herd","Flock","School"]],
+        ["Plural of child?","Children",["Childs","Childes","Childern"]],
+        ["A synonym for happy?","Joyful",["Angry","Tired","Quiet"]],
+        ["Which is spelled correctly?","Because",["Becuase","Becouse","Becase"]],
+        ["Which word is an adjective?","Bright",["Run","Quickly","Jump"]],
+      ],
+      hard:[
+        ["A synonym for 'enormous'?","Gigantic",["Tiny","Average","Slight"]],
+        ["An antonym for 'generous'?","Stingy",["Kind","Giving","Caring"]],
+        ["Which is spelled correctly?","Necessary",["Neccessary","Necesary","Necessery"]],
+        ["A word that describes a verb is an?","Adverb",["Adjective","Noun","Pronoun"]],
+        ["Plural of 'cactus'?","Cacti",["Cactuses","Cactus","Cactusi"]],
+      ],
+    },
+    facts:{
+      easy:[
+        ["How many days in a week?","7",["5","6","8"]],
+        ["Mixing blue and yellow makes?","Green",["Purple","Orange","Brown"]],
+        ["How many fingers on one hand?","5",["4","6","10"]],
+        ["First month of the year?","January",["March","December","June"]],
+        ["How many wheels on a bike?","2",["3","4","1"]],
+      ],
+      medium:[
+        ["How many minutes in an hour?","60",["30","100","24"]],
+        ["How many colors in a rainbow?","7",["5","6","8"]],
+        ["How many hours in a day?","24",["12","48","60"]],
+        ["What shape is a stop sign?","Octagon",["Square","Circle","Hexagon"]],
+        ["How many days in a leap year?","366",["365","364","367"]],
+      ],
+      intermediate:[
+        ["How many seconds in a minute?","60",["30","100","24"]],
+        ["How many months have 31 days?","7",["6","5","12"]],
+        ["How many degrees in a right angle?","90",["45","180","360"]],
+        ["How many zeros in one thousand?","3",["2","4","5"]],
+        ["How many sides does a cube have (faces)?","6",["4","8","12"]],
+      ],
+      hard:[
+        ["How many degrees in a full circle?","360",["180","90","270"]],
+        ["How many zeros in one million?","6",["3","9","5"]],
+        ["How many minutes in a whole day?","1440",["1240","2400","720"]],
+        ["How many cards in a standard deck?","52",["50","54","48"]],
+        ["What is 10 to the power of 3?","1000",["100","300","10000"]],
+      ],
+    },
   };
 
-  const CAT_LABEL = { math:"MATH", science:"SCIENCE", geo:"GEOGRAPHY", words:"WORDS", facts:"FUN FACTS" };
-  const CHEERS = ["Nice! 👍","Great! ✨","On fire! 🔥","Brain power! 🧠","Boom! 💥","Genius! 🌟","Unstoppable! 🚀","Wow! 🤩"];
+  /* ---------------- STORAGE ---------------- */
+  const LS={
+    get(k,d){try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v);}catch(e){return d;}},
+    set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}},
+  };
+  let grade=LS.get("sq_grade","5");
+  let custom=LS.get("sq_custom",{});       // {subject:[{q,correct,wrong:[3]}]}
+  let guides=LS.get("sq_guides",[]);       // [{id,subject,title,text,img}]
+  let bestScore=LS.get("sq_best",0);
+  let muted=false;
 
-  // ---------- State ----------
-  const ROUND_TIME = 60;
-  let score, combo, bestStreak, correctCount, totalCount, timeLeft, level;
-  let mode, current, qTimer, gameTimer, qDeadline, accepting;
+  const $=id=>document.getElementById(id);
+  function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));$(id).classList.add("active");}
+  window.showScreen=showScreen;
 
-  // ---------- DOM ----------
-  const $ = (id) => document.getElementById(id);
-  const screens = { start: $("screen-start"), game: $("screen-game"), over: $("screen-over") };
-  function show(name) {
-    Object.values(screens).forEach(s => s.classList.remove("active"));
-    screens[name].classList.add("active");
+  function rand(n){return Math.floor(Math.random()*n);}
+  function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=rand(i+1);[a[i],a[j]]=[a[j],a[i]];}return a;}
+  function gradeNum(){return grade==="Higher"?10:parseInt(grade,10);}
+
+  /* ---------------- SOUND ---------------- */
+  let actx=null;
+  function beep(f,d,t,v){if(muted)return;try{if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.type=t||"square";o.frequency.value=f;g.gain.value=v||.15;o.connect(g);g.connect(actx.destination);const n=actx.currentTime;o.start(n);g.gain.exponentialRampToValueAtTime(.001,n+d);o.stop(n+d);}catch(e){}}
+  function snd(k){
+    if(k==="correct"){beep(660,.12,"square",.18);setTimeout(()=>beep(880,.14,"square",.18),90);}
+    else if(k==="wrong"){beep(180,.25,"sawtooth",.2);}
+    else if(k==="tick"){beep(420,.05,"sine",.08);}
+    else if(k==="over"){beep(392,.18,"triangle",.2);setTimeout(()=>beep(330,.18,"triangle",.2),160);setTimeout(()=>beep(262,.3,"triangle",.2),320);}
+    else if(k==="win"){beep(523,.12,"triangle",.2);setTimeout(()=>beep(659,.12,"triangle",.2),120);setTimeout(()=>beep(784,.2,"triangle",.2),240);}
+    else if(k==="alarm"){[0,1,2,3].forEach(i=>setTimeout(()=>beep(880,.25,"square",.25),i*350));}
+  }
+  $("mute").addEventListener("click",()=>{muted=!muted;$("mute").textContent=muted?"🔇":"🔊";});
+
+  /* ---------------- QUESTION SOURCING ---------------- */
+  function makeMath(diffKey){
+    const g=gradeNum();
+    const base={easy:5,medium:12,intermediate:25,hard:60}[diffKey];
+    const max=base+g*3;
+    const ops=diffKey==="easy"?["+","-"]:diffKey==="medium"?["+","-","×"]:["+","-","×","÷"];
+    const op=ops[rand(ops.length)];
+    let a,b,ans;
+    if(op==="+"){a=rand(max)+1;b=rand(max)+1;ans=a+b;}
+    else if(op==="-"){a=rand(max)+1;b=rand(a)+1;ans=a-b;}
+    else if(op==="×"){const m=Math.min(12,3+g);a=rand(m)+1;b=rand(m)+1;ans=a*b;}
+    else{const m=Math.min(12,3+g);b=rand(m)+1;ans=rand(m)+1;a=b*ans;}
+    const set=new Set([ans]);let guard=0;
+    while(set.size<4&&guard++<40){let d=ans+(rand(9)-4);if(d===ans)continue;if(d<0)d=ans+rand(5)+1;set.add(d);}
+    while(set.size<4)set.add(ans+set.size);
+    return{cat:"MATH",correct:String(ans),q:a+" "+op+" "+b,options:shuffle([...set].map(String))};
+  }
+  function customRaw(subject){return(custom[subject]||[]).map(c=>[c.q,c.correct,c.wrong]);}
+  function normalize(subjName,raw){const[q,correct,wrong]=raw;const opts=shuffle([correct,...wrong].filter((v,i,a)=>a.indexOf(v)===i));return{cat:subjName,q,correct,options:opts};}
+  function bankPool(subject,diffKey){
+    const base=(BANK[subject]&&BANK[subject][diffKey])?BANK[subject][diffKey]:[];
+    return base.concat(customRaw(subject));
+  }
+  function oneQuestion(subject,diffKey){
+    if(subject==="math")return makeMath(diffKey);
+    const pool=bankPool(subject,diffKey);
+    if(!pool.length)return makeMath(diffKey);
+    return normalize(SUBJ[subject].name.toUpperCase(),pool[rand(pool.length)]);
   }
 
-  // ---------- Sound (Web Audio, no files) ----------
-  let actx = null, muted = false;
-  function beep(freq, dur, type, vol) {
-    if (muted) return;
-    try {
-      if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
-      const o = actx.createOscillator(), g = actx.createGain();
-      o.type = type || "square"; o.frequency.value = freq;
-      g.gain.value = vol || 0.15;
-      o.connect(g); g.connect(actx.destination);
-      const t = actx.currentTime;
-      o.start(t);
-      g.gain.exponentialRampToValueAtTime(0.001, t + dur);
-      o.stop(t + dur);
-    } catch (e) {}
+  /* ---------------- HOME ---------------- */
+  function renderGradePills(){
+    const w=$("gradePills");w.innerHTML="";
+    GRADES.forEach(g=>{const b=document.createElement("button");b.className="pill"+(g===grade?" on":"");
+      b.textContent=g==="Higher"?"Higher 🎓":g;b.onclick=()=>{grade=g;LS.set("sq_grade",g);renderGradePills();};w.appendChild(b);});
   }
-  function playSound(kind) {
-    if (kind === "correct") { beep(660, .12, "square", .18); setTimeout(()=>beep(880,.14,"square",.18),90); }
-    else if (kind === "wrong") { beep(180, .25, "sawtooth", .2); }
-    else if (kind === "level") { beep(523,.1,"triangle",.2); setTimeout(()=>beep(659,.1,"triangle",.2),100); setTimeout(()=>beep(784,.16,"triangle",.2),200); }
-    else if (kind === "tick") { beep(420, .05, "sine", .08); }
-    else if (kind === "over") { beep(392,.18,"triangle",.2); setTimeout(()=>beep(330,.18,"triangle",.2),160); setTimeout(()=>beep(262,.3,"triangle",.2),320); }
+  function renderSubjects(){
+    const w=$("subjectGrid");w.innerHTML="";
+    SUBJECTS.forEach(s=>{const b=document.createElement("button");b.className="card "+s.cls;
+      b.innerHTML='<span class="emoji">'+s.emoji+'</span>'+s.name;b.onclick=()=>openSubject(s.key);w.appendChild(b);});
   }
-  $("mute").addEventListener("click", () => {
-    muted = !muted;
-    $("mute").textContent = muted ? "🔇" : "🔊";
+  function renderHome(){renderGradePills();renderSubjects();$("homeBest").textContent=bestScore;showScreen("screen-home");}
+
+  /* ---------------- SUBJECT MENU ---------------- */
+  let curSubject=null,curDiff=null,modeAfterDiff="game";
+  function openSubject(key){
+    curSubject=key;const s=SUBJ[key];
+    $("subjTitle").textContent=s.emoji+" "+s.name;
+    const modes=[
+      {t:"📝 Mock Quiz",d:"Practice & get graded",bg:"#3b82f6",fn:()=>chooseDiff("quiz")},
+      {t:"🎮 Play Game",d:"Fast 60-sec challenge",bg:"#16a34a",fn:()=>chooseDiff("game")},
+      {t:"📖 Study Guide",d:"Notes for this subject",bg:"#0ea5e9",fn:()=>openGuides(key)},
+      {t:"✏️ My Questions",d:"Make your own",bg:"#a855f7",fn:()=>openQuestions(key)},
+    ];
+    const w=$("modeGrid");w.innerHTML="";
+    modes.forEach(m=>{const b=document.createElement("button");b.className="card";b.style.background=m.bg;
+      b.innerHTML='<span style="font-size:20px">'+m.t+'</span><small style="opacity:.9;font-weight:normal">'+m.d+'</small>';
+      b.onclick=m.fn;w.appendChild(b);});
+    showScreen("screen-subject");
+  }
+
+  /* ---------------- DIFFICULTY ---------------- */
+  function chooseDiff(mode){
+    modeAfterDiff=mode;
+    $("diffTitle").textContent=(mode==="game"?"🎮 ":"📝 ")+SUBJ[curSubject].name;
+    $("diffBack").onclick=()=>openSubject(curSubject);
+    const w=$("diffList");w.innerHTML="";
+    DIFFS.forEach(d=>{const b=document.createElement("button");b.className="diffcard";b.style.background=d.bg;
+      b.innerHTML='<span class="de">'+d.emoji+'</span><span>'+d.name+'<small>'+d.desc+'</small></span>';
+      b.onclick=()=>{if(mode==="game")startGame(curSubject,d.key);else startQuiz(curSubject,d.key);};w.appendChild(b);});
+    showScreen("screen-difficulty");
+  }
+
+  /* ---------------- GAME ---------------- */
+  const ROUND=60;
+  const CHEERS=["Nice! 👍","Great! ✨","On fire! 🔥","Brain power! 🧠","Boom! 💥","Genius! 🌟","Unstoppable! 🚀","Wow! 🤩"];
+  let gScore,gCombo,gBestStreak,gCorrect,gTotal,gTime,gCur,gQTimer,gRoundTimer,gDeadline,gPerQ,gAccept;
+
+  function startGame(subject,diffKey){
+    curSubject=subject;curDiff=diffKey;
+    gScore=0;gCombo=0;gBestStreak=0;gCorrect=0;gTotal=0;gTime=ROUND;
+    gPerQ=DIFF[diffKey].time;
+    $("goBackMenu").onclick=()=>openSubject(subject);
+    if(!actx){try{actx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}
+    updGHud();showScreen("screen-game");
+    clearInterval(gRoundTimer);gRoundTimer=setInterval(gTick,1000);
+    nextG();
+  }
+  function gTick(){gTime--;if(gTime<=5&&gTime>0)snd("tick");$("gClock").textContent=Math.max(0,gTime);if(gTime<=0)endGame();}
+  function updGHud(){$("gScore").textContent=gScore;$("gClock").textContent=gTime;const c=$("gCombo");c.textContent="x"+Math.max(1,gCombo||1);c.classList.toggle("hot",gCombo>=3);}
+  function nextG(){
+    gAccept=true;gCur=oneQuestion(curSubject,curDiff);
+    $("gCat").textContent=gCur.cat;$("gQ").textContent=gCur.q;$("gCheer").textContent="";
+    const w=$("gAns");w.innerHTML="";
+    gCur.options.forEach(opt=>{const b=document.createElement("button");b.className="ans";b.textContent=opt;b.onclick=()=>gAnswer(b,opt);w.appendChild(b);});
+    gDeadline=Date.now()+gPerQ;$("timebar").style.width="100%";
+    clearInterval(gQTimer);
+    gQTimer=setInterval(()=>{const left=gDeadline-Date.now();$("timebar").style.width=Math.max(0,left/gPerQ*100)+"%";if(left<=0)gTimeout();},70);
+  }
+  function gLock(){gAccept=false;clearInterval(gQTimer);[...$("gAns").children].forEach(b=>b.style.pointerEvents="none");}
+  function gShowCorrect(){[...$("gAns").children].forEach(b=>{if(b.textContent===gCur.correct)b.classList.add("correct");});}
+  function gFb(e){const f=$("gFb");f.textContent=e;f.classList.remove("show");void f.offsetWidth;f.classList.add("show");}
+  function gAnswer(btn,opt){
+    if(!gAccept)return;gTotal++;gLock();
+    const bonus=Math.max(0,Math.ceil((gDeadline-Date.now())/1000));
+    if(opt===gCur.correct){gCorrect++;gCombo++;gBestStreak=Math.max(gBestStreak,gCombo);
+      const mult=Math.min(5,gCombo);gScore+=(10+bonus*2)*mult;btn.classList.add("correct");gFb("✅");snd("correct");
+      $("gCheer").textContent=CHEERS[Math.min(CHEERS.length-1,gCombo-1)]||"Awesome!";}
+    else{gCombo=0;gTime=Math.max(0,gTime-2);btn.classList.add("wrong");gShowCorrect();gFb("❌");snd("wrong");
+      $("gCheer").textContent="Oops! It was "+gCur.correct;}
+    updGHud();setTimeout(()=>{if(gTime>0)nextG();},700);
+  }
+  function gTimeout(){if(!gAccept)return;gTotal++;gCombo=0;gLock();gShowCorrect();gFb("⏱️");snd("wrong");$("gCheer").textContent="Too slow! It was "+gCur.correct;updGHud();setTimeout(()=>{if(gTime>0)nextG();},700);}
+  function endGame(){
+    clearInterval(gRoundTimer);clearInterval(gQTimer);gAccept=false;snd("over");
+    const isNew=gScore>bestScore;if(isNew){bestScore=gScore;LS.set("sq_best",bestScore);confetti();snd("win");}
+    $("goScore").textContent=gScore;$("goCorrect").textContent=gCorrect;$("goStreak").textContent=gBestStreak;
+    $("goAcc").textContent=(gTotal?Math.round(gCorrect/gTotal*100):0)+"%";
+    $("goNew").style.display=isNew?"block":"none";$("goTitle").textContent=isNew?"Amazing! 🌟":"Time's Up! ⏰";
+    showScreen("screen-gameover");
+  }
+  window.startGame=startGame;
+
+  /* ---------------- MOCK QUIZ ---------------- */
+  const QLEN=10;
+  let qz=null;
+  function buildQuizItems(subject,diffKey){
+    let items=[];
+    if(subject==="math"){for(let i=0;i<QLEN;i++)items.push(makeMath(diffKey));}
+    else{let pool=bankPool(subject,diffKey).map(r=>normalize(SUBJ[subject].name.toUpperCase(),r));
+      pool=shuffle(pool);if(pool.length>=QLEN)items=pool.slice(0,QLEN);
+      else{items=pool;while(items.length<QLEN&&pool.length)items.push(pool[rand(pool.length)]);}}
+    return items;
+  }
+  function startQuiz(subject,diffKey){
+    curSubject=subject;curDiff=diffKey;
+    qz={items:buildQuizItems(subject,diffKey),idx:0,score:0,wrong:[]};
+    $("quizBack").onclick=()=>{if(confirm("Quit this quiz?"))openSubject(subject);};
+    $("qrAgain").onclick=()=>startQuiz(subject,diffKey);
+    $("qrBack").onclick=()=>openSubject(subject);
+    showScreen("screen-quiz");renderQuiz();
+  }
+  function renderQuiz(){
+    const it=qz.items[qz.idx];
+    $("quizProg").textContent="Question "+(qz.idx+1)+" / "+qz.items.length;
+    $("quizbar").style.width=((qz.idx)/qz.items.length*100)+"%";
+    $("qzCat").textContent=it.cat;$("qzQ").textContent=it.q;$("qzCheer").textContent="";
+    const w=$("qzAns");w.innerHTML="";
+    it.options.forEach(opt=>{const b=document.createElement("button");b.className="ans";b.textContent=opt;b.onclick=()=>quizAnswer(b,opt,it);w.appendChild(b);});
+  }
+  function quizAnswer(btn,opt,it){
+    [...$("qzAns").children].forEach(b=>{b.style.pointerEvents="none";if(b.textContent===it.correct)b.classList.add("correct");});
+    if(opt===it.correct){qz.score++;snd("correct");$("qzCheer").textContent="Correct! ✅";}
+    else{btn.classList.add("wrong");snd("wrong");$("qzCheer").textContent="It was "+it.correct;qz.wrong.push(it);}
+    setTimeout(()=>{qz.idx++;if(qz.idx>=qz.items.length)quizDone();else renderQuiz();},800);
+  }
+  function quizDone(){
+    const pct=Math.round(qz.score/qz.items.length*100);
+    let letter,msg;
+    if(pct>=90){letter="A";msg="Outstanding! 🌟";}
+    else if(pct>=80){letter="B";msg="Great job! 😄";}
+    else if(pct>=70){letter="C";msg="Good effort! 👍";}
+    else if(pct>=60){letter="D";msg="Keep practicing! 💪";}
+    else{letter="F";msg="Try again — you got this! 🔁";}
+    if(pct>=80){confetti();snd("win");}else snd("over");
+    $("qrTitle").textContent=msg;$("qrGrade").textContent=letter;
+    $("qrScore").textContent="You got "+qz.score+" / "+qz.items.length+" ("+pct+"%)";
+    const r=$("qrReview");
+    if(qz.wrong.length){r.innerHTML='<div class="label">Review these:</div>'+qz.wrong.map(w=>'<div class="panel"><b>'+esc(w.q)+'</b><p>✅ '+esc(w.correct)+'</p></div>').join("");}
+    else r.innerHTML='<p class="muted">Perfect — no mistakes! 🎉</p>';
+    showScreen("screen-quizresult");
+  }
+
+  /* ---------------- STUDY GUIDES ---------------- */
+  let guideSubjectFilter=null,editingGuideId=null;
+  function openGuides(subject){guideSubjectFilter=subject;$("guidesTitle").textContent="📖 "+SUBJ[subject].name+" Guides";$("guidesBack").onclick=()=>openSubject(subject);renderGuides();showScreen("screen-guides");}
+  function openAllGuides(){guideSubjectFilter=null;$("guidesTitle").textContent="📒 All Study Guides";$("guidesBack").onclick=()=>showScreen("screen-home");renderGuides();showScreen("screen-guides");}
+  window.openAllGuides=openAllGuides;
+  function renderGuides(){
+    const list=guides.filter(g=>!guideSubjectFilter||g.subject===guideSubjectFilter);
+    const w=$("guidesList");
+    if(!list.length){w.innerHTML='<p class="muted">No study guides yet.<br>Tap "New Study Guide" to make one! ✍️</p>';}
+    else{w.innerHTML=list.slice().reverse().map(g=>'<div class="panel"><h3>'+esc(g.title||"Untitled")+'</h3><p style="opacity:.7;font-size:13px">'+SUBJ[g.subject].emoji+" "+SUBJ[g.subject].name+'</p><div class="rowbtns"><button class="mini play" onclick="viewGuide('+g.id+')">📖 Open</button><button class="mini edit" onclick="editGuide('+g.id+')">✏️ Edit</button></div></div>').join("");}
+    $("guideNew").onclick=()=>newGuide();
+  }
+  function newGuide(){editingGuideId=null;$("geTitle").value="";$("geText").value="";$("gePreview").style.display="none";$("gePreview").src="";$("geImg").value="";
+    $("geBack").onclick=()=>renderBackToGuides();showScreen("screen-guideedit");}
+  function editGuide(id){const g=guides.find(x=>x.id===id);if(!g)return;editingGuideId=id;$("geTitle").value=g.title||"";$("geText").value=g.text||"";
+    if(g.img){$("gePreview").src=g.img;$("gePreview").style.display="block";}else{$("gePreview").style.display="none";}$("geImg").value="";
+    $("geBack").onclick=()=>renderBackToGuides();showScreen("screen-guideedit");}
+  window.editGuide=editGuide;
+  function renderBackToGuides(){renderGuides();showScreen("screen-guides");}
+  let pendingImg=null;
+  $("geImg").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;resizeImg(f,d=>{pendingImg=d;$("gePreview").src=d;$("gePreview").style.display="block";});});
+  $("geSave").addEventListener("click",()=>{
+    const title=$("geTitle").value.trim(),text=$("geText").value.trim();
+    if(!title&&!text){alert("Add a title or some notes first!");return;}
+    if(editingGuideId){const g=guides.find(x=>x.id===editingGuideId);g.title=title;g.text=text;if(pendingImg)g.img=pendingImg;}
+    else{guides.push({id:Date.now(),subject:guideSubjectFilter||curSubject||"facts",title,text,img:pendingImg||null});}
+    pendingImg=null;LS.set("sq_guides",guides);renderBackToGuides();
+  });
+  function viewGuide(id){const g=guides.find(x=>x.id===id);if(!g)return;
+    $("gvBody").innerHTML='<div class="panel"><h3>'+esc(g.title||"Untitled")+'</h3><p style="opacity:.7;font-size:13px">'+SUBJ[g.subject].emoji+" "+SUBJ[g.subject].name+'</p>'+(g.img?'<img class="guideimg" src="'+g.img+'">':"")+'<p>'+esc(g.text||"")+'</p></div>';
+    $("gvBack").onclick=()=>renderBackToGuides();
+    $("gvEdit").onclick=()=>editGuide(id);
+    $("gvDel").onclick=()=>{if(confirm("Delete this study guide?")){guides=guides.filter(x=>x.id!==id);LS.set("sq_guides",guides);renderBackToGuides();}};
+    showScreen("screen-guideview");}
+  window.viewGuide=viewGuide;
+
+  /* ---------------- MY QUESTIONS ---------------- */
+  let qSubject=null,editingQIdx=null;
+  function openQuestions(subject){qSubject=subject;$("qTitle").textContent="✏️ "+SUBJ[subject].name+" Questions";$("qBack").onclick=()=>openSubject(subject);renderQList();showScreen("screen-questions");}
+  function renderQList(){
+    const arr=custom[qSubject]||[];const w=$("qList");
+    if(!arr.length)w.innerHTML='<p class="muted">No custom questions yet.<br>Make your own to use in the Quiz & Game! 🎯</p>';
+    else w.innerHTML=arr.map((c,i)=>'<div class="panel"><b>'+esc(c.q)+'</b><p>✅ '+esc(c.correct)+'</p><div class="rowbtns"><button class="mini edit" onclick="editQ('+i+')">✏️ Edit</button><button class="mini del" onclick="delQ('+i+')">🗑️ Delete</button></div></div>').join("");
+    $("qNew").onclick=()=>newQ();
+  }
+  function newQ(){editingQIdx=null;["qeQ","qeC","qeW1","qeW2","qeW3"].forEach(id=>$(id).value="");$("qeBack").onclick=()=>{renderQList();showScreen("screen-questions");};showScreen("screen-questionedit");}
+  function editQ(i){const c=custom[qSubject][i];editingQIdx=i;$("qeQ").value=c.q;$("qeC").value=c.correct;$("qeW1").value=c.wrong[0]||"";$("qeW2").value=c.wrong[1]||"";$("qeW3").value=c.wrong[2]||"";$("qeBack").onclick=()=>{renderQList();showScreen("screen-questions");};showScreen("screen-questionedit");}
+  window.editQ=editQ;
+  function delQ(i){if(confirm("Delete this question?")){custom[qSubject].splice(i,1);LS.set("sq_custom",custom);renderQList();}}
+  window.delQ=delQ;
+  $("qeSave").addEventListener("click",()=>{
+    const q=$("qeQ").value.trim(),c=$("qeC").value.trim();
+    const w=[$("qeW1").value.trim(),$("qeW2").value.trim(),$("qeW3").value.trim()].filter(x=>x);
+    if(!q||!c||w.length<3){alert("Fill in the question, the correct answer, and all 3 wrong answers.");return;}
+    if(!custom[qSubject])custom[qSubject]=[];
+    const obj={q,correct:c,wrong:w};
+    if(editingQIdx!==null)custom[qSubject][editingQIdx]=obj;else custom[qSubject].push(obj);
+    LS.set("sq_custom",custom);renderQList();showScreen("screen-questions");
   });
 
-  // ---------- High score ----------
-  function getBest() { return parseInt(localStorage.getItem("quizBlitzBest") || "0", 10); }
-  function setBest(v) { localStorage.setItem("quizBlitzBest", String(v)); }
-  function refreshBest() {
-    const b = getBest();
-    $("best-start").textContent = b;
-    $("best-over").textContent = b;
+  /* ---------------- TIMER ---------------- */
+  const PRESETS=[5,10,15,25,45];
+  let tTotal=25*60,tLeft=25*60,tRun=false,tInt=null;
+  function fmt(s){const m=Math.floor(s/60),x=s%60;return m+":"+(x<10?"0":"")+x;}
+  function renderTimer(){$("tClock").textContent=fmt(tLeft);}
+  function openTimer(){
+    const w=$("tPresets");w.innerHTML="";
+    PRESETS.forEach(m=>{const b=document.createElement("button");b.className="pill"+(tTotal===m*60?" on":"");b.textContent=m+" min";
+      b.onclick=()=>{stopTimer();tTotal=m*60;tLeft=tTotal;renderTimer();openTimer();};w.appendChild(b);});
+    renderTimer();$("tStart").textContent=tRun?"⏸ Pause":"▶ Start";showScreen("screen-timer");
   }
-
-  // ---------- Helpers ----------
-  function rand(n) { return Math.floor(Math.random() * n); }
-  function shuffle(a) { for (let i=a.length-1;i>0;i--){ const j=rand(i+1); [a[i],a[j]]=[a[j],a[i]]; } return a; }
-
-  function makeMathQuestion(lvl) {
-    // difficulty scales with level
-    const ops = lvl < 2 ? ["+","-"] : lvl < 4 ? ["+","-","×"] : ["+","-","×","÷"];
-    const op = ops[rand(ops.length)];
-    let a, b, ans, text;
-    const max = 8 + lvl * 6;
-    if (op === "+") { a = rand(max)+1; b = rand(max)+1; ans = a+b; }
-    else if (op === "-") { a = rand(max)+1; b = rand(a)+1; ans = a-b; } // keep positive
-    else if (op === "×") { a = rand(Math.min(12, 4+lvl))+1; b = rand(Math.min(12, 4+lvl))+1; ans = a*b; }
-    else { b = rand(Math.min(10, 3+lvl))+1; ans = rand(Math.min(10,3+lvl))+1; a = b*ans; } // exact division
-    text = a + " " + op + " " + b;
-
-    // distractors near the answer
-    const opts = new Set([ans]);
-    let guard = 0;
-    while (opts.size < 4 && guard++ < 30) {
-      let delta = rand(7) - 3; if (delta === 0) delta = 1;
-      let d = ans + delta;
-      if (d < 0) d = ans + rand(5) + 1;
-      opts.add(d);
-    }
-    while (opts.size < 4) opts.add(ans + opts.size);
-    return { cat: "math", q: text, correct: String(ans), options: shuffle([...opts].map(String)) };
-  }
-
-  function makeBankQuestion(catKey) {
-    const arr = BANK[catKey];
-    const item = arr[rand(arr.length)];
-    const [q, correct, wrongs] = item;
-    const options = shuffle([correct, ...wrongs]);
-    return { cat: catKey, q, correct, options };
-  }
-
-  function nextQuestionData() {
-    let cat = mode;
-    if (mode === "all") {
-      const all = ["math","science","geo","words","facts"];
-      cat = all[rand(all.length)];
-    }
-    if (cat === "math") return makeMathQuestion(level);
-    return makeBankQuestion(cat);
-  }
-
-  // ---------- Game flow ----------
-  function startGame(selected) {
-    mode = selected;
-    score = 0; combo = 0; bestStreak = 0; correctCount = 0; totalCount = 0;
-    timeLeft = ROUND_TIME; level = 1;
-    updateHud();
-    show("game");
-    // resume audio on user gesture
-    if (!actx) { try { actx = new (window.AudioContext||window.webkitAudioContext)(); } catch(e){} }
-    clearInterval(gameTimer);
-    gameTimer = setInterval(tickRound, 1000);
-    nextQuestion();
-  }
-
-  function tickRound() {
-    timeLeft--;
-    if (timeLeft <= 5 && timeLeft > 0) playSound("tick");
-    $("clock").textContent = Math.max(0, timeLeft);
-    if (timeLeft <= 0) endGame();
-  }
-
-  function updateHud() {
-    $("score").textContent = score;
-    $("clock").textContent = timeLeft;
-    const c = $("combo");
-    c.textContent = "x" + Math.max(1, combo + 0 || 1);
-    c.classList.toggle("hot", combo >= 3);
-  }
-
-  function nextQuestion() {
-    accepting = true;
-    current = nextQuestionData();
-    $("qcat").textContent = CAT_LABEL[current.cat] || "QUIZ";
-    $("qtext").textContent = current.q;
-    $("cheer").textContent = "";
-
-    const wrap = $("answers");
-    wrap.innerHTML = "";
-    current.options.forEach(opt => {
-      const b = document.createElement("button");
-      b.className = "ans";
-      b.textContent = opt;
-      b.addEventListener("click", () => answer(b, opt));
-      wrap.appendChild(b);
-    });
-
-    // per-question timer (shrinks with level), drives the bar
-    const perQ = Math.max(3500, 9000 - level * 700);
-    qDeadline = Date.now() + perQ;
-    $("timebar").style.width = "100%";
-    clearInterval(qTimer);
-    qTimer = setInterval(() => {
-      const left = qDeadline - Date.now();
-      const pct = Math.max(0, (left / perQ) * 100);
-      $("timebar").style.width = pct + "%";
-      if (left <= 0) timeoutQuestion();
-    }, 80);
-  }
-
-  function lockAnswers() {
-    accepting = false;
-    clearInterval(qTimer);
-    [...$("answers").children].forEach(b => b.style.pointerEvents = "none");
-  }
-
-  function highlightCorrect() {
-    [...$("answers").children].forEach(b => {
-      if (b.textContent === current.correct) b.classList.add("correct");
-    });
-  }
-
-  function answer(btn, opt) {
-    if (!accepting) return;
-    totalCount++;
-    lockAnswers();
-    const timeBonus = Math.max(0, Math.ceil((qDeadline - Date.now()) / 1000));
-    if (opt === current.correct) {
-      correctCount++;
-      combo++;
-      bestStreak = Math.max(bestStreak, combo);
-      const mult = Math.min(5, 1 + Math.floor((combo - 1) / 1)); // grows with streak, capped x5
-      const gained = (10 + timeBonus * 2) * mult;
-      score += gained;
-      btn.classList.add("correct");
-      flash("✅");
-      playSound("correct");
-      $("cheer").textContent = CHEERS[Math.min(CHEERS.length-1, combo-1)] || "Awesome!";
-      // level up every 4 correct
-      if (correctCount % 4 === 0) { level++; playSound("level"); $("cheer").textContent = "LEVEL " + level + "! 🆙"; }
-    } else {
-      combo = 0;
-      timeLeft = Math.max(0, timeLeft - 2); // small penalty
-      btn.classList.add("wrong");
-      highlightCorrect();
-      flash("❌");
-      playSound("wrong");
-      $("cheer").textContent = "Oops! It was " + current.correct;
-    }
-    updateHud();
-    setTimeout(() => { if (timeLeft > 0) nextQuestion(); }, 750);
-  }
-
-  function timeoutQuestion() {
-    if (!accepting) return;
-    totalCount++;
-    combo = 0;
-    lockAnswers();
-    highlightCorrect();
-    flash("⏱️");
-    playSound("wrong");
-    $("cheer").textContent = "Too slow! It was " + current.correct;
-    updateHud();
-    setTimeout(() => { if (timeLeft > 0) nextQuestion(); }, 750);
-  }
-
-  function flash(emoji) {
-    const f = $("feedback");
-    f.textContent = emoji;
-    f.classList.remove("show"); void f.offsetWidth; f.classList.add("show");
-  }
-
-  function endGame() {
-    clearInterval(gameTimer);
-    clearInterval(qTimer);
-    accepting = false;
-    playSound("over");
-
-    const best = getBest();
-    const isNew = score > best;
-    if (isNew) { setBest(score); confetti(); }
-
-    $("final-score").textContent = score;
-    $("stat-correct").textContent = correctCount;
-    $("stat-streak").textContent = bestStreak;
-    $("stat-acc").textContent = (totalCount ? Math.round(correctCount/totalCount*100) : 0) + "%";
-    $("newbest").style.display = isNew ? "block" : "none";
-    $("over-title").textContent = isNew ? "Amazing! 🌟" : "Time's Up! ⏰";
-    refreshBest();
-    show("over");
-  }
-
-  function confetti() {
-    const app = $("app");
-    const emojis = ["🎉","⭐","🎊","🌟","✨","🏆","💥"];
-    for (let i = 0; i < 24; i++) {
-      const c = document.createElement("div");
-      c.className = "confetti";
-      c.textContent = emojis[rand(emojis.length)];
-      c.style.left = rand(100) + "%";
-      c.style.animationDuration = (1.5 + Math.random()*1.5) + "s";
-      c.style.animationDelay = (Math.random()*0.6) + "s";
-      app.appendChild(c);
-      setTimeout(() => c.remove(), 3500);
-    }
-  }
-
-  // ---------- Wire up ----------
-  document.querySelectorAll(".cat").forEach(btn => {
-    btn.addEventListener("click", () => startGame(btn.dataset.cat));
+  window.openTimer=openTimer;
+  function stopTimer(){tRun=false;clearInterval(tInt);}
+  $("tStart").addEventListener("click",()=>{
+    if(tRun){stopTimer();$("tStart").textContent="▶ Start";return;}
+    if(!actx){try{actx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}
+    tRun=true;$("tStart").textContent="⏸ Pause";
+    tInt=setInterval(()=>{tLeft--;renderTimer();if(tLeft<=0){stopTimer();$("tStart").textContent="▶ Start";snd("alarm");setTimeout(()=>alert("⏰ Time's up! Great studying — take a break!"),100);tLeft=tTotal;}},1000);
   });
-  $("again").addEventListener("click", () => startGame(mode));
-  $("home").addEventListener("click", () => { refreshBest(); show("start"); });
+  $("tReset").addEventListener("click",()=>{stopTimer();tLeft=tTotal;renderTimer();$("tStart").textContent="▶ Start";});
 
-  refreshBest();
+  /* ---------------- HELPERS ---------------- */
+  function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+  function resizeImg(file,cb){const r=new FileReader();r.onload=e=>{const img=new Image();img.onload=()=>{const max=900;let{width:w,height:h}=img;if(w>max||h>max){if(w>h){h=h*max/w;w=max;}else{w=w*max/h;h=max;}}const c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(img,0,0,w,h);cb(c.toDataURL("image/jpeg",0.7));};img.src=e.target.result;};r.readAsDataURL(file);}
+  function confetti(){const app=$("app");const em=["🎉","⭐","🎊","🌟","✨","🏆","💥"];for(let i=0;i<22;i++){const c=document.createElement("div");c.className="confetti";c.textContent=em[rand(em.length)];c.style.left=rand(100)+"%";c.style.animationDuration=(1.5+Math.random()*1.5)+"s";c.style.animationDelay=(Math.random()*.6)+"s";app.appendChild(c);setTimeout(()=>c.remove(),3500);}}
+
+  /* ---------------- INIT ---------------- */
+  $("goBackMenu") && ($("goBackMenu").onclick=()=>renderHome());
+  renderHome();
 })();
 </script>
 </body>
