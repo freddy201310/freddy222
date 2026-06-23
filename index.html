@@ -116,6 +116,32 @@
   body.light .tile{box-shadow:0 4px 14px rgba(15,23,42,.06)}
   body.light .tile:hover{box-shadow:0 10px 24px rgba(15,23,42,.12);background:rgba(99,102,241,.04)}
   body.light .tile .ic{background:rgba(79,70,229,.12);color:#4f46e5}
+  .label{margin-top:26px}
+  .tile{padding:18px}
+  #subjectGrid,#toolGrid{margin-bottom:10px}
+  .scroll{padding-bottom:36px}
+  .appbar{display:flex;align-items:center;gap:12px;max-width:1080px;margin:0 auto;width:100%;padding:2px 104px 10px 2px;border-bottom:1px solid var(--line)}
+  .brand{font-weight:800;font-size:20px;letter-spacing:-.5px;display:flex;align-items:center;gap:9px;color:var(--tx)}
+  .brand .dot{width:15px;height:15px;border-radius:5px;background:linear-gradient(135deg,#6366f1,#22d3ee)}
+  .badge{font-size:10px;font-weight:800;letter-spacing:1px;padding:3px 7px;border-radius:6px;background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff}
+  .hero{text-align:center;padding:clamp(14px,4vw,40px) 0 10px}
+  .hero .title{margin:0}
+  .lock{opacity:.85}
+  body.is-pro .lock{display:none}
+  .promo{background:linear-gradient(120deg,#312e81,#0e7490);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:18px 20px;margin-bottom:14px;display:flex;flex-wrap:wrap;align-items:center;gap:12px;justify-content:space-between}
+  .promo h4{margin:0;font-size:17px;font-weight:700;color:#fff}
+  .promo p{margin:5px 0 0;font-size:13px;color:#dbeafe}
+  body.light .promo{background:linear-gradient(120deg,#6366f1,#0891b2)}
+  .plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:6px}
+  .plan{background:var(--cardbg);border:1px solid var(--line);border-radius:16px;padding:22px}
+  .plan.pro{border-color:rgba(99,102,241,.6);box-shadow:0 16px 44px rgba(79,70,229,.25)}
+  .plan h3{margin:0 0 2px;font-size:20px;font-weight:800;display:flex;align-items:center;gap:8px}
+  .plan .price{font-size:32px;font-weight:800;margin:8px 0 2px}
+  .plan .price small{font-size:13px;font-weight:600;color:var(--mut)}
+  .plan ul{list-style:none;padding:0;margin:16px 0 0;display:flex;flex-direction:column;gap:10px}
+  .plan li{font-size:14px;color:var(--tx);display:flex;gap:9px;align-items:flex-start}
+  .plan li.no{color:var(--mut)}
+  .feat{color:#22d3ee;font-weight:800}
 </style>
 </head>
 <body>
@@ -125,21 +151,31 @@
 
   <!-- HOME -->
   <section id="screen-home" class="screen active">
-    <h1 class="title">Lumina</h1>
-    <p class="subtitle">Master any subject · Build your own study games · Track your progress</p>
+    <div class="appbar"><div class="brand"><span class="dot"></span>Lumina<span class="badge" id="proBadge" style="display:none">PRO</span></div></div>
     <div class="scroll">
+      <div class="hero">
+        <h1 class="title">Lumina</h1>
+        <p class="subtitle">Master any subject · Build your own study games · Track your progress</p>
+      </div>
       <div id="xpBox"></div>
       <div id="rewardBox"></div>
+      <div id="proPromo"></div>
       <div class="label">Subjects</div>
       <div class="grid2" id="subjectGrid"></div>
       <div class="label">Tools</div>
       <div class="grid2" id="toolGrid">
-        <button class="tile" onclick="openBuilder()"><span class="ic">🪄</span><span class="tx"><span class="tt">Game Builder</span><span class="ts">Turn a lesson into a game</span></span></button>
+        <button class="tile" onclick="openBuilder()"><span class="ic">🪄</span><span class="tx"><span class="tt">Game Builder<span class="lock"> 🔒</span></span><span class="ts">Turn a lesson into a game</span></span></button>
         <button class="tile" onclick="openTimer()"><span class="ic">⏱️</span><span class="tx"><span class="tt">Study Timer</span><span class="ts">Focused study sessions</span></span></button>
-        <button class="tile" onclick="openAllGuides()"><span class="ic">📒</span><span class="tx"><span class="tt">Study Guides</span><span class="ts">All your notes</span></span></button>
+        <button class="tile" onclick="openAllGuides()"><span class="ic">📒</span><span class="tx"><span class="tt">Study Guides<span class="lock"> 🔒</span></span><span class="ts">All your notes</span></span></button>
         <button class="tile" onclick="openTeacher()"><span class="ic">🧑‍🏫</span><span class="tx"><span class="tt">Teacher Zone</span><span class="ts">Track progress &amp; goals</span></span></button>
       </div>
     </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="screen-pricing" class="screen">
+    <div class="bar"><button class="back" onclick="showScreen('screen-home')">← Home</button><div class="bartitle">Plans</div></div>
+    <div class="scroll" id="priceBody"></div>
   </section>
 
   <!-- SUBJECT MENU -->
@@ -327,6 +363,8 @@ What is 6 x 7? : 42</div>
   let progress=LS.get("sq_progress",{xp:0,quizzes:0,scoreSum:0,games:0,bestGame:0,studySec:0,bestQuizPct:0,days:{},perSubject:{}});
   let teacher=LS.get("sq_teacher",null);   // {pin}
   let rewards=LS.get("sq_rewards",[]);
+  let pro=LS.get("sq_pro",false);
+  const FREE_GAMES=5;
   let muted=false;
   const saveProg=()=>LS.set("sq_progress",progress);
 
@@ -349,6 +387,9 @@ What is 6 x 7? : 42</div>
   function applyTheme(){document.body.classList.toggle("light",theme==="light");$("theme").textContent=theme==="light"?"☀️":"🌙";}
   $("theme").addEventListener("click",()=>{theme=theme==="light"?"dark":"light";LS.set("sq_theme",theme);applyTheme();});
   applyTheme();
+  function applyPro(){document.body.classList.toggle("is-pro",pro);}
+  function setPro(v){pro=v;LS.set("sq_pro",v);applyPro();}
+  applyPro();
   function ensureAudio(){if(!actx){try{actx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}}
 
   /* ---------- PROGRESS ---------- */
@@ -371,12 +412,29 @@ What is 6 x 7? : 42</div>
   function rewardMet(r){if(r.type==="level")return level()>=r.target;if(r.type==="score")return(progress.bestQuizPct||0)>=r.target;if(r.type==="days")return dayStreak()>=r.target;return false;}
   function renderRewards(){const box=$("rewardBox");const active=rewards.filter(r=>!r.done);if(!active.length){box.innerHTML="";return;}
     box.innerHTML='<div class="label">Goals from your teacher</div>'+active.map(r=>{const met=rewardMet(r);return'<div class="reward"><span>'+(met?"✅ ":"🎯 ")+esc(r.goal)+' → <b>'+esc(r.text)+'</b><br><small style="opacity:.9">'+rewardProgressText(r)+(met?" — reached! 🎉":"")+'</small></span></div>';}).join("");}
-  function renderHome(){renderSubjects();renderXP();renderRewards();showScreen("screen-home");}
+  function renderHome(){renderHeader();renderSubjects();renderXP();renderRewards();renderPromo();showScreen("screen-home");}
+  function renderHeader(){const b=$("proBadge");if(b)b.style.display=pro?"inline-block":"none";}
+  function gamesLeft(){return Math.max(0,FREE_GAMES-(progress.gamesStarted||0));}
+  function canStartGame(){if(pro)return true;if((progress.gamesStarted||0)>=FREE_GAMES){openPricing("Unlimited games");return false;}return true;}
+  function renderPromo(){const box=$("proPromo");if(!box)return;if(pro){box.innerHTML='';return;}const left=gamesLeft();box.innerHTML='<div class="promo"><div><h4>🔓 Unlock Lumina Pro</h4><p>Study guides, custom questions &amp; unlimited games — '+left+' free game'+(left===1?"":"s")+' left.</p></div><button class="btn" style="width:auto" onclick="openPricing(\'\')">See plans</button></div>';}
+  function planFeature(t,on){return'<li class="'+(on?"":"no")+'"><span class="'+(on?"feat":"")+'">'+(on?"✓":"–")+'</span> '+t+'</li>';}
+  function openPricing(reason){const left=gamesLeft();
+    const banner=reason?'<div class="hint" style="border-color:rgba(99,102,241,.5)">🔒 <b>'+esc(reason)+'</b> is part of Lumina Pro.</div>':'';
+    const status=pro?'<div class="promo"><div><h4>✓ Pro is active</h4><p>All features are unlocked on this device.</p></div><button class="btn warn" style="width:auto" onclick="deactivatePro()">Turn off (demo)</button></div>':'';
+    const free='<div class="plan"><h3>Free</h3><div class="price">$0</div><ul>'+planFeature("Mock quizzes — unlimited",true)+planFeature("Play games — 5 total ("+left+" left)",true)+planFeature("Levels, XP &amp; study timer",true)+planFeature("Study guides",false)+planFeature("Build your own questions",false)+planFeature("Game Builder (lessons → games)",false)+'</ul></div>';
+    const propl='<div class="plan pro"><h3>Lumina Pro <span class="badge">POPULAR</span></h3><div class="price">$4.99<small>/mo</small></div><ul>'+planFeature("Everything in Free",true)+planFeature("Unlimited games",true)+planFeature("Study guides with photos",true)+planFeature("Build your own questions",true)+planFeature("Game Builder (lessons → games)",true)+'</ul>'+(pro?'':'<button class="btn" style="margin-top:16px" onclick="getPro()">Get Pro</button>')+'</div>';
+    $("priceBody").innerHTML=banner+status+'<div class="plans">'+free+propl+'</div><p class="hint" style="margin-top:14px">Demo build: activating Pro unlocks features on this device only — no payment is taken, and Lumina never handles money. A school or district license would connect real billing here.</p>';
+    showScreen("screen-pricing");}
+  window.openPricing=openPricing;
+  function getPro(){setPro(true);snd("win");confetti();renderHome();}
+  window.getPro=getPro;
+  function deactivatePro(){setPro(false);openPricing("");}
+  window.deactivatePro=deactivatePro;
 
   /* ---------- SUBJECT MENU ---------- */
   let curSubject=null;
   function openSubject(key){curSubject=key;const s=SUBJ[key];$("subjTitle").textContent=s.emoji+" "+s.name;
-    const modes=[{ic:"📝",t:"Mock Quiz",d:"Practice & get graded",fn:()=>chooseDiff("quiz")},{ic:"🎮",t:"Play Game",d:"Fast 60-second challenge",fn:()=>chooseDiff("game")},{ic:"📖",t:"Study Guide",d:"Notes for this subject",fn:()=>openGuides(key)},{ic:"✏️",t:"My Questions",d:"Write your own",fn:()=>openQuestions(key)}];
+    const modes=[{ic:"📝",t:"Mock Quiz",d:"Practice & get graded",fn:()=>chooseDiff("quiz")},{ic:"🎮",t:"Play Game",d:"Fast 60-second challenge",fn:()=>chooseDiff("game")},{ic:"📖",t:'Study Guide<span class="lock"> 🔒</span>',d:"Notes for this subject",fn:()=>openGuides(key)},{ic:"✏️",t:'My Questions<span class="lock"> 🔒</span>',d:"Write your own",fn:()=>openQuestions(key)}];
     const w=$("modeGrid");w.innerHTML="";modes.forEach(m=>{const b=document.createElement("button");b.className="tile";b.innerHTML='<span class="ic">'+m.ic+'</span><span class="tx"><span class="tt">'+m.t+'</span><span class="ts">'+m.d+'</span></span>';b.onclick=m.fn;w.appendChild(b);});
     showScreen("screen-subject");}
 
@@ -398,7 +456,7 @@ What is 6 x 7? : 42</div>
   /* ---------- GENERIC GAME ---------- */
   const ROUND=60;const CHEERS=["Nice! 👍","Great! ✨","On fire! 🔥","Brain power! 🧠","Boom! 💥","Genius! 🌟","Unstoppable! 🚀","Wow! 🤩"];
   let gScore,gCombo,gBest,gCorrect,gTotal,gTime,gQT,gRT,gDL,gPerQ,gAccept,gGet,gBackFn,gCur,gAgainFn;
-  function runGame(getter,label,perQ,backFn,againFn){gGet=getter;gPerQ=perQ;gBackFn=backFn;gAgainFn=againFn;gScore=0;gCombo=0;gBest=0;gCorrect=0;gTotal=0;gTime=ROUND;
+  function runGame(getter,label,perQ,backFn,againFn){progress.gamesStarted=(progress.gamesStarted||0)+1;saveProg();gGet=getter;gPerQ=perQ;gBackFn=backFn;gAgainFn=againFn;gScore=0;gCombo=0;gBest=0;gCorrect=0;gTotal=0;gTime=ROUND;
     $("goBackMenu").onclick=backFn;$("goAgain").onclick=againFn;ensureAudio();updHud();showScreen("screen-game");clearInterval(gRT);gRT=setInterval(gTick,1000);nextG();}
   function gTick(){gTime--;if(gTime<=5&&gTime>0)snd("tick");$("gClock").textContent=Math.max(0,gTime);if(gTime<=0)endGame();}
   function updHud(){$("gScore").textContent=gScore;$("gClock").textContent=gTime;const c=$("gCombo");c.textContent="x"+Math.max(1,gCombo||1);c.classList.toggle("hot",gCombo>=3);}
@@ -409,8 +467,8 @@ What is 6 x 7? : 42</div>
   function gAnswer(btn,opt){if(!gAccept)return;gTotal++;gLock();const bonus=Math.max(0,Math.ceil((gDL-Date.now())/1000));if(opt===gCur.correct){gCorrect++;gCombo++;gBest=Math.max(gBest,gCombo);gScore+=(10+bonus*2)*Math.min(5,gCombo);btn.classList.add("correct");gfb("✅");snd("correct");$("gCheer").textContent=CHEERS[Math.min(CHEERS.length-1,gCombo-1)]||"Awesome!";}else{gCombo=0;gTime=Math.max(0,gTime-2);btn.classList.add("wrong");gShow();gfb("❌");snd("wrong");$("gCheer").textContent="Oops! It was "+gCur.correct;}updHud();setTimeout(()=>{if(gTime>0)nextG();},700);}
   function gTimeout(){if(!gAccept)return;gTotal++;gCombo=0;gLock();gShow();gfb("⏱️");snd("wrong");$("gCheer").textContent="Too slow! It was "+gCur.correct;updHud();setTimeout(()=>{if(gTime>0)nextG();},700);}
   function endGame(){clearInterval(gRT);clearInterval(gQT);gAccept=false;snd("over");const isNew=gScore>progress.bestGame;recordGame(gScore);if(isNew){confetti();snd("win");}$("goScore").textContent=gScore;$("goCorrect").textContent=gCorrect;$("goStreak").textContent=gBest;$("goAcc").textContent=(gTotal?Math.round(gCorrect/gTotal*100):0)+"%";$("goNew").style.display=isNew?"block":"none";$("goTitle").textContent=isNew?"Amazing! 🌟":"Time's Up! ⏰";showScreen("screen-gameover");}
-  function startSubjectGame(s,d){runGame(()=>oneSubjectQ(s,d),SUBJ[s].name,DIFF[d].time,()=>openSubject(s),()=>startSubjectGame(s,d));}
-  function playBuilt(g){if(g.pairs.length<2){alert("This game needs at least 2 facts to play.");return;}runGame(()=>oneFromPairs(g.pairs,g.title),g.title,7000,()=>openBuilder(),()=>playBuilt(g));}
+  function startSubjectGame(s,d){if(!canStartGame())return;runGame(()=>oneSubjectQ(s,d),SUBJ[s].name,DIFF[d].time,()=>openSubject(s),()=>startSubjectGame(s,d));}
+  function playBuilt(g){if(g.pairs.length<2){alert("This game needs at least 2 facts to play.");return;}if(!canStartGame())return;runGame(()=>oneFromPairs(g.pairs,g.title),g.title,7000,()=>openBuilder(),()=>playBuilt(g));}
   window.playBuilt=playBuilt;
 
   /* ---------- GENERIC QUIZ ---------- */
@@ -426,7 +484,7 @@ What is 6 x 7? : 42</div>
   window.quizBuilt=quizBuilt;
 
   /* ---------- GAME BUILDER ---------- */
-  function openBuilder(){const w=$("builtList");if(!builtGames.length)w.innerHTML='<p class="muted">No built games yet.<br>Paste a lesson or study guide and turn it into a game! 🪄</p>';else w.innerHTML=builtGames.slice().reverse().map(g=>'<div class="panel"><h3>'+esc(g.title)+'</h3><p style="opacity:.7;font-size:13px">'+g.pairs.length+' facts</p><div class="rowbtns"><button class="mini play" onclick="playBuilt(builtById('+g.id+'))">🎮 Play</button><button class="mini quiz" onclick="quizBuilt(builtById('+g.id+'))">📝 Quiz</button><button class="mini del" onclick="delBuilt('+g.id+')">🗑️</button></div></div>').join("");$("builtNew").onclick=newBuilt;showScreen("screen-builder");}
+  function openBuilder(){if(!pro){openPricing("Game Builder");return;}const w=$("builtList");if(!builtGames.length)w.innerHTML='<p class="muted">No built games yet.<br>Paste a lesson or study guide and turn it into a game! 🪄</p>';else w.innerHTML=builtGames.slice().reverse().map(g=>'<div class="panel"><h3>'+esc(g.title)+'</h3><p style="opacity:.7;font-size:13px">'+g.pairs.length+' facts</p><div class="rowbtns"><button class="mini play" onclick="playBuilt(builtById('+g.id+'))">🎮 Play</button><button class="mini quiz" onclick="quizBuilt(builtById('+g.id+'))">📝 Quiz</button><button class="mini del" onclick="delBuilt('+g.id+')">🗑️</button></div></div>').join("");$("builtNew").onclick=newBuilt;showScreen("screen-builder");}
   window.openBuilder=openBuilder;
   window.builtById=id=>builtGames.find(g=>g.id===id);
   window.delBuilt=id=>{if(confirm("Delete this game?")){builtGames=builtGames.filter(g=>g.id!==id);LS.set("sq_games",builtGames);openBuilder();}};
@@ -439,8 +497,8 @@ What is 6 x 7? : 42</div>
 
   /* ---------- STUDY GUIDES ---------- */
   let guideFilter=null,editGuideId=null,gImgData=null;
-  function openGuides(subject){guideFilter=subject;$("guidesTitle").textContent="📖 "+SUBJ[subject].name+" Guides";$("guidesBack").onclick=()=>openSubject(subject);renderGuides();showScreen("screen-guides");}
-  function openAllGuides(){guideFilter=null;$("guidesTitle").textContent="📒 All Study Guides";$("guidesBack").onclick=()=>showScreen("screen-home");renderGuides();showScreen("screen-guides");}
+  function openGuides(subject){if(!pro){openPricing("Study guides");return;}guideFilter=subject;$("guidesTitle").textContent="📖 "+SUBJ[subject].name+" Guides";$("guidesBack").onclick=()=>openSubject(subject);renderGuides();showScreen("screen-guides");}
+  function openAllGuides(){if(!pro){openPricing("Study guides");return;}guideFilter=null;$("guidesTitle").textContent="📒 All Study Guides";$("guidesBack").onclick=()=>showScreen("screen-home");renderGuides();showScreen("screen-guides");}
   window.openAllGuides=openAllGuides;
   function renderGuides(){const list=guides.filter(g=>!guideFilter||g.subject===guideFilter);const w=$("guidesList");if(!list.length)w.innerHTML='<p class="muted">No study guides yet.<br>Tap "New Study Guide" to make one! ✍️</p>';else w.innerHTML=list.slice().reverse().map(g=>'<div class="panel"><h3>'+esc(g.title||"Untitled")+'</h3><p style="opacity:.7;font-size:13px">'+SUBJ[g.subject].emoji+" "+SUBJ[g.subject].name+'</p><div class="rowbtns"><button class="mini play" onclick="viewGuide('+g.id+')">📖 Open</button><button class="mini edit" onclick="editGuide('+g.id+')">✏️ Edit</button></div></div>').join("");$("guideNew").onclick=newGuide;}
   function backGuides(){renderGuides();showScreen("screen-guides");}
@@ -454,7 +512,7 @@ What is 6 x 7? : 42</div>
 
   /* ---------- MY QUESTIONS ---------- */
   let qSubject=null,editQIdx=null;
-  function openQuestions(subject){qSubject=subject;$("qTitle").textContent="✏️ "+SUBJ[subject].name+" Questions";$("qBack").onclick=()=>openSubject(subject);renderQList();showScreen("screen-questions");}
+  function openQuestions(subject){if(!pro){openPricing("Custom questions");return;}qSubject=subject;$("qTitle").textContent="✏️ "+SUBJ[subject].name+" Questions";$("qBack").onclick=()=>openSubject(subject);renderQList();showScreen("screen-questions");}
   function renderQList(){const arr=custom[qSubject]||[];const w=$("qList");if(!arr.length)w.innerHTML='<p class="muted">No custom questions yet.<br>Make your own to use in the Quiz & Game! 🎯</p>';else w.innerHTML=arr.map((c,i)=>'<div class="panel"><b>'+esc(c.q)+'</b><p>✅ '+esc(c.correct)+'</p><div class="rowbtns"><button class="mini edit" onclick="editQ('+i+')">✏️ Edit</button><button class="mini del" onclick="delQ('+i+')">🗑️ Delete</button></div></div>').join("");$("qNew").onclick=newQ;}
   function newQ(){editQIdx=null;["qeQ","qeC","qeW1","qeW2","qeW3"].forEach(id=>$(id).value="");$("qeBack").onclick=()=>{renderQList();showScreen("screen-questions");};showScreen("screen-questionedit");}
   function editQ(i){const c=custom[qSubject][i];editQIdx=i;$("qeQ").value=c.q;$("qeC").value=c.correct;$("qeW1").value=c.wrong[0]||"";$("qeW2").value=c.wrong[1]||"";$("qeW3").value=c.wrong[2]||"";$("qeBack").onclick=()=>{renderQList();showScreen("screen-questions");};showScreen("screen-questionedit");}
