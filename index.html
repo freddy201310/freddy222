@@ -168,6 +168,12 @@
   .subject .nm{font-weight:700;font-size:16.5px}
   .subject .sub{font-size:12.5px;color:var(--mut)}
   .subject .chev{color:var(--mut);font-size:24px;font-weight:700;line-height:1}
+  .optrow{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+  .opt{background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--tx);font-weight:700;font-size:15px;border-radius:10px;padding:10px 18px;cursor:pointer;font-family:inherit;transition:background .15s,filter .15s}
+  .opt:hover{background:rgba(255,255,255,.12)}
+  .opt.on{background:linear-gradient(90deg,#6366f1,#4f46e5);border-color:transparent;color:#fff}
+  body.light .opt{background:rgba(15,23,42,.04)}
+  body.light .opt:hover{background:rgba(15,23,42,.09)}
 </style>
 </head>
 <body>
@@ -177,24 +183,39 @@
 
   <!-- HOME -->
   <section id="screen-home" class="screen active">
-    <nav class="nav"><div class="brand"><span class="dot"></span>Lumina<span class="badge" id="proBadge" style="display:none">PRO</span></div><div class="navlinks"><button class="navlink" onclick="openPricing('')">Plans</button><button class="navlink" onclick="openTeacher()">Teacher</button></div></nav>
+    <nav class="nav"><div class="brand"><span class="dot"></span>Lumina<span class="badge" id="proBadge" style="display:none">PRO</span></div><div class="navlinks"><button class="navlink" onclick="showSubjects()">Subjects</button><button class="navlink" onclick="showTools()">Tools</button><button class="navlink" onclick="openTimer()">Timer</button><button class="navlink" onclick="openPricing('')">Plans</button><button class="navlink" onclick="openTeacher()">Teacher</button></div></nav>
     <div class="scroll">
       <div class="hero2">
-        <div class="herotext"><div class="welcome">Welcome back 👋</div><h2 class="htitle">Ready to learn?</h2><p class="hsub">Choose a subject to quiz, play, or build your own study games.</p></div>
+        <div class="herotext"><div class="welcome">Welcome back 👋</div><h2 class="htitle">Ready to learn?</h2><p class="hsub">Pick a subject to quiz, play, or build your own study games.</p></div>
         <div id="xpBox" class="herocard"></div>
       </div>
       <div id="rewardBox"></div>
       <div id="proPromo"></div>
-      <div class="sechead">Subjects</div>
-      <div class="subjectgrid" id="subjectGrid"></div>
-      <div class="sechead">Study tools</div>
-      <div class="toolgrid" id="toolGrid">
-        <button class="tile" onclick="openBuilder()"><span class="ic">🪄</span><span class="tx"><span class="tt">Game Builder<span class="lock"> 🔒</span></span><span class="ts">Turn a lesson into a game</span></span></button>
-        <button class="tile" onclick="openTimer()"><span class="ic">⏱️</span><span class="tx"><span class="tt">Study Timer</span><span class="ts">Focused study sessions</span></span></button>
-        <button class="tile" onclick="openAllGuides()"><span class="ic">📒</span><span class="tx"><span class="tt">Study Guides<span class="lock"> 🔒</span></span><span class="ts">All your notes</span></span></button>
-        <button class="tile" onclick="openTeacher()"><span class="ic">🧑‍🏫</span><span class="tx"><span class="tt">Teacher Zone</span><span class="ts">Track progress &amp; goals</span></span></button>
+      <div class="sechead">Get started</div>
+      <div class="toolgrid">
+        <button class="tile" onclick="showSubjects()"><span class="ic">📚</span><span class="tx"><span class="tt">Subjects</span><span class="ts">Quiz, play &amp; practice</span></span></button>
+        <button class="tile" onclick="showTools()"><span class="ic">🧰</span><span class="tx"><span class="tt">Study Tools</span><span class="ts">Builder, guides &amp; timer</span></span></button>
+        <button class="tile" onclick="openPricing('')"><span class="ic">⭐</span><span class="tx"><span class="tt">Plans</span><span class="ts">Free, Pro &amp; schools</span></span></button>
+        <button class="tile" onclick="openTeacher()"><span class="ic">🧑‍🏫</span><span class="tx"><span class="tt">Teacher Zone</span><span class="ts">Track progress</span></span></button>
       </div>
     </div>
+  </section>
+
+  <!-- SUBJECTS -->
+  <section id="screen-subjects" class="screen">
+    <div class="bar"><button class="back" onclick="showScreen('screen-home')">← Home</button><div class="bartitle">Subjects</div></div>
+    <div class="scroll"><div class="subjectgrid" id="subjectGrid"></div></div>
+  </section>
+
+  <!-- TOOLS -->
+  <section id="screen-tools" class="screen">
+    <div class="bar"><button class="back" onclick="showScreen('screen-home')">← Home</button><div class="bartitle">Study Tools</div></div>
+    <div class="scroll"><div class="toolgrid">
+      <button class="tile" onclick="openBuilder()"><span class="ic">🪄</span><span class="tx"><span class="tt">Game Builder<span class="lock"> 🔒</span></span><span class="ts">Turn a lesson into a game</span></span></button>
+      <button class="tile" onclick="openTimer()"><span class="ic">⏱️</span><span class="tx"><span class="tt">Study Timer</span><span class="ts">Focused study sessions</span></span></button>
+      <button class="tile" onclick="openAllGuides()"><span class="ic">📒</span><span class="tx"><span class="tt">Study Guides<span class="lock"> 🔒</span></span><span class="ts">All your notes</span></span></button>
+      <button class="tile" onclick="openTeacher()"><span class="ic">🧑‍🏫</span><span class="tx"><span class="tt">Teacher Zone</span><span class="ts">Track progress &amp; goals</span></span></button>
+    </div></div>
   </section>
 
   <!-- PRICING -->
@@ -212,7 +233,7 @@
   <!-- DIFFICULTY -->
   <section id="screen-difficulty" class="screen">
     <div class="bar"><button class="back" id="diffBack">←</button><div class="bartitle" id="diffTitle"></div></div>
-    <div class="scroll"><div class="label">Choose your level:</div><div id="diffList" style="display:flex;flex-direction:column;gap:10px"></div></div>
+    <div class="scroll"><div id="diffOpts"></div><div class="label">Choose your level:</div><div id="diffList" style="display:flex;flex-direction:column;gap:10px"></div></div>
   </section>
 
   <!-- GAME -->
@@ -438,7 +459,10 @@ What is 6 x 7? : 42</div>
   function rewardMet(r){if(r.type==="level")return level()>=r.target;if(r.type==="score")return(progress.bestQuizPct||0)>=r.target;if(r.type==="days")return dayStreak()>=r.target;return false;}
   function renderRewards(){const box=$("rewardBox");const active=rewards.filter(r=>!r.done);if(!active.length){box.innerHTML="";return;}
     box.innerHTML='<div class="label">Goals from your teacher</div>'+active.map(r=>{const met=rewardMet(r);return'<div class="reward"><span>'+(met?"✅ ":"🎯 ")+esc(r.goal)+' → <b>'+esc(r.text)+'</b><br><small style="opacity:.9">'+rewardProgressText(r)+(met?" — reached! 🎉":"")+'</small></span></div>';}).join("");}
-  function renderHome(){renderHeader();renderSubjects();renderXP();renderRewards();renderPromo();showScreen("screen-home");}
+  function renderHome(){renderHeader();renderXP();renderRewards();renderPromo();showScreen("screen-home");}
+  function showSubjects(){renderSubjects();showScreen("screen-subjects");}
+  function showTools(){showScreen("screen-tools");}
+  window.showSubjects=showSubjects;window.showTools=showTools;
   function renderHeader(){const b=$("proBadge");if(b)b.style.display=pro?"inline-block":"none";}
   function gamesLeft(){return Math.max(0,FREE_GAMES-(progress.gamesStarted||0));}
   function canStartGame(){if(pro)return true;if((progress.gamesStarted||0)>=FREE_GAMES){openPricing("Unlimited games");return false;}return true;}
@@ -470,7 +494,11 @@ What is 6 x 7? : 42</div>
     showScreen("screen-subject");}
 
   /* ---------- DIFFICULTY ---------- */
-  function chooseDiff(mode){$("diffTitle").textContent=(mode==="game"?"🎮 ":"📝 ")+SUBJ[curSubject].name;$("diffBack").onclick=()=>openSubject(curSubject);
+  let selRound=60,selQLen=10;
+  function renderDiffOpts(mode){const box=$("diffOpts");if(!box)return;if(mode==="game"){const o=[[30,"30s"],[60,"60s"],[90,"90s"],[120,"2 min"]];box.innerHTML='<div class="label" style="margin-top:0;border:none;padding-top:0">Round length</div><div class="optrow">'+o.map(x=>'<button class="opt'+(selRound===x[0]?" on":"")+'" onclick="setRound('+x[0]+')">'+x[1]+'</button>').join("")+'</div>';}else{const o=[5,10,20];box.innerHTML='<div class="label" style="margin-top:0;border:none;padding-top:0">Number of questions</div><div class="optrow">'+o.map(n=>'<button class="opt'+(selQLen===n?" on":"")+'" onclick="setQLen('+n+')">'+n+'</button>').join("")+'</div>';}}
+  window.setRound=n=>{selRound=n;renderDiffOpts("game");};
+  window.setQLen=n=>{selQLen=n;renderDiffOpts("quiz");};
+  function chooseDiff(mode){$("diffTitle").textContent=(mode==="game"?"🎮 ":"📝 ")+SUBJ[curSubject].name;$("diffBack").onclick=()=>openSubject(curSubject);renderDiffOpts(mode);
     const w=$("diffList");w.innerHTML="";DIFFS.forEach(d=>{const b=document.createElement("button");b.className="diffcard";b.style.background=d.bg;b.innerHTML='<span class="de">'+d.emoji+'</span><span>'+d.name+'<small>'+d.desc+'</small></span>';b.onclick=()=>{if(mode==="game")startSubjectGame(curSubject,d.key);else startSubjectQuiz(curSubject,d.key);};w.appendChild(b);});showScreen("screen-difficulty");}
 
   /* ---------- QUESTION SOURCING ---------- */
@@ -487,7 +515,7 @@ What is 6 x 7? : 42</div>
   /* ---------- GENERIC GAME ---------- */
   const ROUND=60;const CHEERS=["Nice! 👍","Great! ✨","On fire! 🔥","Brain power! 🧠","Boom! 💥","Genius! 🌟","Unstoppable! 🚀","Wow! 🤩"];
   let gScore,gCombo,gBest,gCorrect,gTotal,gTime,gQT,gRT,gDL,gPerQ,gAccept,gGet,gBackFn,gCur,gAgainFn;
-  function runGame(getter,label,perQ,backFn,againFn){progress.gamesStarted=(progress.gamesStarted||0)+1;saveProg();gGet=getter;gPerQ=perQ;gBackFn=backFn;gAgainFn=againFn;gScore=0;gCombo=0;gBest=0;gCorrect=0;gTotal=0;gTime=ROUND;
+  function runGame(getter,label,perQ,backFn,againFn,roundSecs){progress.gamesStarted=(progress.gamesStarted||0)+1;saveProg();gGet=getter;gPerQ=perQ;gBackFn=backFn;gAgainFn=againFn;gScore=0;gCombo=0;gBest=0;gCorrect=0;gTotal=0;gTime=roundSecs||ROUND;
     $("goBackMenu").onclick=backFn;$("goAgain").onclick=againFn;ensureAudio();updHud();showScreen("screen-game");clearInterval(gRT);gRT=setInterval(gTick,1000);nextG();}
   function gTick(){gTime--;if(gTime<=5&&gTime>0)snd("tick");$("gClock").textContent=Math.max(0,gTime);if(gTime<=0)endGame();}
   function updHud(){$("gScore").textContent=gScore;$("gClock").textContent=gTime;const c=$("gCombo");c.textContent="x"+Math.max(1,gCombo||1);c.classList.toggle("hot",gCombo>=3);}
@@ -498,7 +526,7 @@ What is 6 x 7? : 42</div>
   function gAnswer(btn,opt){if(!gAccept)return;gTotal++;gLock();const bonus=Math.max(0,Math.ceil((gDL-Date.now())/1000));if(opt===gCur.correct){gCorrect++;gCombo++;gBest=Math.max(gBest,gCombo);gScore+=(10+bonus*2)*Math.min(5,gCombo);btn.classList.add("correct");gfb("✅");snd("correct");$("gCheer").textContent=CHEERS[Math.min(CHEERS.length-1,gCombo-1)]||"Awesome!";}else{gCombo=0;gTime=Math.max(0,gTime-2);btn.classList.add("wrong");gShow();gfb("❌");snd("wrong");$("gCheer").textContent="Oops! It was "+gCur.correct;}updHud();setTimeout(()=>{if(gTime>0)nextG();},700);}
   function gTimeout(){if(!gAccept)return;gTotal++;gCombo=0;gLock();gShow();gfb("⏱️");snd("wrong");$("gCheer").textContent="Too slow! It was "+gCur.correct;updHud();setTimeout(()=>{if(gTime>0)nextG();},700);}
   function endGame(){clearInterval(gRT);clearInterval(gQT);gAccept=false;snd("over");const isNew=gScore>progress.bestGame;recordGame(gScore);if(isNew){confetti();snd("win");}$("goScore").textContent=gScore;$("goCorrect").textContent=gCorrect;$("goStreak").textContent=gBest;$("goAcc").textContent=(gTotal?Math.round(gCorrect/gTotal*100):0)+"%";$("goNew").style.display=isNew?"block":"none";$("goTitle").textContent=isNew?"Amazing! 🌟":"Time's Up! ⏰";showScreen("screen-gameover");}
-  function startSubjectGame(s,d){if(!canStartGame())return;runGame(()=>oneSubjectQ(s,d),SUBJ[s].name,DIFF[d].time,()=>openSubject(s),()=>startSubjectGame(s,d));}
+  function startSubjectGame(s,d){if(!canStartGame())return;runGame(()=>oneSubjectQ(s,d),SUBJ[s].name,DIFF[d].time,()=>openSubject(s),()=>startSubjectGame(s,d),selRound);}
   function playBuilt(g){if(g.pairs.length<2){alert("This game needs at least 2 facts to play.");return;}if(!canStartGame())return;runGame(()=>oneFromPairs(g.pairs,g.title),g.title,7000,()=>openBuilder(),()=>playBuilt(g));}
   window.playBuilt=playBuilt;
 
@@ -508,9 +536,9 @@ What is 6 x 7? : 42</div>
   function renderQuiz(){const it=qz.items[qz.idx];$("quizProg").textContent="Question "+(qz.idx+1)+" / "+qz.items.length;$("quizbar").style.width=(qz.idx/qz.items.length*100)+"%";$("qzCat").textContent=it.cat;$("qzQ").textContent=it.q;$("qzCheer").textContent="";const w=$("qzAns");w.innerHTML="";it.options.forEach(o=>{const b=document.createElement("button");b.className="ans";b.textContent=o;b.onclick=()=>quizAnswer(b,o,it);w.appendChild(b);});}
   function quizAnswer(btn,opt,it){[...$("qzAns").children].forEach(b=>{b.style.pointerEvents="none";if(b.textContent===it.correct)b.classList.add("correct");});if(opt===it.correct){qz.score++;snd("correct");$("qzCheer").textContent="Correct! ✅";}else{btn.classList.add("wrong");snd("wrong");$("qzCheer").textContent="It was "+it.correct;qz.wrong.push(it);}setTimeout(()=>{qz.idx++;if(qz.idx>=qz.items.length)quizDone();else renderQuiz();},800);}
   function quizDone(){const pct=Math.round(qz.score/qz.items.length*100);let L,m;if(pct>=90){L="A";m="Outstanding! 🌟";}else if(pct>=80){L="B";m="Great job! 😄";}else if(pct>=70){L="C";m="Good effort! 👍";}else if(pct>=60){L="D";m="Keep practicing! 💪";}else{L="F";m="Try again — you got this! 🔁";}if(pct>=80){confetti();snd("win");}else snd("over");recordQuiz(pct,qz.score,qz.items.length,qz.subjectKey);$("qrTitle").textContent=m;$("qrGrade").textContent=L;$("qrScore").textContent="You got "+qz.score+" / "+qz.items.length+" ("+pct+"%) — +XP!";const r=$("qrReview");r.innerHTML=qz.wrong.length?'<div class="label">Review these:</div>'+qz.wrong.map(w=>'<div class="panel"><b>'+esc(w.q)+'</b><p>✅ '+esc(w.correct)+'</p></div>').join(""):'<p class="muted">Perfect — no mistakes! 🎉</p>';showScreen("screen-quizresult");}
-  function buildItems(subject,diffKey){let items=[];if(subject==="math"){for(let i=0;i<QLEN;i++)items.push(makeMath(diffKey));}else{let pool=bankPool(subject,diffKey).map(r=>normalize(SUBJ[subject].name.toUpperCase(),r));pool=shuffle(pool);if(pool.length>=QLEN)items=pool.slice(0,QLEN);else{items=pool.slice();while(items.length<QLEN&&pool.length)items.push(pool[rand(pool.length)]);}}return items;}
+  function buildItems(subject,diffKey,n){n=n||QLEN;let items=[];if(subject==="math"){for(let i=0;i<n;i++)items.push(makeMath(diffKey));}else{let pool=bankPool(subject,diffKey).map(r=>normalize(SUBJ[subject].name.toUpperCase(),r));pool=shuffle(pool);if(pool.length>=n)items=pool.slice(0,n);else{items=pool.slice();while(items.length<n&&pool.length)items.push(pool[rand(pool.length)]);}}return items;}
   function itemsFromPairs(pairs,title){let items=[];const n=Math.min(QLEN,Math.max(pairs.length,1));const order=shuffle(pairs);for(let i=0;i<Math.max(n,Math.min(QLEN,pairs.length));i++){items.push(oneFromPairs(pairs,title));}return items.slice(0,QLEN);}
-  function startSubjectQuiz(s,d){runQuiz(buildItems(s,d),SUBJ[s].name,s,()=>startSubjectQuiz(s,d),()=>openSubject(s));}
+  function startSubjectQuiz(s,d){runQuiz(buildItems(s,d,selQLen),SUBJ[s].name,s,()=>startSubjectQuiz(s,d),()=>openSubject(s));}
   function quizBuilt(g){if(g.pairs.length<2){alert("This game needs at least 2 facts.");return;}runQuiz(itemsFromPairs(g.pairs,g.title),g.title,null,()=>quizBuilt(g),()=>openBuilder());}
   window.quizBuilt=quizBuilt;
 
