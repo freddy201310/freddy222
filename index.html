@@ -226,8 +226,8 @@
 
   <!-- SUBJECT MENU -->
   <section id="screen-subject" class="screen">
-    <div class="bar"><button class="back" onclick="showScreen('screen-home')">← Home</button><div class="bartitle" id="subjTitle"></div></div>
-    <div class="scroll"><div class="label">What do you want to do?</div><div class="grid2" id="modeGrid"></div></div>
+    <div class="bar"><button class="back" id="subjBack" onclick="showScreen('screen-subjects')">← Subjects</button><div class="bartitle" id="subjTitle"></div></div>
+    <div class="scroll"><div class="label" id="subjLabel">Choose a topic</div><div class="grid2" id="modeGrid"></div></div>
   </section>
 
   <!-- DIFFICULTY -->
@@ -371,6 +371,45 @@ What is 6 x 7? : 42</div>
     {key:"words",name:"Words",emoji:"📖",cls:"c-words"},{key:"facts",name:"Fun Facts",emoji:"💡",cls:"c-facts"},
   ];
   const SUBJ=Object.fromEntries(SUBJECTS.map(s=>[s.key,s]));
+  const TOPICS={
+    math:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"add",name:"Addition",emoji:"➕"},{key:"sub",name:"Subtraction",emoji:"➖"},{key:"mult",name:"Multiplication",emoji:"✖️"},{key:"div",name:"Division",emoji:"➗"},{key:"perimeter",name:"Perimeter",emoji:"⬜"},{key:"area",name:"Area",emoji:"🟦"},{key:"circles",name:"Circles",emoji:"⭕"}],
+    science:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"space",name:"Space",emoji:"🪐"},{key:"animals",name:"Animals",emoji:"🐾"},{key:"body",name:"Human Body",emoji:"🫀"},{key:"matter",name:"Matter & States",emoji:"💧"}],
+    geo:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"capitals",name:"Capitals",emoji:"🏛️"},{key:"continents",name:"Continents",emoji:"🗺️"},{key:"oceans",name:"Oceans & Rivers",emoji:"🌊"},{key:"landforms",name:"Landforms",emoji:"⛰️"}],
+    shapes:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"sides",name:"Sides & Corners",emoji:"🔷"},{key:"3d",name:"3D Shapes",emoji:"🧊"},{key:"angles",name:"Angles",emoji:"📐"}],
+    words:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"commas",name:"Commas",emoji:"✒️"},{key:"synonyms",name:"Synonyms",emoji:"🟰"},{key:"antonyms",name:"Antonyms",emoji:"↔️"},{key:"plurals",name:"Plurals",emoji:"🔁"},{key:"spelling",name:"Spelling",emoji:"🔤"}],
+    facts:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"time",name:"Time",emoji:"⏰"},{key:"colors",name:"Colors",emoji:"🎨"},{key:"numbers",name:"Numbers",emoji:"🔢"}],
+  };
+  const TOPICBANK={
+    science:{
+      space:[["What planet is the Red Planet?","Mars",["Venus","Jupiter","Mercury"]],["Largest planet in our solar system?","Jupiter",["Saturn","Earth","Neptune"]],["Planet closest to the Sun?","Mercury",["Venus","Mars","Earth"]],["What galaxy do we live in?","Milky Way",["Andromeda","Whirlpool","Sombrero"]],["What do we orbit?","The Sun",["The Moon","Mars","Earth"]]],
+      animals:[["Which animal is a mammal?","Whale",["Shark","Octopus","Lizard"]],["How many legs does an insect have?","6",["4","8","10"]],["Animals that eat only plants are?","Herbivores",["Carnivores","Omnivores","Predators"]],["A baby frog is called a?","Tadpole",["Cub","Joey","Calf"]],["Largest animal on Earth?","Blue whale",["Elephant","Giraffe","Shark"]]],
+      body:[["What organ pumps blood?","Heart",["Lungs","Brain","Liver"]],["How many bones in an adult body?","206",["201","150","300"]],["What do your lungs help you do?","Breathe",["Digest","Think","See"]],["The body's largest organ is?","Skin",["Heart","Liver","Brain"]],["What carries messages around the body?","Nerves",["Veins","Bones","Muscles"]]],
+      matter:[["Ice is which state of matter?","Solid",["Liquid","Gas","Plasma"]],["Water vapor is a?","Gas",["Solid","Liquid","Plasma"]],["A solid turning to liquid is?","Melting",["Freezing","Boiling","Condensing"]],["Boiling water turns into?","Steam",["Ice","Snow","Frost"]],["Which can be poured?","Liquid",["Solid","Gas","Rock"]]],
+    },
+    geo:{
+      capitals:[["Capital of France?","Paris",["London","Rome","Berlin"]],["Capital of Japan?","Tokyo",["Beijing","Seoul","Bangkok"]],["Capital of the USA?","Washington, D.C.",["New York","Boston","Chicago"]],["Capital of Italy?","Rome",["Milan","Venice","Naples"]],["Capital of Canada?","Ottawa",["Toronto","Vancouver","Montreal"]]],
+      continents:[["How many continents are there?","7",["5","6","8"]],["Which continent is Egypt in?","Africa",["Asia","Europe","Australia"]],["Smallest continent?","Australia",["Europe","Antarctica","Asia"]],["Largest continent?","Asia",["Africa","Europe","North America"]],["Coldest continent?","Antarctica",["Europe","Asia","Africa"]]],
+      oceans:[["Largest ocean?","Pacific",["Atlantic","Indian","Arctic"]],["Longest river in the world?","Nile",["Amazon","Yangtze","Thames"]],["Coldest ocean?","Arctic",["Indian","Pacific","Atlantic"]],["Ocean between America and Europe?","Atlantic",["Pacific","Indian","Arctic"]],["A large body of salt water is an?","Ocean",["Lake","Pond","River"]]],
+      landforms:[["A very tall landform is a?","Mountain",["Valley","Plain","Desert"]],["A dry, sandy area is a?","Desert",["Forest","Ocean","Swamp"]],["Tallest mountain on Earth?","Everest",["K2","Alps","Andes"]],["A low area between mountains is a?","Valley",["Peak","Cliff","Plateau"]],["Hot melted rock from a volcano is?","Lava",["Mud","Ice","Sand"]]],
+    },
+    shapes:{
+      sides:[["How many sides does a triangle have?","3",["2","4","5"]],["How many sides does a hexagon have?","6",["5","7","8"]],["How many sides does a pentagon have?","5",["4","6","7"]],["How many sides does an octagon have?","8",["6","7","9"]],["How many corners does a square have?","4",["3","5","6"]]],
+      "3d":[["A shape like a dice is a?","Cube",["Sphere","Cone","Cylinder"]],["How many faces does a cube have?","6",["4","8","12"]],["A ball is shaped like a?","Sphere",["Cube","Cone","Cylinder"]],["An ice-cream cone shape is a?","Cone",["Cube","Sphere","Prism"]],["A soup can is shaped like a?","Cylinder",["Cube","Cone","Sphere"]]],
+      angles:[["A right angle is how many degrees?","90°",["45°","180°","360°"]],["Angles in a triangle add up to?","180°",["90°","360°","270°"]],["A full turn is how many degrees?","360°",["180°","90°","270°"]],["An angle smaller than 90° is?","Acute",["Obtuse","Right","Straight"]],["An angle bigger than 90° is?","Obtuse",["Acute","Right","Reflex"]]],
+    },
+    words:{
+      commas:[["Which is punctuated correctly?","I bought apples, pears, and milk.",["I bought apples pears and milk.","I bought, apples pears and milk.","I bought apples pears, and milk"]],["Pick the correct comma:","After lunch, we went outside.",["After lunch we, went outside.","After, lunch we went outside.","After lunch we went, outside."]],["Correct comma in a list?","red, white, and blue",["red white, and blue","red, white and, blue","red white and, blue"]],["Add the comma: 'Yes I will come.'","Yes, I will come.",["Yes I, will come.","Yes I will, come.","Yes I will come,"]],["Comma when speaking to someone: 'Thanks Mom'","Thanks, Mom.",["Thanks Mom,","Thanks Mom.","Thanks ,Mom."]]],
+      synonyms:[["A synonym for 'happy'?","Joyful",["Angry","Tired","Sad"]],["A synonym for 'big'?","Huge",["Tiny","Slow","Soft"]],["A synonym for 'fast'?","Quick",["Slow","Heavy","Loud"]],["A synonym for 'smart'?","Clever",["Dull","Mean","Weak"]],["A synonym for 'begin'?","Start",["Stop","End","Close"]]],
+      antonyms:[["An antonym for 'hot'?","Cold",["Warm","Boiling","Heat"]],["An antonym for 'up'?","Down",["Side","Top","High"]],["An antonym for 'happy'?","Sad",["Glad","Joyful","Cheerful"]],["An antonym for 'big'?","Small",["Large","Huge","Giant"]],["An antonym for 'begin'?","End",["Start","Open","Go"]]],
+      plurals:[["Plural of 'mouse'?","Mice",["Mouses","Mouse","Mices"]],["Plural of 'child'?","Children",["Childs","Childes","Childern"]],["Plural of 'foot'?","Feet",["Foots","Feets","Footes"]],["Plural of 'cactus'?","Cacti",["Cactuses","Cactus","Cactusi"]],["Plural of 'leaf'?","Leaves",["Leafs","Leaffs","Leave"]]],
+      spelling:[["Which is spelled correctly?","Friend",["Freind","Frend","Friende"]],["Which is spelled correctly?","Because",["Becuase","Becouse","Becase"]],["Which is spelled correctly?","Necessary",["Neccessary","Necesary","Necessery"]],["Which is spelled correctly?","Beautiful",["Beutiful","Beautifull","Butiful"]],["Which is spelled correctly?","Tomorrow",["Tomorow","Tommorow","Tommorrow"]]],
+    },
+    facts:{
+      time:[["How many days in a week?","7",["5","6","8"]],["How many minutes in an hour?","60",["30","100","24"]],["How many hours in a day?","24",["12","48","60"]],["How many months in a year?","12",["10","11","13"]],["How many seconds in a minute?","60",["30","100","24"]]],
+      colors:[["Blue and yellow make?","Green",["Purple","Orange","Brown"]],["Red and blue make?","Purple",["Green","Orange","Pink"]],["Red and yellow make?","Orange",["Green","Purple","Brown"]],["How many colors in a rainbow?","7",["5","6","8"]],["Color of a clear daytime sky?","Blue",["Green","Red","Purple"]]],
+      numbers:[["How many zeros in one hundred?","2",["1","3","4"]],["How many zeros in one thousand?","3",["2","4","5"]],["What is 10 × 10?","100",["10","1000","20"]],["Which number is even?","8",["7","5","3"]],["How many sides on a cube?","6",["4","8","12"]]],
+    },
+  };
   const DIFFS=[
     {key:"easy",name:"Easy",emoji:"🟢",desc:"Very easy — a warm up!",bg:"#22c55e",time:11000},
     {key:"medium",name:"Medium",emoji:"🟡",desc:"A fair, medium challenge.",bg:"#eab308",time:8500},
@@ -487,19 +526,24 @@ What is 6 x 7? : 42</div>
   window.deactivatePro=deactivatePro;
 
   /* ---------- SUBJECT MENU ---------- */
-  let curSubject=null;
-  function openSubject(key){curSubject=key;const s=SUBJ[key];$("subjTitle").textContent=s.emoji+" "+s.name;
-    const modes=[{ic:"📝",t:"Mock Quiz",d:"Practice & get graded",fn:()=>chooseDiff("quiz")},{ic:"🎮",t:"Play Game",d:"Fast 60-second challenge",fn:()=>chooseDiff("game")},{ic:"📖",t:'Study Guide<span class="lock"> 🔒</span>',d:"Notes for this subject",fn:()=>openGuides(key)},{ic:"✏️",t:'My Questions<span class="lock"> 🔒</span>',d:"Write your own",fn:()=>openQuestions(key)}];
+  let curSubject=null,curTopic="all";
+  function openSubject(key){curSubject=key;const s=SUBJ[key];$("subjTitle").textContent=s.emoji+" "+s.name;$("subjLabel").textContent="Choose a topic";$("subjBack").textContent="← Subjects";$("subjBack").onclick=()=>showScreen("screen-subjects");
+    const topics=TOPICS[key]||[{key:"all",name:"Mixed",emoji:"🎲"}];
+    const w=$("modeGrid");w.innerHTML="";topics.forEach(t=>{const b=document.createElement("button");b.className="tile";b.innerHTML='<span class="ic">'+(t.emoji||"•")+'</span><span class="tx"><span class="tt">'+t.name+'</span><span class="ts">'+(t.key==="all"?"Everything in "+s.name:"Focused practice")+'</span></span>';b.onclick=()=>openTopic(key,t.key);w.appendChild(b);});
+    showScreen("screen-subject");}
+  function openTopic(key,topic){curSubject=key;curTopic=topic;const s=SUBJ[key];$("subjTitle").textContent=s.emoji+" "+s.name+" · "+topicName(key,topic);$("subjLabel").textContent="What do you want to do?";$("subjBack").textContent="← Topics";$("subjBack").onclick=()=>openSubject(key);
+    const modes=[{ic:"📝",t:"Mock Quiz",d:"Practice & get graded",fn:()=>chooseDiff("quiz")},{ic:"🎮",t:"Play Game",d:"Fast timed challenge",fn:()=>chooseDiff("game")},{ic:"📖",t:'Study Guide<span class="lock"> 🔒</span>',d:"Notes for this subject",fn:()=>openGuides(key)},{ic:"✏️",t:'My Questions<span class="lock"> 🔒</span>',d:"Write your own",fn:()=>openQuestions(key)}];
     const w=$("modeGrid");w.innerHTML="";modes.forEach(m=>{const b=document.createElement("button");b.className="tile";b.innerHTML='<span class="ic">'+m.ic+'</span><span class="tx"><span class="tt">'+m.t+'</span><span class="ts">'+m.d+'</span></span>';b.onclick=m.fn;w.appendChild(b);});
     showScreen("screen-subject");}
+  window.openTopic=openTopic;
 
   /* ---------- DIFFICULTY ---------- */
   let selRound=60,selQLen=10;
   function renderDiffOpts(mode){const box=$("diffOpts");if(!box)return;if(mode==="game"){const o=[[30,"30s"],[60,"60s"],[90,"90s"],[120,"2 min"]];box.innerHTML='<div class="label" style="margin-top:0;border:none;padding-top:0">Round length</div><div class="optrow">'+o.map(x=>'<button class="opt'+(selRound===x[0]?" on":"")+'" onclick="setRound('+x[0]+')">'+x[1]+'</button>').join("")+'</div>';}else{const o=[5,10,20];box.innerHTML='<div class="label" style="margin-top:0;border:none;padding-top:0">Number of questions</div><div class="optrow">'+o.map(n=>'<button class="opt'+(selQLen===n?" on":"")+'" onclick="setQLen('+n+')">'+n+'</button>').join("")+'</div>';}}
   window.setRound=n=>{selRound=n;renderDiffOpts("game");};
   window.setQLen=n=>{selQLen=n;renderDiffOpts("quiz");};
-  function chooseDiff(mode){$("diffTitle").textContent=(mode==="game"?"🎮 ":"📝 ")+SUBJ[curSubject].name;$("diffBack").onclick=()=>openSubject(curSubject);renderDiffOpts(mode);
-    const w=$("diffList");w.innerHTML="";DIFFS.forEach(d=>{const b=document.createElement("button");b.className="diffcard";b.style.background=d.bg;b.innerHTML='<span class="de">'+d.emoji+'</span><span>'+d.name+'<small>'+d.desc+'</small></span>';b.onclick=()=>{if(mode==="game")startSubjectGame(curSubject,d.key);else startSubjectQuiz(curSubject,d.key);};w.appendChild(b);});showScreen("screen-difficulty");}
+  function chooseDiff(mode){$("diffTitle").textContent=(mode==="game"?"🎮 ":"📝 ")+SUBJ[curSubject].name+" · "+topicName(curSubject,curTopic);$("diffBack").onclick=()=>openTopic(curSubject,curTopic);renderDiffOpts(mode);
+    const w=$("diffList");w.innerHTML="";DIFFS.forEach(d=>{const b=document.createElement("button");b.className="diffcard";b.style.background=d.bg;b.innerHTML='<span class="de">'+d.emoji+'</span><span>'+d.name+'<small>'+d.desc+'</small></span>';b.onclick=()=>{if(mode==="game")startSubjectGame(curSubject,curTopic,d.key);else startSubjectQuiz(curSubject,curTopic,d.key);};w.appendChild(b);});showScreen("screen-difficulty");}
 
   /* ---------- QUESTION SOURCING ---------- */
   function makeMath(diffKey){const base={easy:10,medium:25,intermediate:50,hard:99}[diffKey];const ops=diffKey==="easy"?["+","-"]:diffKey==="medium"?["+","-","×"]:["+","-","×","÷"];const op=ops[rand(ops.length)];let a,b,ans;const m={medium:6,intermediate:10,hard:12}[diffKey]||6;
@@ -510,6 +554,20 @@ What is 6 x 7? : 42</div>
   function normalize(cat,raw){const[q,correct,wrong]=raw;const opts=shuffle([correct,...wrong].filter((v,i,a)=>a.indexOf(v)===i));return{cat,q,correct,options:opts};}
   function bankPool(subject,diffKey){const base=(BANK[subject]&&BANK[subject][diffKey])?BANK[subject][diffKey]:[];return base.concat(customRaw(subject));}
   function oneSubjectQ(subject,diffKey){if(subject==="math")return makeMath(diffKey);const pool=bankPool(subject,diffKey);if(!pool.length)return makeMath(diffKey);return normalize(SUBJ[subject].name.toUpperCase(),pool[rand(pool.length)]);}
+  function numQ(q,ans,cat){const set=new Set([ans]);let g=0;while(set.size<4&&g++<60){let d=ans+(rand(11)-5);if(d===ans||d<0)continue;set.add(d);}while(set.size<4)set.add(ans+set.size+1);return{cat:cat||"MATH",correct:String(ans),q:q,options:shuffle([...set].map(String))};}
+  function mathOp(op,base,cat){let a,b,ans;if(op==="+"){a=rand(base)+1;b=rand(base)+1;ans=a+b;}else if(op==="-"){a=rand(base)+1;b=rand(a)+1;ans=a-b;}else{const m=Math.min(12,Math.max(5,Math.round(base/6)));if(op==="×"){a=rand(m)+1;b=rand(m)+1;ans=a*b;}else{b=rand(m)+1;ans=rand(m)+1;a=b*ans;}}return numQ(a+" "+op+" "+b,ans,cat);}
+  function makeMathTopic(topic,diff){const base={easy:10,medium:25,intermediate:50,hard:99}[diff]||25;
+    if(topic==="add")return mathOp("+",base,"ADDITION");
+    if(topic==="sub")return mathOp("-",base,"SUBTRACTION");
+    if(topic==="mult")return mathOp("×",base,"MULTIPLICATION");
+    if(topic==="div")return mathOp("÷",base,"DIVISION");
+    if(topic==="perimeter"){const m=Math.max(4,Math.round(base/4)),l=rand(m)+2,w=rand(m)+2;return numQ("Perimeter of a "+l+" × "+w+" rectangle?",2*(l+w),"PERIMETER");}
+    if(topic==="area"){const m=Math.max(4,Math.round(base/5)),l=rand(m)+2,w=rand(m)+2;return numQ("Area of a "+l+" × "+w+" rectangle?",l*w,"AREA");}
+    if(topic==="circles"){const r=rand(Math.max(4,Math.round(base/6)))+2;return rand(2)?numQ("A circle has radius "+r+". What is its diameter?",r*2,"CIRCLES"):numQ("A circle has diameter "+(r*2)+". What is its radius?",r,"CIRCLES");}
+    return makeMath(diff);}
+  function topicName(s,t){const a=(TOPICS[s]||[]).find(x=>x.key===t);return a?a.name:SUBJ[s].name;}
+  function topicRawPool(s,t,diff){if(t==="all"||t==null)return bankPool(s,diff);return(TOPICBANK[s]&&TOPICBANK[s][t])||[];}
+  function oneTopicQ(s,t,diff){if(s==="math")return makeMathTopic(t,diff);const pool=topicRawPool(s,t,diff);if(!pool.length)return makeMath(diff);return normalize(topicName(s,t).toUpperCase(),pool[rand(pool.length)]);}
   function oneFromPairs(pairs,title){const p=pairs[rand(pairs.length)];const others=pairs.filter(x=>x.answer!==p.answer);const wrongs=shuffle(others).slice(0,3).map(x=>x.answer);return{cat:title.toUpperCase(),q:p.prompt,correct:p.answer,options:shuffle([p.answer,...wrongs])};}
 
   /* ---------- GENERIC GAME ---------- */
@@ -526,7 +584,7 @@ What is 6 x 7? : 42</div>
   function gAnswer(btn,opt){if(!gAccept)return;gTotal++;gLock();const bonus=Math.max(0,Math.ceil((gDL-Date.now())/1000));if(opt===gCur.correct){gCorrect++;gCombo++;gBest=Math.max(gBest,gCombo);gScore+=(10+bonus*2)*Math.min(5,gCombo);btn.classList.add("correct");gfb("✅");snd("correct");$("gCheer").textContent=CHEERS[Math.min(CHEERS.length-1,gCombo-1)]||"Awesome!";}else{gCombo=0;gTime=Math.max(0,gTime-2);btn.classList.add("wrong");gShow();gfb("❌");snd("wrong");$("gCheer").textContent="Oops! It was "+gCur.correct;}updHud();setTimeout(()=>{if(gTime>0)nextG();},700);}
   function gTimeout(){if(!gAccept)return;gTotal++;gCombo=0;gLock();gShow();gfb("⏱️");snd("wrong");$("gCheer").textContent="Too slow! It was "+gCur.correct;updHud();setTimeout(()=>{if(gTime>0)nextG();},700);}
   function endGame(){clearInterval(gRT);clearInterval(gQT);gAccept=false;snd("over");const isNew=gScore>progress.bestGame;recordGame(gScore);if(isNew){confetti();snd("win");}$("goScore").textContent=gScore;$("goCorrect").textContent=gCorrect;$("goStreak").textContent=gBest;$("goAcc").textContent=(gTotal?Math.round(gCorrect/gTotal*100):0)+"%";$("goNew").style.display=isNew?"block":"none";$("goTitle").textContent=isNew?"Amazing! 🌟":"Time's Up! ⏰";showScreen("screen-gameover");}
-  function startSubjectGame(s,d){if(!canStartGame())return;runGame(()=>oneSubjectQ(s,d),SUBJ[s].name,DIFF[d].time,()=>openSubject(s),()=>startSubjectGame(s,d),selRound);}
+  function startSubjectGame(s,t,d){if(!canStartGame())return;runGame(()=>oneTopicQ(s,t,d),SUBJ[s].name,DIFF[d].time,()=>openTopic(s,t),()=>startSubjectGame(s,t,d),selRound);}
   function playBuilt(g){if(g.pairs.length<2){alert("This game needs at least 2 facts to play.");return;}if(!canStartGame())return;runGame(()=>oneFromPairs(g.pairs,g.title),g.title,7000,()=>openBuilder(),()=>playBuilt(g));}
   window.playBuilt=playBuilt;
 
@@ -536,9 +594,9 @@ What is 6 x 7? : 42</div>
   function renderQuiz(){const it=qz.items[qz.idx];$("quizProg").textContent="Question "+(qz.idx+1)+" / "+qz.items.length;$("quizbar").style.width=(qz.idx/qz.items.length*100)+"%";$("qzCat").textContent=it.cat;$("qzQ").textContent=it.q;$("qzCheer").textContent="";const w=$("qzAns");w.innerHTML="";it.options.forEach(o=>{const b=document.createElement("button");b.className="ans";b.textContent=o;b.onclick=()=>quizAnswer(b,o,it);w.appendChild(b);});}
   function quizAnswer(btn,opt,it){[...$("qzAns").children].forEach(b=>{b.style.pointerEvents="none";if(b.textContent===it.correct)b.classList.add("correct");});if(opt===it.correct){qz.score++;snd("correct");$("qzCheer").textContent="Correct! ✅";}else{btn.classList.add("wrong");snd("wrong");$("qzCheer").textContent="It was "+it.correct;qz.wrong.push(it);}setTimeout(()=>{qz.idx++;if(qz.idx>=qz.items.length)quizDone();else renderQuiz();},800);}
   function quizDone(){const pct=Math.round(qz.score/qz.items.length*100);let L,m;if(pct>=90){L="A";m="Outstanding! 🌟";}else if(pct>=80){L="B";m="Great job! 😄";}else if(pct>=70){L="C";m="Good effort! 👍";}else if(pct>=60){L="D";m="Keep practicing! 💪";}else{L="F";m="Try again — you got this! 🔁";}if(pct>=80){confetti();snd("win");}else snd("over");recordQuiz(pct,qz.score,qz.items.length,qz.subjectKey);$("qrTitle").textContent=m;$("qrGrade").textContent=L;$("qrScore").textContent="You got "+qz.score+" / "+qz.items.length+" ("+pct+"%) — +XP!";const r=$("qrReview");r.innerHTML=qz.wrong.length?'<div class="label">Review these:</div>'+qz.wrong.map(w=>'<div class="panel"><b>'+esc(w.q)+'</b><p>✅ '+esc(w.correct)+'</p></div>').join(""):'<p class="muted">Perfect — no mistakes! 🎉</p>';showScreen("screen-quizresult");}
-  function buildItems(subject,diffKey,n){n=n||QLEN;let items=[];if(subject==="math"){for(let i=0;i<n;i++)items.push(makeMath(diffKey));}else{let pool=bankPool(subject,diffKey).map(r=>normalize(SUBJ[subject].name.toUpperCase(),r));pool=shuffle(pool);if(pool.length>=n)items=pool.slice(0,n);else{items=pool.slice();while(items.length<n&&pool.length)items.push(pool[rand(pool.length)]);}}return items;}
+  function buildItems(subject,topic,diffKey,n){n=n||QLEN;let items=[];if(subject==="math"){for(let i=0;i<n;i++)items.push(makeMathTopic(topic,diffKey));return items;}const label=topicName(subject,topic).toUpperCase();let pool=topicRawPool(subject,topic,diffKey).map(r=>normalize(label,r));pool=shuffle(pool);if(!pool.length){for(let i=0;i<n;i++)items.push(makeMath(diffKey));return items;}if(pool.length>=n)items=pool.slice(0,n);else{items=pool.slice();while(items.length<n&&pool.length)items.push(pool[rand(pool.length)]);}return items;}
   function itemsFromPairs(pairs,title){let items=[];const n=Math.min(QLEN,Math.max(pairs.length,1));const order=shuffle(pairs);for(let i=0;i<Math.max(n,Math.min(QLEN,pairs.length));i++){items.push(oneFromPairs(pairs,title));}return items.slice(0,QLEN);}
-  function startSubjectQuiz(s,d){runQuiz(buildItems(s,d,selQLen),SUBJ[s].name,s,()=>startSubjectQuiz(s,d),()=>openSubject(s));}
+  function startSubjectQuiz(s,t,d){runQuiz(buildItems(s,t,d,selQLen),SUBJ[s].name,s,()=>startSubjectQuiz(s,t,d),()=>openTopic(s,t));}
   function quizBuilt(g){if(g.pairs.length<2){alert("This game needs at least 2 facts.");return;}runQuiz(itemsFromPairs(g.pairs,g.title),g.title,null,()=>quizBuilt(g),()=>openBuilder());}
   window.quizBuilt=quizBuilt;
 
