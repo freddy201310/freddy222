@@ -215,7 +215,7 @@
   <!-- SUBJECTS -->
   <section id="screen-subjects" class="screen">
     <div class="bar"><button class="back" onclick="showScreen('screen-home')">← Home</button><div class="bartitle">Subjects</div></div>
-    <div class="scroll"><div class="subjectgrid" id="subjectGrid"></div></div>
+    <div class="scroll" id="subjectsBody"></div>
   </section>
 
   <!-- TOOLS -->
@@ -377,9 +377,13 @@ What is 6 x 7? : 42</div>
   "use strict";
   /* ---------- DATA ---------- */
   const SUBJECTS=[
-    {key:"math",name:"Math",emoji:"➕",cls:"c-math"},{key:"science",name:"Science",emoji:"🔬",cls:"c-science"},
-    {key:"geo",name:"Geography",emoji:"🌍",cls:"c-geo"},{key:"shapes",name:"Shapes",emoji:"🔷",cls:"c-shapes"},
-    {key:"words",name:"Words",emoji:"📖",cls:"c-words"},{key:"facts",name:"Fun Facts",emoji:"💡",cls:"c-facts"},
+    {key:"math",name:"Math",emoji:"➕",lvl:"core"},{key:"science",name:"Science",emoji:"🔬",lvl:"core"},
+    {key:"geo",name:"Geography",emoji:"🌍",lvl:"core"},{key:"shapes",name:"Shapes",emoji:"🔷",lvl:"core"},
+    {key:"words",name:"Words",emoji:"📖",lvl:"core"},{key:"facts",name:"Fun Facts",emoji:"💡",lvl:"core"},
+    {key:"algebra",name:"Algebra",emoji:"🧮",lvl:"hs"},{key:"geometry",name:"Geometry",emoji:"📐",lvl:"hs"},
+    {key:"biology",name:"Biology",emoji:"🧬",lvl:"hs"},{key:"chemistry",name:"Chemistry",emoji:"⚗️",lvl:"hs"},
+    {key:"physics",name:"Physics",emoji:"🔭",lvl:"hs"},{key:"history",name:"History",emoji:"🏛️",lvl:"hs"},
+    {key:"literature",name:"Literature",emoji:"📚",lvl:"hs"},
   ];
   const SUBJ=Object.fromEntries(SUBJECTS.map(s=>[s.key,s]));
   const TOPICS={
@@ -389,6 +393,13 @@ What is 6 x 7? : 42</div>
     shapes:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"sides",name:"Sides & Corners",emoji:"🔷"},{key:"3d",name:"3D Shapes",emoji:"🧊"},{key:"angles",name:"Angles",emoji:"📐"},{key:"polygons",name:"Polygons",emoji:"🔶"},{key:"quad",name:"Quadrilaterals",emoji:"▭"},{key:"lines",name:"Lines",emoji:"📏"},{key:"symmetry",name:"Symmetry",emoji:"🦋"},{key:"circleparts",name:"Parts of a Circle",emoji:"⭕"}],
     words:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"commas",name:"Commas",emoji:"✒️"},{key:"synonyms",name:"Synonyms",emoji:"🟰"},{key:"antonyms",name:"Antonyms",emoji:"↔️"},{key:"plurals",name:"Plurals",emoji:"🔁"},{key:"spelling",name:"Spelling",emoji:"🔤"},{key:"nouns",name:"Nouns",emoji:"🏷️"},{key:"verbs",name:"Verbs",emoji:"🏃"},{key:"adjectives",name:"Adjectives",emoji:"🎨"},{key:"capitals2",name:"Capitalization",emoji:"🔠"},{key:"prefixes",name:"Prefixes",emoji:"⬅️"},{key:"suffixes",name:"Suffixes",emoji:"➡️"},{key:"homophones",name:"Homophones",emoji:"👂"},{key:"contractions",name:"Contractions",emoji:"✂️"},{key:"apostrophes",name:"Apostrophes",emoji:"❜"},{key:"sentences",name:"Sentence Types",emoji:"📝"}],
     facts:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"time",name:"Time",emoji:"⏰"},{key:"colors",name:"Colors",emoji:"🎨"},{key:"numbers",name:"Numbers",emoji:"🔢"},{key:"holidays",name:"Holidays",emoji:"🎉"},{key:"sports",name:"Sports",emoji:"⚽"},{key:"food",name:"Food",emoji:"🍎"},{key:"music",name:"Music",emoji:"🎵"},{key:"history",name:"History",emoji:"🏺"},{key:"records",name:"World Records",emoji:"🏆"}],
+    algebra:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"orderops",name:"Order of Operations",emoji:"🔢"},{key:"integers",name:"Integers",emoji:"➖"},{key:"solving",name:"Solving Equations",emoji:"⚖️"},{key:"exponents",name:"Exponents",emoji:"²"}],
+    geometry:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"anglesg",name:"Angles",emoji:"📐"},{key:"triangles",name:"Triangles",emoji:"🔺"},{key:"pythag",name:"Pythagorean Theorem",emoji:"📏"},{key:"areavol",name:"Area & Volume",emoji:"🧊"}],
+    biology:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"cells",name:"Cells",emoji:"🔬"},{key:"genetics",name:"Genetics",emoji:"🧬"},{key:"ecology",name:"Ecology",emoji:"🌳"},{key:"bodysys",name:"Body Systems",emoji:"🫁"}],
+    chemistry:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"atoms",name:"Atoms",emoji:"⚛️"},{key:"periodic",name:"Periodic Table",emoji:"🧪"},{key:"bonding",name:"Bonds & Molecules",emoji:"💠"},{key:"reactions",name:"Reactions",emoji:"🔥"}],
+    physics:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"motion",name:"Motion",emoji:"🏃"},{key:"forces",name:"Forces",emoji:"🧲"},{key:"penergy",name:"Energy & Work",emoji:"⚡"},{key:"waves",name:"Waves & Electricity",emoji:"📡"}],
+    history:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"ancient",name:"Ancient",emoji:"🏺"},{key:"medieval",name:"Medieval",emoji:"🏰"},{key:"earlyus",name:"Early America",emoji:"🦅"},{key:"modern",name:"Modern World",emoji:"🌐"}],
+    literature:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"terms",name:"Literary Terms",emoji:"📖"},{key:"figurative",name:"Figurative Language",emoji:"🎭"},{key:"grammar",name:"Grammar",emoji:"✏️"},{key:"genres",name:"Genres",emoji:"📚"}],
   };
   const TOPICBANK={
     science:{
@@ -451,6 +462,48 @@ What is 6 x 7? : 42</div>
       music:[["How many strings does a standard guitar have?","6",["4","5","7"]],["Which instrument has black and white keys?","Piano",["Drum","Flute","Violin"]],["A group of singers is a?","Choir",["Band","Solo","Audience"]],["Which instrument do you hit with sticks?","Drums",["Piano","Flute","Harp"]],["High and low sounds are called?","Pitch",["Beat","Rest","Lyrics"]]],
       history:[["Who was the first U.S. President?","George Washington",["Abraham Lincoln","Thomas Jefferson","John Adams"]],["The Ancient Egyptians built the?","Pyramids",["Colosseum","Great Wall","Eiffel Tower"]],["When did dinosaurs live?","Long ago",["Last year","Today","Next year"]],["Knights in the Middle Ages wore?","Armor",["Suits","Jeans","Robes"]],["The study of the past is called?","History",["Science","Math","Art"]]],
       records:[["Tallest land animal?","Giraffe",["Elephant","Horse","Camel"]],["Largest planet in our solar system?","Jupiter",["Earth","Mars","Saturn"]],["Fastest land animal?","Cheetah",["Lion","Horse","Greyhound"]],["Largest ocean?","Pacific",["Atlantic","Indian","Arctic"]],["Tallest mountain on Earth?","Everest",["K2","Alps","Andes"]]],
+    },
+    algebra:{
+      orderops:[["What is 2 + 3 × 4?","14",["20","24","9"]],["Solve: (5 + 3) × 2","16",["13","26","11"]],["What is 10 − 2 × 3?","4",["24","8","18"]],["In PEMDAS, what comes first?","Parentheses",["Exponents","Multiplication","Addition"]],["What is 6 + 6 ÷ 2?","9",["6","12","3"]]],
+      integers:[["What is −5 + 3?","−2",["−8","2","8"]],["What is −4 × −2?","8",["−8","−6","6"]],["What is 7 − (−2)?","9",["5","−9","−5"]],["Which is greater: −3 or −7?","−3",["−7","they are equal","cannot tell"]],["What is −6 ÷ 3?","−2",["2","−3","3"]]],
+      solving:[["Solve for x: x + 5 = 12","7",["17","5","60"]],["Solve for x: 3x = 12","4",["36","9","15"]],["Solve for x: x − 4 = 10","14",["6","40","−6"]],["Solve for x: x ÷ 2 = 6","12",["3","8","4"]],["Solve for x: 2x + 1 = 9","4",["5","3","10"]]],
+      exponents:[["What is 2³?","8",["6","9","23"]],["What is 5²?","25",["10","7","52"]],["What is 10⁴?","10000",["1000","100","40"]],["Any number to the power of 0 equals?","1",["0","the number","10"]],["What is 3² × 3²?","81",["9","27","18"]]],
+    },
+    geometry:{
+      anglesg:[["Angles on a straight line add up to?","180°",["90°","360°","270°"]],["Two angles that add to 90° are?","Complementary",["Supplementary","Vertical","Right"]],["Two angles that add to 180° are?","Supplementary",["Complementary","Acute","Obtuse"]],["A full circle has how many degrees?","360°",["180°","90°","270°"]],["An angle of exactly 90° is a?","Right angle",["Acute angle","Obtuse angle","Straight angle"]]],
+      triangles:[["A triangle with all equal sides is?","Equilateral",["Isosceles","Scalene","Right"]],["A triangle with a 90° angle is a?","Right triangle",["Equilateral","Acute","Obtuse"]],["Angles in a triangle add up to?","180°",["90°","360°","270°"]],["A triangle with two equal sides is?","Isosceles",["Scalene","Equilateral","Right"]],["A triangle with no equal sides is?","Scalene",["Isosceles","Equilateral","Right"]]],
+      pythag:[["In a² + b² = c², c is the?","Hypotenuse",["Leg","Base","Height"]],["If the legs are 3 and 4, the hypotenuse is?","5",["7","6","12"]],["If the legs are 6 and 8, the hypotenuse is?","10",["14","12","48"]],["The Pythagorean theorem works only for which triangle?","Right",["Equilateral","Obtuse","Acute"]],["If a = 5 and b = 12, then c =?","13",["17","60","7"]]],
+      areavol:[["Area of a rectangle = length × ?","width",["height","2","side"]],["Area of a triangle = ½ × base × ?","height",["width","side","2"]],["Volume of a cube with side 3 =?","27",["9","6","18"]],["Area of a square with side 5 =?","25",["10","20","55"]],["The distance around a circle is the?","Circumference",["Area","Radius","Diameter"]]],
+    },
+    biology:{
+      cells:[["The basic unit of life is the?","Cell",["Atom","Organ","Tissue"]],["The 'powerhouse of the cell' is the?","Mitochondria",["Nucleus","Ribosome","Membrane"]],["The part that controls the cell is the?","Nucleus",["Membrane","Cytoplasm","Wall"]],["Plant cells have a cell wall and?","Chloroplasts",["Lungs","Bones","Fins"]],["Cells that carry oxygen in blood are?","Red blood cells",["White blood cells","Nerve cells","Skin cells"]]],
+      genetics:[["DNA carries the body's?","Genetic information",["Energy","Water","Oxygen"]],["Units of heredity are called?","Genes",["Cells","Atoms","Organs"]],["How many chromosomes do humans have?","46",["23","48","12"]],["A trait passed from parents is?","Inherited",["Learned","Random","Chosen"]],["DNA is shaped like a?","Double helix",["Circle","Square","Line"]]],
+      ecology:[["An organism that makes its own food is a?","Producer",["Consumer","Decomposer","Predator"]],["A diagram showing who eats whom is a food?","Chain",["Cycle","Map","List"]],["Decomposers mainly?","Break down dead matter",["Make food","Hunt prey","Produce oxygen"]],["Living things in an area plus their environment form an?","Ecosystem",["Atom","Organ","Cell"]],["Animals that eat both plants and meat are?","Omnivores",["Herbivores","Carnivores","Producers"]]],
+      bodysys:[["The system that pumps blood is the?","Circulatory system",["Digestive system","Nervous system","Skeletal system"]],["The system with bones is the?","Skeletal system",["Muscular system","Nervous system","Digestive system"]],["The brain and nerves form the?","Nervous system",["Circulatory system","Respiratory system","Skeletal system"]],["The lungs are part of the?","Respiratory system",["Digestive system","Skeletal system","Nervous system"]],["The stomach is part of the?","Digestive system",["Respiratory system","Circulatory system","Nervous system"]]],
+    },
+    chemistry:{
+      atoms:[["The center of an atom is the?","Nucleus",["Electron","Shell","Proton cloud"]],["Negatively charged particles are?","Electrons",["Protons","Neutrons","Ions"]],["Positively charged particles are?","Protons",["Electrons","Neutrons","Atoms"]],["Particles with no charge are?","Neutrons",["Protons","Electrons","Ions"]],["The smallest unit of an element is an?","Atom",["Molecule","Cell","Compound"]]],
+      periodic:[["The chemical symbol for Oxygen is?","O",["Ox","O2","Og"]],["The chemical symbol for Gold is?","Au",["Gd","Go","Ag"]],["The chemical symbol for Hydrogen is?","H",["Hy","He","H2"]],["Rows in the periodic table are called?","Periods",["Groups","Families","Columns"]],["The symbol for Sodium is?","Na",["So","Sd","S"]]],
+      bonding:[["Water's chemical formula is?","H₂O",["CO₂","O₂","HO"]],["Two or more atoms joined together form a?","Molecule",["Proton","Electron","Period"]],["Table salt is sodium and?","Chlorine",["Oxygen","Carbon","Hydrogen"]],["CO₂ is the formula for?","Carbon dioxide",["Water","Oxygen","Salt"]],["Atoms bond by sharing or transferring?","Electrons",["Protons","Neutrons","Nuclei"]]],
+      reactions:[["A substance that speeds a reaction without being used up is a?","Catalyst",["Reactant","Product","Solvent"]],["In a reaction, the starting substances are?","Reactants",["Products","Catalysts","Ions"]],["Burning is an example of a chemical?","Reaction",["Mixture","State","Bond"]],["When ice melts, it is a ___ change.","Physical",["Chemical","Nuclear","Reaction"]],["The substance formed in a reaction is the?","Product",["Reactant","Catalyst","Solvent"]]],
+    },
+    physics:{
+      motion:[["Speed is distance divided by?","Time",["Mass","Force","Weight"]],["A change in velocity is called?","Acceleration",["Speed","Momentum","Friction"]],["The metric unit of distance is the?","Meter",["Mile","Foot","Liter"]],["An object at rest stays at rest unless acted on by a?","Force",["Color","Sound","Smell"]],["Speed in a given direction is called?","Velocity",["Mass","Energy","Weight"]]],
+      forces:[["The force that pulls objects toward Earth is?","Gravity",["Friction","Magnetism","Tension"]],["A force that opposes motion is?","Friction",["Gravity","Lift","Thrust"]],["The unit of force is the?","Newton",["Joule","Watt","Volt"]],["For every action there is an equal and opposite?","Reaction",["Motion","Force field","Speed"]],["Mass × acceleration equals?","Force",["Energy","Power","Work"]]],
+      penergy:[["The unit of energy is the?","Joule",["Newton","Volt","Watt"]],["Energy of motion is ___ energy.","Kinetic",["Potential","Chemical","Nuclear"]],["Stored energy due to position is ___ energy.","Potential",["Kinetic","Sound","Light"]],["Energy cannot be created or destroyed — it is?","Conserved",["Lost","Created","Doubled"]],["The rate of doing work is?","Power",["Force","Mass","Speed"]]],
+      waves:[["Light travels faster than?","Sound",["Nothing","Radio","Electrons"]],["The number of waves per second is the?","Frequency",["Amplitude","Wavelength","Speed"]],["Electric current is measured in?","Amperes",["Joules","Newtons","Meters"]],["A material that lets electricity flow is a?","Conductor",["Insulator","Magnet","Resistor"]],["The height of a wave is its?","Amplitude",["Frequency","Wavelength","Period"]]],
+    },
+    history:{
+      ancient:[["The ancient Egyptians wrote in?","Hieroglyphics",["Latin","Cuneiform","English"]],["Democracy began in ancient?","Greece",["Rome","Egypt","China"]],["The Great Pyramid was built in?","Egypt",["Greece","Rome","Mexico"]],["Roman gladiators fought in the?","Colosseum",["Parthenon","Forum","Pyramid"]],["The Great Wall was built to protect?","China",["Rome","Egypt","India"]]],
+      medieval:[["A medieval warrior in armor was a?","Knight",["Pharaoh","Senator","Pilgrim"]],["A large stone home for nobles was a?","Castle",["Pyramid","Temple","Hut"]],["The disease that swept Europe in the 1300s was the?","Black Death",["Flu","Polio","Measles"]],["Lords gave land to vassals under?","Feudalism",["Democracy","Communism","Capitalism"]],["Wars to control the Holy Land were the?","Crusades",["Olympics","Renaissance","Reformation"]]],
+      earlyus:[["Who was the first U.S. President?","George Washington",["Abraham Lincoln","John Adams","Ben Franklin"]],["The U.S. declared independence in?","1776",["1492","1865","1620"]],["The U.S. Civil War was mainly over?","Slavery",["Taxes only","Religion","Land in Europe"]],["Who mainly wrote the Declaration of Independence?","Thomas Jefferson",["George Washington","John Hancock","James Madison"]],["Lincoln freed enslaved people with the?","Emancipation Proclamation",["Bill of Rights","Magna Carta","Constitution"]]],
+      modern:[["World War II ended in?","1945",["1918","1939","1965"]],["The first person on the Moon was?","Neil Armstrong",["Buzz Aldrin","Yuri Gagarin","John Glenn"]],["The Cold War was mainly between the USA and the?","Soviet Union",["United Kingdom","China","Germany"]],["Martin Luther King Jr. fought for?","Civil rights",["Taxes","Independence","Trade"]],["World War I began in?","1914",["1945","1865","1989"]]],
+    },
+    literature:{
+      terms:[["The main character of a story is the?","Protagonist",["Antagonist","Narrator","Author"]],["The character who opposes the hero is the?","Antagonist",["Protagonist","Narrator","Editor"]],["The time and place of a story is the?","Setting",["Plot","Theme","Mood"]],["The sequence of events is the?","Plot",["Setting","Theme","Tone"]],["The main message of a story is the?","Theme",["Plot","Setting","Title"]]],
+      figurative:[["'As brave as a lion' is a?","Simile",["Metaphor","Hyperbole","Pun"]],["'The world is a stage' is a?","Metaphor",["Simile","Onomatopoeia","Idiom"]],["Giving human traits to objects is?","Personification",["Simile","Hyperbole","Alliteration"]],["'Buzz' and 'boom' are examples of?","Onomatopoeia",["Metaphor","Simile","Idiom"]],["An extreme exaggeration is a?","Hyperbole",["Simile","Symbol","Pun"]]],
+      grammar:[["Which is a complete sentence?","She runs.",["Running fast.","The big dog.","Because of rain."]],["A word that joins clauses (and, but, or) is a?","Conjunction",["Noun","Adjective","Pronoun"]],["'He', 'she', and 'they' are?","Pronouns",["Verbs","Adjectives","Adverbs"]],["An adverb often describes a?","Verb",["Noun","Pronoun","Conjunction"]],["Which word is past tense?","walked",["walk","walking","walks"]]],
+      genres:[["A made-up story is?","Fiction",["Nonfiction","Biography","Essay"]],["A true account of someone's life is a?","Biography",["Novel","Myth","Fable"]],["A poem with 14 lines is a?","Sonnet",["Haiku","Limerick","Ode"]],["A short story with a moral, often with animals, is a?","Fable",["Novel","Memoir","Report"]],["Writing about facts and real events is?","Nonfiction",["Fiction","Fantasy","Myth"]]],
     },
   };
   const DIFFS=[
@@ -534,8 +587,10 @@ What is 6 x 7? : 42</div>
   function recordStudy(sec){progress.studySec+=sec;addXP(Math.floor(sec/60)*2);markDay();saveProg();}
 
   /* ---------- HOME ---------- */
-  const SCOLOR={math:"linear-gradient(135deg,#3b82f6,#1e40af)",science:"linear-gradient(135deg,#10b981,#047857)",geo:"linear-gradient(135deg,#06b6d4,#0e7490)",shapes:"linear-gradient(135deg,#8b5cf6,#6d28d9)",words:"linear-gradient(135deg,#a855f7,#7e22ce)",facts:"linear-gradient(135deg,#f43f5e,#be123c)"};
-  function renderSubjects(){const w=$("subjectGrid");w.innerHTML="";SUBJECTS.forEach(s=>{const b=document.createElement("button");b.className="subject";b.innerHTML='<span class="ic" style="background:'+(SCOLOR[s.key]||"#6366f1")+'">'+s.emoji+'</span><span class="meta"><span class="nm">'+s.name+'</span><span class="sub">Quiz · Game · Practice</span></span><span class="chev">›</span>';b.onclick=()=>openSubject(s.key);w.appendChild(b);});}
+  const SCOLOR={math:"linear-gradient(135deg,#3b82f6,#1e40af)",science:"linear-gradient(135deg,#10b981,#047857)",geo:"linear-gradient(135deg,#06b6d4,#0e7490)",shapes:"linear-gradient(135deg,#8b5cf6,#6d28d9)",words:"linear-gradient(135deg,#a855f7,#7e22ce)",facts:"linear-gradient(135deg,#f43f5e,#be123c)",algebra:"linear-gradient(135deg,#6366f1,#4338ca)",geometry:"linear-gradient(135deg,#14b8a6,#0f766e)",biology:"linear-gradient(135deg,#22c55e,#15803d)",chemistry:"linear-gradient(135deg,#ec4899,#9d174d)",physics:"linear-gradient(135deg,#0ea5e9,#1e3a8a)",history:"linear-gradient(135deg,#d97706,#92400e)",literature:"linear-gradient(135deg,#a855f7,#6b21a8)"};
+  function renderSubjects(){const body=$("subjectsBody");const groups=[["Elementary & up","core"],["Middle & high school","hs"]];
+    body.innerHTML=groups.map(g=>{const list=SUBJECTS.filter(s=>s.lvl===g[1]);if(!list.length)return"";return '<div class="sechead">'+g[0]+'</div><div class="subjectgrid">'+list.map(s=>'<button class="subject" data-k="'+s.key+'"><span class="ic" style="background:'+(SCOLOR[s.key]||"#6366f1")+'">'+s.emoji+'</span><span class="meta"><span class="nm">'+s.name+'</span><span class="sub">'+Math.max(0,(TOPICS[s.key]||[]).length-1)+' topics</span></span><span class="chev">›</span></button>').join("")+'</div>';}).join("");
+    [...body.querySelectorAll(".subject")].forEach(b=>{b.onclick=()=>openSubject(b.dataset.k);});}
   function renderXP(){const lv=level(),inLv=progress.xp%100;$("xpBox").innerHTML='<div class="xpwrap"><div class="xptop"><span>⭐ Level '+lv+'</span><span>'+progress.xp+' XP</span></div><div class="xpbar"><div class="xpfill" style="width:'+inLv+'%"></div></div></div>';}
   function rewardProgressText(r){if(r.type==="level")return"Level "+level()+" / "+r.target;if(r.type==="score")return"Best "+(progress.bestQuizPct||0)+"% / "+r.target+"%";if(r.type==="days")return dayStreak()+" / "+r.target+" days";return"";}
   function rewardMet(r){if(r.type==="level")return level()>=r.target;if(r.type==="score")return(progress.bestQuizPct||0)>=r.target;if(r.type==="days")return dayStreak()>=r.target;return false;}
@@ -627,7 +682,7 @@ What is 6 x 7? : 42</div>
     if(topic==="squares"){const n=rand(10)+2;return numQ("What is "+n+" squared ("+n+" × "+n+")?",n*n,"SQUARES");}
     return makeMath(diff);}
   function topicName(s,t){const a=(TOPICS[s]||[]).find(x=>x.key===t);return a?a.name:SUBJ[s].name;}
-  function topicRawPool(s,t,diff){if(t==="all"||t==null)return bankPool(s,diff);return(TOPICBANK[s]&&TOPICBANK[s][t])||[];}
+  function topicRawPool(s,t,diff){if(t==="all"||t==null){let base=bankPool(s,diff);const tb=TOPICBANK[s];if(tb){for(const k in tb)base=base.concat(tb[k]);}return base;}return(TOPICBANK[s]&&TOPICBANK[s][t])||[];}
   function oneTopicQ(s,t,diff){if(s==="math")return makeMathTopic(t,diff);const pool=topicRawPool(s,t,diff);if(!pool.length)return makeMath(diff);return normalize(topicName(s,t).toUpperCase(),pool[rand(pool.length)]);}
   function oneFromPairs(pairs,title){const p=pairs[rand(pairs.length)];const others=pairs.filter(x=>x.answer!==p.answer);const wrongs=shuffle(others).slice(0,3).map(x=>x.answer);return{cat:title.toUpperCase(),q:p.prompt,correct:p.answer,options:shuffle([p.answer,...wrongs])};}
 
