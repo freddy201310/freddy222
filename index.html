@@ -384,6 +384,9 @@ What is 6 x 7? : 42</div>
     {key:"biology",name:"Biology",emoji:"🧬",lvl:"hs"},{key:"chemistry",name:"Chemistry",emoji:"⚗️",lvl:"hs"},
     {key:"physics",name:"Physics",emoji:"🔭",lvl:"hs"},{key:"history",name:"History",emoji:"🏛️",lvl:"hs"},
     {key:"literature",name:"Literature",emoji:"📚",lvl:"hs"},
+    {key:"prealgebra",name:"Pre-Algebra",emoji:"🔢",lvl:"hs"},{key:"earthsci",name:"Earth Science",emoji:"🌎",lvl:"hs"},
+    {key:"econ",name:"Economics",emoji:"💰",lvl:"hs"},{key:"spanish",name:"Spanish",emoji:"🇪🇸",lvl:"hs"},
+    {key:"compsci",name:"Computer Science",emoji:"💻",lvl:"hs"},
   ];
   const SUBJ=Object.fromEntries(SUBJECTS.map(s=>[s.key,s]));
   const TOPICS={
@@ -400,6 +403,11 @@ What is 6 x 7? : 42</div>
     physics:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"motion",name:"Motion",emoji:"🏃"},{key:"forces",name:"Forces",emoji:"🧲"},{key:"penergy",name:"Energy & Work",emoji:"⚡"},{key:"waves",name:"Waves & Electricity",emoji:"📡"}],
     history:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"ancient",name:"Ancient",emoji:"🏺"},{key:"medieval",name:"Medieval",emoji:"🏰"},{key:"earlyus",name:"Early America",emoji:"🦅"},{key:"modern",name:"Modern World",emoji:"🌐"}],
     literature:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"terms",name:"Literary Terms",emoji:"📖"},{key:"figurative",name:"Figurative Language",emoji:"🎭"},{key:"grammar",name:"Grammar",emoji:"✏️"},{key:"genres",name:"Genres",emoji:"📚"}],
+    prealgebra:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"fractions",name:"Fractions",emoji:"½"},{key:"decimals",name:"Decimals",emoji:"."},{key:"percents",name:"Percents",emoji:"%"},{key:"ratios",name:"Ratios",emoji:"➗"}],
+    earthsci:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"rocks",name:"Rocks & Minerals",emoji:"🪨"},{key:"watercycle",name:"Water Cycle",emoji:"💧"},{key:"atmosphere",name:"Atmosphere",emoji:"🌫️"},{key:"astronomy",name:"Astronomy",emoji:"🔭"}],
+    econ:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"basics",name:"Basics",emoji:"📈"},{key:"money",name:"Money",emoji:"💵"},{key:"trade",name:"Trade",emoji:"🚢"},{key:"finance",name:"Personal Finance",emoji:"🏦"}],
+    spanish:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"greetings",name:"Greetings",emoji:"👋"},{key:"numbers",name:"Numbers",emoji:"🔢"},{key:"colors",name:"Colors",emoji:"🎨"},{key:"words",name:"Common Words",emoji:"🗣️"}],
+    compsci:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"basics",name:"Computer Basics",emoji:"🖥️"},{key:"internet",name:"Internet",emoji:"🌐"},{key:"coding",name:"Coding",emoji:"⌨️"},{key:"binary",name:"Binary",emoji:"🔟"}],
   };
   const TOPICBANK={
     science:{
@@ -505,6 +513,36 @@ What is 6 x 7? : 42</div>
       grammar:[["Which is a complete sentence?","She runs.",["Running fast.","The big dog.","Because of rain."]],["A word that joins clauses (and, but, or) is a?","Conjunction",["Noun","Adjective","Pronoun"]],["'He', 'she', and 'they' are?","Pronouns",["Verbs","Adjectives","Adverbs"]],["An adverb often describes a?","Verb",["Noun","Pronoun","Conjunction"]],["Which word is past tense?","walked",["walk","walking","walks"]]],
       genres:[["A made-up story is?","Fiction",["Nonfiction","Biography","Essay"]],["A true account of someone's life is a?","Biography",["Novel","Myth","Fable"]],["A poem with 14 lines is a?","Sonnet",["Haiku","Limerick","Ode"]],["A short story with a moral, often with animals, is a?","Fable",["Novel","Memoir","Report"]],["Writing about facts and real events is?","Nonfiction",["Fiction","Fantasy","Myth"]]],
     },
+    prealgebra:{
+      fractions:[["Which fraction is bigger: 1/2 or 1/4?","1/2",["1/4","they are equal","cannot tell"]],["1/2 + 1/2 = ?","1",["1/4","2/4","1/2"]],["What is 1/2 of 10?","5",["2","10","20"]],["Which is equal to 1/2?","2/4",["1/3","3/4","2/3"]],["1/4 + 1/4 = ?","1/2",["2/8","1/4","1"]]],
+      decimals:[["What is 0.5 as a fraction?","1/2",["1/5","5","1/4"]],["Which is larger: 0.7 or 0.07?","0.7",["0.07","equal","cannot tell"]],["0.25 equals which fraction?","1/4",["1/2","1/5","2/5"]],["What is 0.1 + 0.2?","0.3",["0.12","0.21","3"]],["Round 3.6 to the nearest whole number.","4",["3","3.5","6"]]],
+      percents:[["What is 50% of 20?","10",["5","20","40"]],["100% of a number is?","The whole",["Half","None","Double"]],["What is 10% of 100?","10",["1","100","20"]],["25% equals which fraction?","1/4",["1/2","1/3","1/5"]],["What is 50% as a decimal?","0.5",["5","0.05","50"]]],
+      ratios:[["The ratio 2:4 simplifies to?","1:2",["2:1","4:2","1:4"]],["If 3 apples cost $6, one apple costs?","$2",["$3","$6","$1"]],["A ratio compares two?","Quantities",["Colors","Shapes","Letters"]],["2:3 means for every 2 there are?","3",["2","5","1"]],["The ratio 5:5 is the same as?","1:1",["5:1","1:5","2:1"]]],
+    },
+    earthsci:{
+      rocks:[["Rock formed from cooled lava is?","Igneous",["Sedimentary","Metamorphic","Mineral"]],["Rock formed in layers over time is?","Sedimentary",["Igneous","Metamorphic","Magma"]],["Rock changed by heat and pressure is?","Metamorphic",["Igneous","Sedimentary","Lava"]],["Melted rock under the ground is?","Magma",["Lava","Ash","Soil"]],["The hardest natural substance is?","Diamond",["Gold","Iron","Quartz"]]],
+      watercycle:[["Water turning into vapor is?","Evaporation",["Condensation","Precipitation","Collection"]],["Clouds forming from vapor is?","Condensation",["Evaporation","Precipitation","Runoff"]],["Rain, snow, and hail are forms of?","Precipitation",["Evaporation","Condensation","Erosion"]],["The Sun's heat drives the water?","Cycle",["Rock","Carbon","Food"]],["Most of Earth's water is in the?","Oceans",["Rivers","Clouds","Lakes"]]],
+      atmosphere:[["The most common gas in our air is?","Nitrogen",["Oxygen","Carbon dioxide","Helium"]],["The layer of gases around Earth is the?","Atmosphere",["Crust","Mantle","Core"]],["The gas we breathe to live is?","Oxygen",["Nitrogen","Carbon dioxide","Hydrogen"]],["The ozone layer protects us from?","UV rays",["Rain","Wind","Gravity"]],["Weather happens in which layer?","Troposphere",["Stratosphere","Mesosphere","Exosphere"]]],
+      astronomy:[["The star at the center of our solar system is the?","Sun",["Moon","Mars","Polaris"]],["How many planets are in our solar system?","8",["9","7","10"]],["Earth's only natural satellite is the?","Moon",["Sun","Mars","ISS"]],["A huge group of stars is a?","Galaxy",["Comet","Planet","Crater"]],["Which planet is famous for its rings?","Saturn",["Mars","Venus","Mercury"]]],
+    },
+    econ:{
+      basics:[["When something is scarce, it is?","Limited",["Free","Endless","Always cheap"]],["When demand goes up, price usually?","Rises",["Falls","Stays same","Disappears"]],["Goods are things you can touch; services are?","Actions",["Money","Taxes","Stores"]],["A person who starts a business is an?","Entrepreneur",["Employee","Customer","Banker"]],["The study of money and resources is?","Economics",["Geography","Biology","History"]]],
+      money:[["Money you set aside for the future is?","Savings",["Debt","Loan","Tax"]],["Money you owe is called?","Debt",["Savings","Profit","Income"]],["Money earned from working is?","Income",["Debt","Tax","Loan"]],["Money paid to the government is?","Tax",["Profit","Savings","Tip"]],["Earning more than you spend gives you a?","Profit",["Loss","Debt","Tax"]]],
+      trade:[["Buying goods from another country is?","Importing",["Exporting","Saving","Lending"]],["Selling goods to another country is?","Exporting",["Importing","Buying","Taxing"]],["Swapping goods without money is?","Bartering",["Saving","Investing","Lending"]],["A place where goods are bought and sold is a?","Market",["Bank","School","Factory"]],["The money used in a country is its?","Currency",["Tax","Debt","Budget"]]],
+      finance:[["A plan for spending money is a?","Budget",["Debt","Loan","Tax"]],["Money borrowed that must be paid back is a?","Loan",["Gift","Profit","Saving"]],["Putting money into something to grow it is?","Investing",["Spending","Borrowing","Owing"]],["Extra money a bank pays you for saving is?","Interest",["Tax","Fee","Fine"]],["Spending less than you earn helps you?","Save",["Borrow","Owe","Lose"]]],
+    },
+    spanish:{
+      greetings:[["'Hola' means?","Hello",["Goodbye","Please","Thanks"]],["'Adiós' means?","Goodbye",["Hello","Yes","No"]],["'Gracias' means?","Thank you",["Sorry","Please","Hello"]],["'Por favor' means?","Please",["Thanks","Goodbye","Yes"]],["'Sí' means?","Yes",["No","Maybe","Hello"]]],
+      numbers:[["'Uno' means?","One",["Two","Three","Ten"]],["'Dos' means?","Two",["Four","Twelve","Ten"]],["'Tres' means?","Three",["Two","Six","Eight"]],["'Diez' means?","Ten",["Two","Five","Nine"]],["'Cinco' means?","Five",["Four","Six","Seven"]]],
+      colors:[["'Rojo' means?","Red",["Blue","Green","Black"]],["'Azul' means?","Blue",["Red","Yellow","White"]],["'Verde' means?","Green",["Blue","Red","Brown"]],["'Negro' means?","Black",["White","Blue","Gray"]],["'Blanco' means?","White",["Black","Yellow","Red"]]],
+      words:[["'Gato' means?","Cat",["Dog","Bird","Fish"]],["'Perro' means?","Dog",["Cat","Cow","Horse"]],["'Agua' means?","Water",["Bread","Milk","Juice"]],["'Casa' means?","House",["Car","School","Tree"]],["'Libro' means?","Book",["Pen","Desk","Bag"]]],
+    },
+    compsci:{
+      basics:[["The 'brain' of a computer is the?","CPU",["Monitor","Mouse","Printer"]],["Temporary working memory is?","RAM",["CPU","USB","WiFi"]],["Which is an input device?","Keyboard",["Monitor","Speaker","Printer"]],["Which is an output device?","Monitor",["Keyboard","Mouse","Microphone"]],["Programs that run on a computer are called?","Software",["Hardware","Cables","Screens"]]],
+      internet:[["WWW stands for World Wide?","Web",["Wire","Work","Window"]],["A web address is also called a?","URL",["CPU","RAM","USB"]],["A program used to browse the web is a?","Browser",["Printer","Folder","Driver"]],["Junk or unwanted email is called?","Spam",["Cookie","Cache","Link"]],["Keeping a password secret protects your?","Security",["Speed","Color","Battery"]]],
+      coding:[["A set of steps to solve a problem is an?","Algorithm",["Error","Pixel","Cookie"]],["A mistake in code is called a?","Bug",["Byte","Pixel","Link"]],["Code that repeats is a?","Loop",["List","Link","Logo"]],["A value stored under a name is a?","Variable",["Loop","Bug","Pixel"]],["'If / else' in code makes a?","Decision",["Loop","Sound","Picture"]]],
+      binary:[["Computers store data using which two digits?","0 and 1",["1 and 2","A and B","Yes and No"]],["A single 0 or 1 is called a?","Bit",["Byte","Pixel","Word"]],["8 bits make one?","Byte",["Bit","Kilobyte","Pixel"]],["Binary is base?","2",["10","8","16"]],["In binary, 1 + 1 = ?","10",["2","11","1"]]],
+    },
   };
   const DIFFS=[
     {key:"easy",name:"Easy",emoji:"🟢",desc:"Very easy — a warm up!",bg:"#22c55e",time:11000},
@@ -587,7 +625,7 @@ What is 6 x 7? : 42</div>
   function recordStudy(sec){progress.studySec+=sec;addXP(Math.floor(sec/60)*2);markDay();saveProg();}
 
   /* ---------- HOME ---------- */
-  const SCOLOR={math:"linear-gradient(135deg,#3b82f6,#1e40af)",science:"linear-gradient(135deg,#10b981,#047857)",geo:"linear-gradient(135deg,#06b6d4,#0e7490)",shapes:"linear-gradient(135deg,#8b5cf6,#6d28d9)",words:"linear-gradient(135deg,#a855f7,#7e22ce)",facts:"linear-gradient(135deg,#f43f5e,#be123c)",algebra:"linear-gradient(135deg,#6366f1,#4338ca)",geometry:"linear-gradient(135deg,#14b8a6,#0f766e)",biology:"linear-gradient(135deg,#22c55e,#15803d)",chemistry:"linear-gradient(135deg,#ec4899,#9d174d)",physics:"linear-gradient(135deg,#0ea5e9,#1e3a8a)",history:"linear-gradient(135deg,#d97706,#92400e)",literature:"linear-gradient(135deg,#a855f7,#6b21a8)"};
+  const SCOLOR={math:"linear-gradient(135deg,#3b82f6,#1e40af)",science:"linear-gradient(135deg,#10b981,#047857)",geo:"linear-gradient(135deg,#06b6d4,#0e7490)",shapes:"linear-gradient(135deg,#8b5cf6,#6d28d9)",words:"linear-gradient(135deg,#a855f7,#7e22ce)",facts:"linear-gradient(135deg,#f43f5e,#be123c)",algebra:"linear-gradient(135deg,#6366f1,#4338ca)",geometry:"linear-gradient(135deg,#14b8a6,#0f766e)",biology:"linear-gradient(135deg,#22c55e,#15803d)",chemistry:"linear-gradient(135deg,#ec4899,#9d174d)",physics:"linear-gradient(135deg,#0ea5e9,#1e3a8a)",history:"linear-gradient(135deg,#d97706,#92400e)",literature:"linear-gradient(135deg,#a855f7,#6b21a8)",prealgebra:"linear-gradient(135deg,#818cf8,#4f46e5)",earthsci:"linear-gradient(135deg,#0ea5e9,#0e7490)",econ:"linear-gradient(135deg,#f59e0b,#b45309)",spanish:"linear-gradient(135deg,#ef4444,#b91c1c)",compsci:"linear-gradient(135deg,#64748b,#334155)"};
   function renderSubjects(){const body=$("subjectsBody");const groups=[["Elementary & up","core"],["Middle & high school","hs"]];
     body.innerHTML=groups.map(g=>{const list=SUBJECTS.filter(s=>s.lvl===g[1]);if(!list.length)return"";return '<div class="sechead">'+g[0]+'</div><div class="subjectgrid">'+list.map(s=>'<button class="subject" data-k="'+s.key+'"><span class="ic" style="background:'+(SCOLOR[s.key]||"#6366f1")+'">'+s.emoji+'</span><span class="meta"><span class="nm">'+s.name+'</span><span class="sub">'+Math.max(0,(TOPICS[s.key]||[]).length-1)+' topics</span></span><span class="chev">›</span></button>').join("")+'</div>';}).join("");
     [...body.querySelectorAll(".subject")].forEach(b=>{b.onclick=()=>openSubject(b.dataset.k);});}
