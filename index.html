@@ -225,8 +225,21 @@
       <button class="tile" onclick="openBuilder()"><span class="ic">🪄</span><span class="tx"><span class="tt">Game Builder<span class="lock"> 🔒</span></span><span class="ts">Turn a lesson into a game</span></span></button>
       <button class="tile" onclick="openTimer()"><span class="ic">⏱️</span><span class="tx"><span class="tt">Study Timer</span><span class="ts">Focused study sessions</span></span></button>
       <button class="tile" onclick="openAllGuides()"><span class="ic">📒</span><span class="tx"><span class="tt">Study Guides<span class="lock"> 🔒</span></span><span class="ts">All your notes</span></span></button>
+      <button class="tile" onclick="openCoach()"><span class="ic">✍️</span><span class="tx"><span class="tt">Writing Coach</span><span class="ts">Guided feedback on your writing</span></span></button>
       <button class="tile" onclick="openTeacher()"><span class="ic">🧑‍🏫</span><span class="tx"><span class="tt">Teacher Zone</span><span class="ts">Track progress &amp; goals</span></span></button>
     </div></div>
+  </section>
+
+  <!-- WRITING COACH -->
+  <section id="screen-coach" class="screen">
+    <div class="bar"><button class="back" onclick="showScreen('screen-tools')">← Tools</button><div class="bartitle">✍️ Writing Coach</div></div>
+    <div class="scroll">
+      <p class="hint">Paste your writing — an essay, a paragraph, or just your thesis. The coach points out what to improve. It <b>guides</b> you; it never writes it for you.</p>
+      <div class="field-label">Your writing</div>
+      <textarea id="coachText" placeholder="Paste your essay, paragraph, or thesis here…"></textarea>
+      <button class="btn" id="coachGo">Coach me ✍️</button>
+      <div id="coachOut" class="results" style="margin-top:14px"></div>
+    </div>
   </section>
 
   <!-- PRICING -->
@@ -403,7 +416,7 @@ What is 6 x 7? : 42</div>
     physics:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"motion",name:"Motion",emoji:"🏃"},{key:"forces",name:"Forces",emoji:"🧲"},{key:"penergy",name:"Energy & Work",emoji:"⚡"},{key:"waves",name:"Waves & Electricity",emoji:"📡"}],
     history:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"ancient",name:"Ancient",emoji:"🏺"},{key:"medieval",name:"Medieval",emoji:"🏰"},{key:"earlyus",name:"Early America",emoji:"🦅"},{key:"modern",name:"Modern World",emoji:"🌐"}],
     literature:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"terms",name:"Literary Terms",emoji:"📖"},{key:"figurative",name:"Figurative Language",emoji:"🎭"},{key:"grammar",name:"Grammar",emoji:"✏️"},{key:"genres",name:"Genres",emoji:"📚"}],
-    prealgebra:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"fractions",name:"Fractions",emoji:"½"},{key:"decimals",name:"Decimals",emoji:"."},{key:"percents",name:"Percents",emoji:"%"},{key:"ratios",name:"Ratios",emoji:"➗"}],
+    prealgebra:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"fractions",name:"Fractions",emoji:"½"},{key:"decimals",name:"Decimals",emoji:"."},{key:"percents",name:"Percents",emoji:"%"},{key:"ratios",name:"Ratios",emoji:"➗"},{key:"pinteg",name:"Integers",emoji:"➖"},{key:"pexp",name:"Exponents",emoji:"²"},{key:"porder",name:"Order of Operations",emoji:"🔢"},{key:"pwordprob",name:"Word Problems",emoji:"❓"}],
     earthsci:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"rocks",name:"Rocks & Minerals",emoji:"🪨"},{key:"watercycle",name:"Water Cycle",emoji:"💧"},{key:"atmosphere",name:"Atmosphere",emoji:"🌫️"},{key:"astronomy",name:"Astronomy",emoji:"🔭"}],
     econ:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"basics",name:"Basics",emoji:"📈"},{key:"money",name:"Money",emoji:"💵"},{key:"trade",name:"Trade",emoji:"🚢"},{key:"finance",name:"Personal Finance",emoji:"🏦"}],
     spanish:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"greetings",name:"Greetings",emoji:"👋"},{key:"numbers",name:"Numbers",emoji:"🔢"},{key:"colors",name:"Colors",emoji:"🎨"},{key:"words",name:"Common Words",emoji:"🗣️"}],
@@ -518,6 +531,10 @@ What is 6 x 7? : 42</div>
       decimals:[["What is 0.5 as a fraction?","1/2",["1/5","5","1/4"]],["Which is larger: 0.7 or 0.07?","0.7",["0.07","equal","cannot tell"]],["0.25 equals which fraction?","1/4",["1/2","1/5","2/5"]],["What is 0.1 + 0.2?","0.3",["0.12","0.21","3"]],["Round 3.6 to the nearest whole number.","4",["3","3.5","6"]]],
       percents:[["What is 50% of 20?","10",["5","20","40"]],["100% of a number is?","The whole",["Half","None","Double"]],["What is 10% of 100?","10",["1","100","20"]],["25% equals which fraction?","1/4",["1/2","1/3","1/5"]],["What is 50% as a decimal?","0.5",["5","0.05","50"]]],
       ratios:[["The ratio 2:4 simplifies to?","1:2",["2:1","4:2","1:4"]],["If 3 apples cost $6, one apple costs?","$2",["$3","$6","$1"]],["A ratio compares two?","Quantities",["Colors","Shapes","Letters"]],["2:3 means for every 2 there are?","3",["2","5","1"]],["The ratio 5:5 is the same as?","1:1",["5:1","1:5","2:1"]]],
+      pinteg:[["What is −5 + 3?","−2",["−8","2","8"]],["What is 4 + (−6)?","−2",["10","2","−10"]],["What is −3 − 2?","−5",["−1","1","5"]],["Which is smaller: −2 or 1?","−2",["1","0","equal"]],["What is −2 × 3?","−6",["6","−5","5"]]],
+      pexp:[["What is 2³?","8",["6","9","23"]],["What is 4²?","16",["8","6","42"]],["What is 3²?","9",["6","5","32"]],["What is 10²?","100",["20","1000","12"]],["What is 5²?","25",["10","7","55"]]],
+      porder:[["What is 2 + 3 × 4?","14",["20","24","9"]],["Solve: (6 − 2) × 3","12",["10","18","6"]],["What is 12 ÷ 3 + 1?","5",["3","7","4"]],["First step in PEMDAS?","Parentheses",["Add","Multiply","Exponents"]],["What is 5 + 2²?","9",["14","49","7"]]],
+      pwordprob:[["Sam has 3 bags of 4 apples. How many apples?","12",["7","34","9"]],["A pizza is cut into 8 slices. You eat 2. What fraction is left?","6/8",["2/8","8/6","3/4"]],["You save $5 a week. How much after 6 weeks?","$30",["$11","$25","$56"]],["A book has 90 pages. You read 30. What percent is left?","66%",["30%","33%","90%"]],["12 students split into 3 equal groups. Group size?","4",["9","36","3"]]],
     },
     earthsci:{
       rocks:[["Rock formed from cooled lava is?","Igneous",["Sedimentary","Metamorphic","Mineral"]],["Rock formed in layers over time is?","Sedimentary",["Igneous","Metamorphic","Magma"]],["Rock changed by heat and pressure is?","Metamorphic",["Igneous","Sedimentary","Lava"]],["Melted rock under the ground is?","Magma",["Lava","Ash","Soil"]],["The hardest natural substance is?","Diamond",["Gold","Iron","Quartz"]]],
@@ -648,6 +665,66 @@ What is 6 x 7? : 42</div>
     box.innerHTML='<p class="rnote">'+hits.length+' result'+(hits.length===1?"":"s")+'</p>'+hits.map(h=>'<button class="tile"><span class="ic">'+(h.emoji||"🔎")+'</span><span class="tx"><span class="tt">'+esc(h.label)+'</span><span class="ts">'+(h.type==="subject"?"Subject":esc(h.sub)+" · Topic")+'</span></span></button>').join("");
     [...box.querySelectorAll(".tile")].forEach((b,i)=>{b.onclick=()=>{const h=hits[i];$("search").value="";box.innerHTML="";if(dash)dash.style.display="";if(h.type==="subject")openSubject(h.key);else openTopic(h.key,h.topic);};});}
   $("search").addEventListener("input",renderSearch);
+  function openCoach(){$("coachOut").innerHTML="";showScreen("screen-coach");}
+  window.openCoach=openCoach;
+  function coachCard(icon,title,msg,tone){const c=tone==="good"?"#22c55e":tone==="bad"?"#ef4444":"#f59e0b";return '<div class="panel" style="border-left:4px solid '+c+'"><b>'+icon+' '+esc(title)+'</b><p>'+esc(msg)+'</p></div>';}
+  function runCoach(){
+    const t=($("coachText").value||"").trim(),out=$("coachOut");
+    if(t.length<15){out.innerHTML=coachCard("✏️","Add a little more","Write or paste a bit more text so the coach has something to work with.","warn");return;}
+    const words=t.split(/\s+/).filter(Boolean),lower=t.toLowerCase();
+    const sentences=t.split(/[.!?]+/).map(s=>s.trim()).filter(Boolean);
+    const paras=t.split(/\n\s*\n/).map(p=>p.trim()).filter(Boolean);
+    const first=sentences[0]||t,firstL=first.toLowerCase(),tips=[];
+    const hedges=["maybe","might","kind of","sort of","i think","i feel","probably","perhaps","somewhat"];
+    const vague=["good","bad","nice","stuff","things","a lot","interesting"];
+    if(/\?\s*$/.test(first))tips.push(["🎯","Thesis is a question","Your opening reads like a question. A thesis should state your claim as a sentence — decide your answer and assert it.","bad"]);
+    if(first.split(/\s+/).length<6)tips.push(["🎯","Thesis may be too short","Your first sentence is very short. A clear thesis usually needs enough words to state a specific, arguable point.","warn"]);
+    if(hedges.some(h=>firstL.indexOf(h)>=0))tips.push(["🎯","Weak thesis","Your claim hedges (words like 'maybe' or 'I think'). State it more directly and confidently — but the claim itself should be yours.","warn"]);
+    if(vague.some(v=>firstL.indexOf(v)>=0))tips.push(["🎯","Be more specific","Your opening uses vague words. What exactly are you arguing? Name the specific point.","warn"]);
+    if(paras.length<2&&words.length>90)tips.push(["🧱","Structure","This is one big block. Break it into paragraphs — introduction, body, conclusion — so each idea stands on its own.","warn"]);
+    const trans=["however","therefore","for example","in addition","furthermore","first","second","finally","on the other hand","as a result","although","meanwhile","in contrast"];
+    if(sentences.length>=4&&!trans.some(x=>lower.indexOf(x)>=0))tips.push(["🔗","Add transitions","I don't see transition words. Words like 'however', 'for example', or 'as a result' connect your ideas and guide the reader.","warn"]);
+    const starts={};sentences.forEach(s=>{const w0=(s.split(/\s+/)[0]||"").toLowerCase();if(w0)starts[w0]=(starts[w0]||0)+1;});
+    let rep=null;for(const k in starts){if(starts[k]>=3&&sentences.length>=4){rep=k;break;}}
+    if(rep)tips.push(["🔀","Vary your sentences","Several sentences start with \""+rep+"\". Try beginning some sentences differently.","warn"]);
+    const fillers=["very","really","just","actually","basically","literally"];let fill=0;fillers.forEach(f=>{const m=lower.match(new RegExp("\\b"+f+"\\b","g"));if(m)fill+=m.length;});
+    if(fill>=4)tips.push(["🧹","Trim filler words","You use filler words (very, really, just…) about "+fill+" times. Cutting some makes your writing punchier.","warn"]);
+    const stop={the:1,a:1,an:1,and:1,or:1,but:1,to:1,of:1,in:1,on:1,is:1,are:1,was:1,were:1,it:1,that:1,this:1,for:1,with:1,as:1,be:1,by:1,i:1,you:1,they:1,we:1,my:1,your:1,have:1,has:1,not:1};
+    const freq={};words.forEach(w=>{const c=w.toLowerCase().replace(/[^a-z]/g,"");if(c.length>3&&!stop[c])freq[c]=(freq[c]||0)+1;});
+    let topW=null,topN=0;for(const k in freq){if(freq[k]>topN){topN=freq[k];topW=k;}}
+    if(topW&&topN>=4)tips.push(["🔁","Word repetition","You use \""+topW+"\" "+topN+" times. Swap in a synonym here and there to keep it fresh.","warn"]);
+    const miss={alot:"a lot",definately:"definitely",recieve:"receive",seperate:"separate",untill:"until",becuase:"because",wich:"which",thier:"their"};
+    const found=[];for(const k in miss){if(new RegExp("\\b"+k+"\\b","i").test(t))found.push(k+" → "+miss[k]);}
+    if(found.length)tips.push(["🔤","Check spelling",found.join(", ")+".","warn"]);
+    if(paras.length>=2&&words.length>120&&!/(in conclusion|to conclude|in summary|overall|to sum up)/i.test(t))tips.push(["✅","Wrap it up","Consider a clear closing that restates your main point so the reader feels the piece is finished.","warn"]);
+    const good=[];if(trans.some(x=>lower.indexOf(x)>=0))good.push("you use transition words");if(paras.length>=3)good.push("you organized it into paragraphs");if(sentences.length>=5)good.push("you developed several sentences");if(!found.length&&t.length>60)good.push("no common spelling slips");
+    let html='<p class="rnote">'+words.length+' words · '+sentences.length+' sentence'+(sentences.length===1?"":"s")+' · '+paras.length+' paragraph'+(paras.length===1?"":"s")+'</p>';
+    if(good.length)html+=coachCard("🌟","Nice work","Good things I noticed: "+good.join(", ")+".","good");
+    html+='<p class="rnote" style="margin-top:10px">Whole-piece feedback</p>';
+    html+=tips.map(x=>coachCard(x[0],x[1],x[2],x[3])).join("");
+    if(paras.length>1){
+      html+='<p class="rnote" style="margin-top:10px">Paragraph by paragraph</p>';
+      html+=paras.map(function(p,i){
+        const pw=p.split(/\s+/).filter(Boolean).length;
+        const ps=p.split(/[.!?]+/).map(x=>x.trim()).filter(Boolean);
+        const pl=p.toLowerCase(),n=[];
+        if(pw<15)n.push("Quite short — add a detail, reason, or example to develop it.");
+        if(ps.length<=1&&pw>=18)n.push("This is basically one long sentence — split it into clearer ones.");
+        const hasEx=["for example","for instance","such as","because","this shows","this means","evidence"].some(x=>pl.indexOf(x)>=0);
+        if(i===0)n.push("As your introduction, open with a hook and end with a clear thesis (your main claim) — you write the claim, not me.");
+        else if(i===paras.length-1)n.push("As your conclusion, restate your main point in fresh words — don't add brand-new ideas here.");
+        else if(!hasEx)n.push("Back up this point with evidence or an example so it's convincing.");
+        if(!n.length)n.push("Clear and on topic. 👍");
+        const label=i===0?"Introduction":(i===paras.length-1?"Conclusion":"Body paragraph "+i);
+        const tone=(n.length===1&&n[0].indexOf("Clear and on topic")>=0)?"good":"warn";
+        return coachCard("📄",label+" · "+pw+" words",n.join(" "),tone);
+      }).join("");
+    }
+    if(!tips.length&&paras.length<=1)html+=coachCard("✅","Looking strong","I didn't spot obvious issues. Read it aloud once more to check the flow — and remember, the ideas should be yours.","good");
+    html+='<p class="hint" style="margin-top:12px">Lumina Coach comments on every part to guide you. It keeps feedback constructive and classroom-appropriate — and never writes your work for you.</p>';
+    out.innerHTML=html;
+  }
+  $("coachGo").addEventListener("click",runCoach);
   function renderHeader(){const b=$("proBadge");if(b)b.style.display=pro?"inline-block":"none";}
   function gamesLeft(){return Math.max(0,FREE_GAMES-(progress.gamesStarted||0));}
   function canStartGame(){if(pro)return true;if((progress.gamesStarted||0)>=FREE_GAMES){openPricing("Unlimited games");return false;}return true;}
@@ -676,6 +753,7 @@ What is 6 x 7? : 42</div>
   function openSubject(key){curSubject=key;const s=SUBJ[key];$("subjTitle").textContent=s.emoji+" "+s.name;$("subjLabel").textContent="Choose a topic";$("subjBack").textContent="← Subjects";$("subjBack").onclick=()=>showScreen("screen-subjects");
     const topics=TOPICS[key]||[{key:"all",name:"Mixed",emoji:"🎲"}];
     const w=$("modeGrid");w.innerHTML="";topics.forEach(t=>{const b=document.createElement("button");b.className="tile";b.innerHTML='<span class="ic">'+(t.emoji||"•")+'</span><span class="tx"><span class="tt">'+t.name+'</span><span class="ts">'+(t.key==="all"?"Everything in "+s.name:"Focused practice")+'</span></span>';b.onclick=()=>openTopic(key,t.key);w.appendChild(b);});
+    const cta=document.createElement("button");cta.className="tile";cta.innerHTML='<span class="ic">➕</span><span class="tx"><span class="tt">Study something else</span><span class="ts">Build your own quiz &amp; game from any notes</span></span>';cta.onclick=()=>openBuilder();w.appendChild(cta);
     showScreen("screen-subject");}
   function openTopic(key,topic){curSubject=key;curTopic=topic;const s=SUBJ[key];$("subjTitle").textContent=s.emoji+" "+s.name+" · "+topicName(key,topic);$("subjLabel").textContent="What do you want to do?";$("subjBack").textContent="← Topics";$("subjBack").onclick=()=>openSubject(key);
     const modes=[{ic:"📝",t:"Mock Quiz",d:"Practice & get graded",fn:()=>chooseDiff("quiz")},{ic:"🎮",t:"Play Game",d:"Fast timed challenge",fn:()=>chooseDiff("game")},{ic:"📖",t:'Study Guide<span class="lock"> 🔒</span>',d:"Notes for this subject",fn:()=>openGuides(key)},{ic:"✏️",t:'My Questions<span class="lock"> 🔒</span>',d:"Write your own",fn:()=>openQuestions(key)}];
