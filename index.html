@@ -181,6 +181,10 @@
   .results{display:flex;flex-direction:column;gap:8px}
   .results .tile .ts{opacity:.8}
   .rnote{color:var(--mut);font-size:13px;margin:8px 2px}
+  .flashcard{background:#fff;color:var(--ink);border-radius:20px;min-height:260px;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;font-size:clamp(22px,5vw,34px);font-weight:700;box-shadow:0 14px 36px rgba(0,0,0,.35);cursor:pointer;user-select:none;margin-bottom:12px;transition:transform .1s}
+  .flashcard:active{transform:scale(.99)}
+  .flashcard img{max-width:100%;max-height:180px;border-radius:12px;display:block;margin:0 auto 12px}
+  .flashcard .fside{font-size:12px;font-weight:700;color:#7c3aed;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
 </style>
 </head>
 <body>
@@ -226,6 +230,8 @@
       <button class="tile" onclick="openTimer()"><span class="ic">⏱️</span><span class="tx"><span class="tt">Study Timer</span><span class="ts">Focused study sessions</span></span></button>
       <button class="tile" onclick="openAllGuides()"><span class="ic">📒</span><span class="tx"><span class="tt">Study Guides<span class="lock"> 🔒</span></span><span class="ts">All your notes</span></span></button>
       <button class="tile" onclick="openCoach()"><span class="ic">✍️</span><span class="tx"><span class="tt">Writing Coach</span><span class="ts">Guided feedback on your writing</span></span></button>
+      <button class="tile" onclick="openDecks()"><span class="ic">🃏</span><span class="tx"><span class="tt">Flashcards<span class="lock"> 🔒</span></span><span class="ts">Memorize words, terms &amp; pictures</span></span></button>
+      <button class="tile" onclick="openSets()"><span class="ic">🎯</span><span class="tx"><span class="tt">Make a Game<span class="lock"> 🔒</span></span><span class="ts">Your own questions — pick right &amp; wrong</span></span></button>
       <button class="tile" onclick="openTeacher()"><span class="ic">🧑‍🏫</span><span class="tx"><span class="tt">Teacher Zone</span><span class="ts">Track progress &amp; goals</span></span></button>
     </div></div>
   </section>
@@ -234,12 +240,72 @@
   <section id="screen-coach" class="screen">
     <div class="bar"><button class="back" onclick="showScreen('screen-tools')">← Tools</button><div class="bartitle">✍️ Writing Coach</div></div>
     <div class="scroll">
-      <p class="hint">Paste your writing — an essay, a paragraph, or just your thesis. The coach points out what to improve. It <b>guides</b> you; it never writes it for you.</p>
+      <p class="hint">Paste your writing — an essay, a paragraph, or just your thesis. The coach tells you exactly what is weak and what to fix. It <b>guides</b> you; it never writes it for you.</p>
       <div class="field-label">Your writing</div>
       <textarea id="coachText" placeholder="Paste your essay, paragraph, or thesis here…"></textarea>
       <button class="btn" id="coachGo">Coach me ✍️</button>
       <div id="coachOut" class="results" style="margin-top:14px"></div>
     </div>
+  </section>
+
+  <!-- FLASHCARDS: DECKS -->
+  <section id="screen-decks" class="screen">
+    <div class="bar"><button class="back" onclick="showScreen('screen-tools')">← Tools</button><div class="bartitle">🃏 Flashcards</div></div>
+    <div class="scroll" id="decksList"></div>
+    <button class="btn" style="margin-top:8px" id="deckNew">➕ New Deck</button>
+  </section>
+
+  <!-- FLASHCARDS: DECK EDIT -->
+  <section id="screen-deckedit" class="screen">
+    <div class="bar"><button class="back" id="deBack">←</button><div class="bartitle">Edit Deck</div></div>
+    <div class="scroll">
+      <div class="field-label">Deck name</div>
+      <input type="text" id="dkName" placeholder="e.g. Spanish Words">
+      <div class="field-label">Add a card</div>
+      <input type="text" id="dkFront" placeholder="Front — the word or term">
+      <input type="text" id="dkBack" placeholder="Back — the meaning or answer">
+      <input type="file" id="dkImg" accept="image/*" style="color:var(--tx);margin:6px 0">
+      <img id="dkPreview" class="guideimg" style="display:none">
+      <button class="btn alt" id="dkAdd">➕ Add card</button>
+      <div id="dkCards" style="margin-top:12px"></div>
+    </div>
+    <button class="btn" style="margin-top:8px" id="dkStudy">▶ Study this deck</button>
+  </section>
+
+  <!-- FLASHCARDS: STUDY -->
+  <section id="screen-flash" class="screen">
+    <div class="bar"><button class="back" id="flBack">←</button><div class="bartitle" id="flTitle">Study</div></div>
+    <div class="scroll" style="display:flex;flex-direction:column">
+      <div class="flashcard" id="flCard">Tap to flip</div>
+      <div class="cheer" id="flHint"></div>
+      <div class="btnrow" style="margin-top:auto"><button class="btn alt" id="flPrev" style="flex:1">← Prev</button><button class="btn alt" id="flNext" style="flex:1">Next →</button></div>
+      <button class="btn" style="margin-top:8px" id="flShuffle">🔀 Shuffle</button>
+    </div>
+  </section>
+
+  <!-- MAKE A GAME: LIST -->
+  <section id="screen-sets" class="screen">
+    <div class="bar"><button class="back" onclick="showScreen('screen-tools')">← Tools</button><div class="bartitle">🎯 Make a Game</div></div>
+    <div class="scroll" id="setsList"></div>
+    <button class="btn" style="margin-top:8px" id="setNew">➕ New Game</button>
+  </section>
+
+  <!-- MAKE A GAME: EDIT -->
+  <section id="screen-setedit" class="screen">
+    <div class="bar"><button class="back" id="seBack">←</button><div class="bartitle">Edit Game</div></div>
+    <div class="scroll">
+      <div class="field-label">Game name</div>
+      <input type="text" id="stName" placeholder="e.g. My History Game">
+      <div class="field-label">Add a question</div>
+      <input type="text" id="stQ" placeholder="Question">
+      <input type="text" id="stC" placeholder="✅ Correct answer">
+      <input type="text" id="stW1" placeholder="❌ Wrong answer 1">
+      <input type="text" id="stW2" placeholder="❌ Wrong answer 2 (optional)">
+      <input type="text" id="stW3" placeholder="❌ Wrong answer 3 (optional)">
+      <button class="btn alt" id="stAdd">➕ Add question</button>
+      <div id="stList" style="margin-top:12px"></div>
+    </div>
+    <div class="btnrow" style="margin-top:8px"><button class="btn" id="stPlay" style="flex:1">🎮 Play</button><button class="btn alt" id="stQuiz" style="flex:1">📝 Quiz</button></div>
   </section>
 
   <!-- PRICING -->
@@ -400,6 +466,7 @@ What is 6 x 7? : 42</div>
     {key:"prealgebra",name:"Pre-Algebra",emoji:"🔢",lvl:"hs"},{key:"earthsci",name:"Earth Science",emoji:"🌎",lvl:"hs"},
     {key:"econ",name:"Economics",emoji:"💰",lvl:"hs"},{key:"spanish",name:"Spanish",emoji:"🇪🇸",lvl:"hs"},
     {key:"compsci",name:"Computer Science",emoji:"💻",lvl:"hs"},
+    {key:"jewish",name:"Jewish Studies",emoji:"✡️",lvl:"hs"},
   ];
   const SUBJ=Object.fromEntries(SUBJECTS.map(s=>[s.key,s]));
   const TOPICS={
@@ -421,6 +488,7 @@ What is 6 x 7? : 42</div>
     econ:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"basics",name:"Basics",emoji:"📈"},{key:"money",name:"Money",emoji:"💵"},{key:"trade",name:"Trade",emoji:"🚢"},{key:"finance",name:"Personal Finance",emoji:"🏦"}],
     spanish:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"greetings",name:"Greetings",emoji:"👋"},{key:"numbers",name:"Numbers",emoji:"🔢"},{key:"colors",name:"Colors",emoji:"🎨"},{key:"words",name:"Common Words",emoji:"🗣️"}],
     compsci:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"basics",name:"Computer Basics",emoji:"🖥️"},{key:"internet",name:"Internet",emoji:"🌐"},{key:"coding",name:"Coding",emoji:"⌨️"},{key:"binary",name:"Binary",emoji:"🔟"}],
+    jewish:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"torah",name:"Torah (Chumash)",emoji:"📜"},{key:"hebrew",name:"Hebrew Alphabet",emoji:"🔠"},{key:"chagim",name:"Holidays (Chagim)",emoji:"🕎"},{key:"tefillah",name:"Prayer & Shabbat",emoji:"🕯️"},{key:"mitzvot",name:"Mitzvot & Values",emoji:"✡️"}],
   };
   const TOPICBANK={
     science:{
@@ -560,6 +628,13 @@ What is 6 x 7? : 42</div>
       coding:[["A set of steps to solve a problem is an?","Algorithm",["Error","Pixel","Cookie"]],["A mistake in code is called a?","Bug",["Byte","Pixel","Link"]],["Code that repeats is a?","Loop",["List","Link","Logo"]],["A value stored under a name is a?","Variable",["Loop","Bug","Pixel"]],["'If / else' in code makes a?","Decision",["Loop","Sound","Picture"]]],
       binary:[["Computers store data using which two digits?","0 and 1",["1 and 2","A and B","Yes and No"]],["A single 0 or 1 is called a?","Bit",["Byte","Pixel","Word"]],["8 bits make one?","Byte",["Bit","Kilobyte","Pixel"]],["Binary is base?","2",["10","8","16"]],["In binary, 1 + 1 = ?","10",["2","11","1"]]],
     },
+    jewish:{
+      torah:[["How many books are in the Torah (Chumash)?","5",["4","6","10"]],["What is the first book of the Torah?","Bereishit (Genesis)",["Shemot (Exodus)","Vayikra (Leviticus)","Devarim (Deuteronomy)"]],["Which book describes the Exodus from Egypt?","Shemot (Exodus)",["Bereishit","Vayikra","Bamidbar"]],["Who led the Jewish people out of Egypt?","Moshe (Moses)",["Aharon","Yehoshua","David"]],["On which mountain was the Torah given?","Har Sinai",["Har Moriah","Har Carmel","Har Nevo"]],["How many of the Ten Commandments are there?","10",["7","12","5"]],["The Torah is written in which language?","Hebrew",["Aramaic","Yiddish","Greek"]]],
+      hebrew:[["What is the first letter of the Hebrew alphabet?","Aleph",["Bet","Tav","Shin"]],["How many letters are in the Hebrew alphabet?","22",["24","26","20"]],["Hebrew is read in which direction?","Right to left",["Left to right","Top to bottom","Bottom to top"]],["What is the last letter of the Hebrew alphabet?","Tav",["Aleph","Shin","Mem"]],["Which is the second letter of the Hebrew alphabet?","Bet",["Aleph","Gimel","Tav"]]],
+      chagim:[["Which holiday is the Jewish New Year?","Rosh Hashanah",["Yom Kippur","Purim","Shavuot"]],["On which day do we fast and ask forgiveness?","Yom Kippur",["Purim","Chanukah","Sukkot"]],["Which holiday remembers leaving Egypt, with matzah?","Pesach (Passover)",["Sukkot","Shavuot","Purim"]],["On which holiday do we sit in a sukkah?","Sukkot",["Pesach","Shavuot","Purim"]],["Which holiday celebrates receiving the Torah?","Shavuot",["Purim","Chanukah","Tisha B'Av"]],["How many nights do we light the menorah on Chanukah?","8",["7","9","5"]],["On which holiday do we read Megillat Esther?","Purim",["Pesach","Sukkot","Shavuot"]]],
+      tefillah:[["Which prayer declares that Hashem is One?","Shema",["Aleinu","Hallel","Kaddish"]],["When does Shabbat begin?","Friday at sunset",["Saturday morning","Sunday at sunset","Friday at noon"]],["When does Shabbat end?","Saturday night",["Friday night","Sunday morning","Saturday noon"]],["How many prayer services are there on a weekday?","3",["1","5","7"]],["What special bread is eaten on Shabbat?","Challah",["Matzah","Pita","Bagel"]],["The prayer said to end Shabbat is called?","Havdalah",["Kiddush","Shema","Hallel"]],["What do we light to welcome Shabbat?","Candles",["A bonfire","A lantern","Incense"]]],
+      mitzvot:[["How many mitzvot are there traditionally?","613",["10","100","365"]],["A boy becomes bar mitzvah at what age?","13",["12","10","18"]],["A girl becomes bat mitzvah at what age?","12",["13","10","16"]],["What is placed on the doorpost of a Jewish home?","Mezuzah",["Menorah","Dreidel","Shofar"]],["What is blown on Rosh Hashanah?","Shofar",["Trumpet","Drum","Bell"]],["Keeping kosher means not mixing meat with?","Milk (dairy)",["Fish","Bread","Vegetables"]],["What is worn on the head and arm at weekday morning prayers?","Tefillin",["Tzitzit only","A crown","A scarf"]]],
+    },
   };
   const DIFFS=[
     {key:"easy",name:"Easy",emoji:"🟢",desc:"Very easy — a warm up!",bg:"#22c55e",time:11000},
@@ -642,7 +717,7 @@ What is 6 x 7? : 42</div>
   function recordStudy(sec){progress.studySec+=sec;addXP(Math.floor(sec/60)*2);markDay();saveProg();}
 
   /* ---------- HOME ---------- */
-  const SCOLOR={math:"linear-gradient(135deg,#3b82f6,#1e40af)",science:"linear-gradient(135deg,#10b981,#047857)",geo:"linear-gradient(135deg,#06b6d4,#0e7490)",shapes:"linear-gradient(135deg,#8b5cf6,#6d28d9)",words:"linear-gradient(135deg,#a855f7,#7e22ce)",facts:"linear-gradient(135deg,#f43f5e,#be123c)",algebra:"linear-gradient(135deg,#6366f1,#4338ca)",geometry:"linear-gradient(135deg,#14b8a6,#0f766e)",biology:"linear-gradient(135deg,#22c55e,#15803d)",chemistry:"linear-gradient(135deg,#ec4899,#9d174d)",physics:"linear-gradient(135deg,#0ea5e9,#1e3a8a)",history:"linear-gradient(135deg,#d97706,#92400e)",literature:"linear-gradient(135deg,#a855f7,#6b21a8)",prealgebra:"linear-gradient(135deg,#818cf8,#4f46e5)",earthsci:"linear-gradient(135deg,#0ea5e9,#0e7490)",econ:"linear-gradient(135deg,#f59e0b,#b45309)",spanish:"linear-gradient(135deg,#ef4444,#b91c1c)",compsci:"linear-gradient(135deg,#64748b,#334155)"};
+  const SCOLOR={math:"linear-gradient(135deg,#3b82f6,#1e40af)",science:"linear-gradient(135deg,#10b981,#047857)",geo:"linear-gradient(135deg,#06b6d4,#0e7490)",shapes:"linear-gradient(135deg,#8b5cf6,#6d28d9)",words:"linear-gradient(135deg,#a855f7,#7e22ce)",facts:"linear-gradient(135deg,#f43f5e,#be123c)",algebra:"linear-gradient(135deg,#6366f1,#4338ca)",geometry:"linear-gradient(135deg,#14b8a6,#0f766e)",biology:"linear-gradient(135deg,#22c55e,#15803d)",chemistry:"linear-gradient(135deg,#ec4899,#9d174d)",physics:"linear-gradient(135deg,#0ea5e9,#1e3a8a)",history:"linear-gradient(135deg,#d97706,#92400e)",literature:"linear-gradient(135deg,#a855f7,#6b21a8)",prealgebra:"linear-gradient(135deg,#818cf8,#4f46e5)",earthsci:"linear-gradient(135deg,#0ea5e9,#0e7490)",econ:"linear-gradient(135deg,#f59e0b,#b45309)",spanish:"linear-gradient(135deg,#ef4444,#b91c1c)",compsci:"linear-gradient(135deg,#64748b,#334155)",jewish:"linear-gradient(135deg,#2563eb,#1e3a8a)"};
   function renderSubjects(){const body=$("subjectsBody");const groups=[["Elementary & up","core"],["Middle & high school","hs"]];
     body.innerHTML=groups.map(g=>{const list=SUBJECTS.filter(s=>s.lvl===g[1]);if(!list.length)return"";return '<div class="sechead">'+g[0]+'</div><div class="subjectgrid">'+list.map(s=>'<button class="subject" data-k="'+s.key+'"><span class="ic" style="background:'+(SCOLOR[s.key]||"#6366f1")+'">'+s.emoji+'</span><span class="meta"><span class="nm">'+s.name+'</span><span class="sub">'+Math.max(0,(TOPICS[s.key]||[]).length-1)+' topics</span></span><span class="chev">›</span></button>').join("")+'</div>';}).join("");
     [...body.querySelectorAll(".subject")].forEach(b=>{b.onclick=()=>openSubject(b.dataset.k);});}
@@ -670,36 +745,36 @@ What is 6 x 7? : 42</div>
   function coachCard(icon,title,msg,tone){const c=tone==="good"?"#22c55e":tone==="bad"?"#ef4444":"#f59e0b";return '<div class="panel" style="border-left:4px solid '+c+'"><b>'+icon+' '+esc(title)+'</b><p>'+esc(msg)+'</p></div>';}
   function runCoach(){
     const t=($("coachText").value||"").trim(),out=$("coachOut");
-    if(t.length<15){out.innerHTML=coachCard("✏️","Add a little more","Write or paste a bit more text so the coach has something to work with.","warn");return;}
+    if(t.length<15){out.innerHTML=coachCard("✏️","Too short","Too short to analyze. Write or paste more text.","warn");return;}
     const words=t.split(/\s+/).filter(Boolean),lower=t.toLowerCase();
     const sentences=t.split(/[.!?]+/).map(s=>s.trim()).filter(Boolean);
     const paras=t.split(/\n\s*\n/).map(p=>p.trim()).filter(Boolean);
     const first=sentences[0]||t,firstL=first.toLowerCase(),tips=[];
     const hedges=["maybe","might","kind of","sort of","i think","i feel","probably","perhaps","somewhat"];
     const vague=["good","bad","nice","stuff","things","a lot","interesting"];
-    if(/\?\s*$/.test(first))tips.push(["🎯","Thesis is a question","Your opening reads like a question. A thesis should state your claim as a sentence — decide your answer and assert it.","bad"]);
-    if(first.split(/\s+/).length<6)tips.push(["🎯","Thesis may be too short","Your first sentence is very short. A clear thesis usually needs enough words to state a specific, arguable point.","warn"]);
-    if(hedges.some(h=>firstL.indexOf(h)>=0))tips.push(["🎯","Weak thesis","Your claim hedges (words like 'maybe' or 'I think'). State it more directly and confidently — but the claim itself should be yours.","warn"]);
-    if(vague.some(v=>firstL.indexOf(v)>=0))tips.push(["🎯","Be more specific","Your opening uses vague words. What exactly are you arguing? Name the specific point.","warn"]);
-    if(paras.length<2&&words.length>90)tips.push(["🧱","Structure","This is one big block. Break it into paragraphs — introduction, body, conclusion — so each idea stands on its own.","warn"]);
+    if(/\?\s*$/.test(first))tips.push(["🎯","Weak thesis","Your thesis is a question. Make it a statement and assert your claim.","bad"]);
+    if(first.split(/\s+/).length<6)tips.push(["🎯","Weak thesis","Your thesis is too short. State a specific, arguable claim in a full sentence.","bad"]);
+    if(hedges.some(h=>firstL.indexOf(h)>=0))tips.push(["🎯","Weak thesis","Your thesis hedges (\"maybe\", \"I think\"). Cut the hedging and state it directly.","bad"]);
+    if(vague.some(v=>firstL.indexOf(v)>=0))tips.push(["🎯","Vague opening","Your opening is vague. Name the exact point you are arguing.","warn"]);
+    if(paras.length<2&&words.length>90)tips.push(["🧱","No structure","Break this into paragraphs: introduction, body, conclusion.","warn"]);
     const trans=["however","therefore","for example","in addition","furthermore","first","second","finally","on the other hand","as a result","although","meanwhile","in contrast"];
-    if(sentences.length>=4&&!trans.some(x=>lower.indexOf(x)>=0))tips.push(["🔗","Add transitions","I don't see transition words. Words like 'however', 'for example', or 'as a result' connect your ideas and guide the reader.","warn"]);
+    if(sentences.length>=4&&!trans.some(x=>lower.indexOf(x)>=0))tips.push(["🔗","No transitions","Add transitions. Use \"however\", \"for example\", or \"as a result\" to connect ideas.","warn"]);
     const starts={};sentences.forEach(s=>{const w0=(s.split(/\s+/)[0]||"").toLowerCase();if(w0)starts[w0]=(starts[w0]||0)+1;});
     let rep=null;for(const k in starts){if(starts[k]>=3&&sentences.length>=4){rep=k;break;}}
-    if(rep)tips.push(["🔀","Vary your sentences","Several sentences start with \""+rep+"\". Try beginning some sentences differently.","warn"]);
+    if(rep)tips.push(["🔀","Repetitive sentences","Too many sentences start with \""+rep+"\". Vary your sentence openings.","warn"]);
     const fillers=["very","really","just","actually","basically","literally"];let fill=0;fillers.forEach(f=>{const m=lower.match(new RegExp("\\b"+f+"\\b","g"));if(m)fill+=m.length;});
-    if(fill>=4)tips.push(["🧹","Trim filler words","You use filler words (very, really, just…) about "+fill+" times. Cutting some makes your writing punchier.","warn"]);
+    if(fill>=4)tips.push(["🧹","Too much filler","Cut filler words. You used \"very / really / just\" about "+fill+" times.","warn"]);
     const stop={the:1,a:1,an:1,and:1,or:1,but:1,to:1,of:1,in:1,on:1,is:1,are:1,was:1,were:1,it:1,that:1,this:1,for:1,with:1,as:1,be:1,by:1,i:1,you:1,they:1,we:1,my:1,your:1,have:1,has:1,not:1};
     const freq={};words.forEach(w=>{const c=w.toLowerCase().replace(/[^a-z]/g,"");if(c.length>3&&!stop[c])freq[c]=(freq[c]||0)+1;});
     let topW=null,topN=0;for(const k in freq){if(freq[k]>topN){topN=freq[k];topW=k;}}
-    if(topW&&topN>=4)tips.push(["🔁","Word repetition","You use \""+topW+"\" "+topN+" times. Swap in a synonym here and there to keep it fresh.","warn"]);
+    if(topW&&topN>=4)tips.push(["🔁","Overused word","You repeat \""+topW+"\" "+topN+" times. Replace some with synonyms.","warn"]);
     const miss={alot:"a lot",definately:"definitely",recieve:"receive",seperate:"separate",untill:"until",becuase:"because",wich:"which",thier:"their"};
     const found=[];for(const k in miss){if(new RegExp("\\b"+k+"\\b","i").test(t))found.push(k+" → "+miss[k]);}
-    if(found.length)tips.push(["🔤","Check spelling",found.join(", ")+".","warn"]);
-    if(paras.length>=2&&words.length>120&&!/(in conclusion|to conclude|in summary|overall|to sum up)/i.test(t))tips.push(["✅","Wrap it up","Consider a clear closing that restates your main point so the reader feels the piece is finished.","warn"]);
-    const good=[];if(trans.some(x=>lower.indexOf(x)>=0))good.push("you use transition words");if(paras.length>=3)good.push("you organized it into paragraphs");if(sentences.length>=5)good.push("you developed several sentences");if(!found.length&&t.length>60)good.push("no common spelling slips");
+    if(found.length)tips.push(["🔤","Spelling errors","Fix these: "+found.join(", ")+".","bad"]);
+    if(paras.length>=2&&words.length>120&&!/(in conclusion|to conclude|in summary|overall|to sum up)/i.test(t))tips.push(["✅","No conclusion","Add a conclusion. Restate your main point clearly.","warn"]);
+    const good=[];if(trans.some(x=>lower.indexOf(x)>=0))good.push("clear transitions");if(paras.length>=3)good.push("organized into paragraphs");if(sentences.length>=5)good.push("developed with several sentences");if(!found.length&&t.length>60)good.push("no spelling slips");
     let html='<p class="rnote">'+words.length+' words · '+sentences.length+' sentence'+(sentences.length===1?"":"s")+' · '+paras.length+' paragraph'+(paras.length===1?"":"s")+'</p>';
-    if(good.length)html+=coachCard("🌟","Nice work","Good things I noticed: "+good.join(", ")+".","good");
+    if(good.length)html+=coachCard("🌟","Strengths","Working: "+good.join(", ")+".","good");
     html+='<p class="rnote" style="margin-top:10px">Whole-piece feedback</p>';
     html+=tips.map(x=>coachCard(x[0],x[1],x[2],x[3])).join("");
     if(paras.length>1){
@@ -708,23 +783,71 @@ What is 6 x 7? : 42</div>
         const pw=p.split(/\s+/).filter(Boolean).length;
         const ps=p.split(/[.!?]+/).map(x=>x.trim()).filter(Boolean);
         const pl=p.toLowerCase(),n=[];
-        if(pw<15)n.push("Quite short — add a detail, reason, or example to develop it.");
-        if(ps.length<=1&&pw>=18)n.push("This is basically one long sentence — split it into clearer ones.");
+        if(pw<15)n.push("Too short. Add a detail, reason, or example.");
+        if(ps.length<=1&&pw>=18)n.push("One long sentence. Split it into shorter, clearer ones.");
         const hasEx=["for example","for instance","such as","because","this shows","this means","evidence"].some(x=>pl.indexOf(x)>=0);
-        if(i===0)n.push("As your introduction, open with a hook and end with a clear thesis (your main claim) — you write the claim, not me.");
-        else if(i===paras.length-1)n.push("As your conclusion, restate your main point in fresh words — don't add brand-new ideas here.");
-        else if(!hasEx)n.push("Back up this point with evidence or an example so it's convincing.");
-        if(!n.length)n.push("Clear and on topic. 👍");
+        if(i===0)n.push("Introduction: open with a hook, end with a clear thesis. You write the claim.");
+        else if(i===paras.length-1)n.push("Conclusion: restate your main point. Add no new ideas.");
+        else if(!hasEx)n.push("No support. Add evidence or an example.");
+        if(!n.length)n.push("Clear and on topic.");
         const label=i===0?"Introduction":(i===paras.length-1?"Conclusion":"Body paragraph "+i);
         const tone=(n.length===1&&n[0].indexOf("Clear and on topic")>=0)?"good":"warn";
         return coachCard("📄",label+" · "+pw+" words",n.join(" "),tone);
       }).join("");
     }
-    if(!tips.length&&paras.length<=1)html+=coachCard("✅","Looking strong","I didn't spot obvious issues. Read it aloud once more to check the flow — and remember, the ideas should be yours.","good");
-    html+='<p class="hint" style="margin-top:12px">Lumina Coach comments on every part to guide you. It keeps feedback constructive and classroom-appropriate — and never writes your work for you.</p>';
+    if(!tips.length&&paras.length<=1)html+=coachCard("✅","No major issues","No obvious problems. Read it aloud to check the flow.","good");
+    html+='<p class="hint" style="margin-top:12px">Lumina Coach tells you what is weak and what to add. It never writes your work for you.</p>';
     out.innerHTML=html;
   }
   $("coachGo").addEventListener("click",runCoach);
+
+  /* ---------- FLASHCARDS ---------- */
+  let decks=LS.get("sq_decks",[]),curDeck=null,dkImgData=null,flCards=[],flIdx=0,flShow="front";
+  function openDecks(){if(!pro){openPricing("Flashcards");return;}renderDecks();showScreen("screen-decks");}
+  window.openDecks=openDecks;
+  function renderDecks(){const w=$("decksList");if(!decks.length)w.innerHTML='<p class="muted">No flashcard decks yet.<br>Make one to memorize words, terms, or pictures! 🃏</p>';else w.innerHTML=decks.slice().reverse().map(d=>'<div class="panel"><h3>'+esc(d.name||"Untitled")+'</h3><p style="opacity:.7;font-size:13px">'+d.cards.length+' card'+(d.cards.length===1?"":"s")+'</p><div class="rowbtns"><button class="mini play" onclick="studyDeck('+d.id+')">▶ Study</button><button class="mini edit" onclick="editDeck('+d.id+')">✏️ Edit</button><button class="mini del" onclick="delDeck('+d.id+')">🗑️</button></div></div>').join("");$("deckNew").onclick=newDeck;}
+  function backDecks(){renderDecks();showScreen("screen-decks");}
+  function newDeck(){curDeck={id:Date.now(),name:"",cards:[]};dkImgData=null;$("dkName").value="";$("dkFront").value="";$("dkBack").value="";$("dkImg").value="";$("dkPreview").style.display="none";$("deBack").onclick=backDecks;renderDkCards();showScreen("screen-deckedit");}
+  function editDeck(id){curDeck=decks.find(d=>d.id===id);if(!curDeck)return;dkImgData=null;$("dkName").value=curDeck.name||"";$("dkFront").value="";$("dkBack").value="";$("dkImg").value="";$("dkPreview").style.display="none";$("deBack").onclick=backDecks;renderDkCards();showScreen("screen-deckedit");}
+  window.editDeck=editDeck;
+  function delDeck(id){if(confirm("Delete this deck?")){decks=decks.filter(d=>d.id!==id);LS.set("sq_decks",decks);renderDecks();}}
+  window.delDeck=delDeck;
+  function saveDeck(){curDeck.name=$("dkName").value.trim()||"Untitled";if(!decks.find(d=>d.id===curDeck.id))decks.push(curDeck);LS.set("sq_decks",decks);}
+  function renderDkCards(){const w=$("dkCards");if(!curDeck.cards.length){w.innerHTML='<p class="hint">No cards yet. Add a front and back above.</p>';return;}w.innerHTML=curDeck.cards.map((c,i)=>'<div class="panel" style="padding:10px 12px"><b>'+esc(c.front)+'</b><p style="margin:2px 0">'+esc(c.back)+(c.img?' 🖼️':'')+'</p><button class="mini del" onclick="delCard('+i+')">🗑️ Remove</button></div>').join("");}
+  window.delCard=i=>{curDeck.cards.splice(i,1);saveDeck();renderDkCards();};
+  $("dkImg").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;resizeImg(f,d=>{dkImgData=d;$("dkPreview").src=d;$("dkPreview").style.display="block";});});
+  $("dkAdd").addEventListener("click",()=>{const fr=$("dkFront").value.trim(),bk=$("dkBack").value.trim();if(!fr||!bk){alert("Fill in both the front and the back.");return;}curDeck.cards.push({front:fr,back:bk,img:dkImgData||null});dkImgData=null;$("dkFront").value="";$("dkBack").value="";$("dkImg").value="";$("dkPreview").style.display="none";saveDeck();renderDkCards();});
+  $("dkStudy").addEventListener("click",()=>{saveDeck();studyDeck(curDeck.id);});
+  function studyDeck(id){const d=decks.find(x=>x.id===id);if(!d||!d.cards.length){alert("Add at least one card first.");return;}flCards=d.cards.slice();flIdx=0;flShow="front";$("flTitle").textContent="🃏 "+(d.name||"Deck");$("flBack").onclick=backDecks;renderFlash();showScreen("screen-flash");}
+  window.studyDeck=studyDeck;
+  function renderFlash(){const c=flCards[flIdx],side=flShow==="front"?"Front":"Back",txt=flShow==="front"?c.front:c.back;$("flCard").innerHTML='<div><div class="fside">'+side+'</div>'+(c.img?'<img src="'+c.img+'">':'')+'<div>'+esc(txt)+'</div></div>';$("flHint").textContent="Card "+(flIdx+1)+" / "+flCards.length+" — tap to flip";}
+  $("flCard").addEventListener("click",()=>{flShow=flShow==="front"?"back":"front";renderFlash();});
+  $("flPrev").addEventListener("click",()=>{flIdx=(flIdx-1+flCards.length)%flCards.length;flShow="front";renderFlash();});
+  $("flNext").addEventListener("click",()=>{flIdx=(flIdx+1)%flCards.length;flShow="front";renderFlash();});
+  $("flShuffle").addEventListener("click",()=>{flCards=shuffle(flCards);flIdx=0;flShow="front";renderFlash();snd("correct");});
+
+  /* ---------- MAKE A GAME (custom question sets) ---------- */
+  let sets=LS.get("sq_sets",[]),curSet=null;
+  function openSets(){if(!pro){openPricing("Make a Game");return;}renderSets();showScreen("screen-sets");}
+  window.openSets=openSets;
+  function renderSets(){const w=$("setsList");if(!sets.length)w.innerHTML='<p class="muted">No games yet.<br>Write your own questions, pick right &amp; wrong, then play! 🎯</p>';else w.innerHTML=sets.slice().reverse().map(s=>'<div class="panel"><h3>'+esc(s.name||"Untitled")+'</h3><p style="opacity:.7;font-size:13px">'+s.qs.length+' question'+(s.qs.length===1?"":"s")+'</p><div class="rowbtns"><button class="mini play" onclick="playSet('+s.id+')">🎮 Play</button><button class="mini quiz" onclick="quizSet('+s.id+')">📝 Quiz</button><button class="mini edit" onclick="editSet('+s.id+')">✏️ Edit</button><button class="mini del" onclick="delSet('+s.id+')">🗑️</button></div></div>').join("");$("setNew").onclick=newSet;}
+  function backSets(){renderSets();showScreen("screen-sets");}
+  const STF=["stQ","stC","stW1","stW2","stW3"];
+  function newSet(){curSet={id:Date.now(),name:"",qs:[]};$("stName").value="";STF.forEach(id=>$(id).value="");$("seBack").onclick=backSets;renderStList();showScreen("screen-setedit");}
+  function editSet(id){curSet=sets.find(s=>s.id===id);if(!curSet)return;$("stName").value=curSet.name||"";STF.forEach(id=>$(id).value="");$("seBack").onclick=backSets;renderStList();showScreen("screen-setedit");}
+  window.editSet=editSet;
+  function delSet(id){if(confirm("Delete this game?")){sets=sets.filter(s=>s.id!==id);LS.set("sq_sets",sets);renderSets();}}
+  window.delSet=delSet;
+  function saveSet(){curSet.name=$("stName").value.trim()||"My Game";if(!sets.find(s=>s.id===curSet.id))sets.push(curSet);LS.set("sq_sets",sets);}
+  function renderStList(){const w=$("stList");if(!curSet.qs.length){w.innerHTML='<p class="hint">No questions yet. Add one above.</p>';return;}w.innerHTML=curSet.qs.map((q,i)=>'<div class="panel" style="padding:10px 12px"><b>'+esc(q.q)+'</b><p style="margin:2px 0">✅ '+esc(q.correct)+'</p><button class="mini del" onclick="delSetQ('+i+')">🗑️ Remove</button></div>').join("");}
+  window.delSetQ=i=>{curSet.qs.splice(i,1);saveSet();renderStList();};
+  $("stAdd").addEventListener("click",()=>{const q=$("stQ").value.trim(),c=$("stC").value.trim(),wr=[$("stW1").value.trim(),$("stW2").value.trim(),$("stW3").value.trim()].filter(Boolean);if(!q||!c||wr.length<1){alert("Add a question, the correct answer, and at least one wrong answer.");return;}curSet.qs.push({q,correct:c,wrong:wr});STF.forEach(id=>$(id).value="");saveSet();renderStList();});
+  $("stPlay").addEventListener("click",()=>{saveSet();playSet(curSet.id);});
+  $("stQuiz").addEventListener("click",()=>{saveSet();quizSet(curSet.id);});
+  function playSet(id){const s=sets.find(x=>x.id===id);if(!s||!s.qs.length){alert("Add at least one question first.");return;}if(!canStartGame())return;const raws=s.qs.map(q=>[q.q,q.correct,q.wrong]);runGame(()=>normalize((s.name||"GAME").toUpperCase(),raws[rand(raws.length)]),s.name,7000,()=>openSets(),()=>playSet(id),selRound);}
+  window.playSet=playSet;
+  function quizSet(id){const s=sets.find(x=>x.id===id);if(!s||!s.qs.length){alert("Add at least one question first.");return;}const norm=()=>s.qs.map(q=>normalize((s.name||"GAME").toUpperCase(),[q.q,q.correct,q.wrong]));let items=shuffle(norm());while(items.length<selQLen&&s.qs.length)items=items.concat(norm());items=items.slice(0,selQLen);runQuiz(items,s.name,null,()=>quizSet(id),()=>openSets());}
+  window.quizSet=quizSet;
   function renderHeader(){const b=$("proBadge");if(b)b.style.display=pro?"inline-block":"none";}
   function gamesLeft(){return Math.max(0,FREE_GAMES-(progress.gamesStarted||0));}
   function canStartGame(){if(pro)return true;if((progress.gamesStarted||0)>=FREE_GAMES){openPricing("Unlimited games");return false;}return true;}
