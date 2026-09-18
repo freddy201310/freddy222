@@ -208,11 +208,22 @@
       <div class="sechead">Get started</div>
       <div class="toolgrid">
         <button class="tile" onclick="showSubjects()"><span class="ic">📚</span><span class="tx"><span class="tt">Subjects</span><span class="ts">Quiz, play &amp; practice</span></span></button>
+        <button class="tile" onclick="startDaily()"><span class="ic">📅</span><span class="tx"><span class="tt">Daily Challenge</span><span class="ts">10 mixed questions today</span></span></button>
         <button class="tile" onclick="showTools()"><span class="ic">🧰</span><span class="tx"><span class="tt">Study Tools</span><span class="ts">Builder, guides &amp; timer</span></span></button>
+        <button class="tile" onclick="openAchievements()"><span class="ic">🏅</span><span class="tx"><span class="tt">Achievements</span><span class="ts">Badges you've earned</span></span></button>
         <button class="tile" onclick="openPricing('')"><span class="ic">⭐</span><span class="tx"><span class="tt">Plans</span><span class="ts">Free, Pro &amp; schools</span></span></button>
         <button class="tile" onclick="openTeacher()"><span class="ic">🧑‍🏫</span><span class="tx"><span class="tt">Teacher Zone</span><span class="ts">Track progress</span></span></button>
       </div>
       </div>
+    </div>
+  </section>
+
+  <!-- ACHIEVEMENTS -->
+  <section id="screen-achievements" class="screen">
+    <div class="bar"><button class="back" onclick="showScreen('screen-home')">← Home</button><div class="bartitle">🏅 Achievements</div></div>
+    <div class="scroll">
+      <p class="hint">Badges unlock as you study. Keep going to light them all up!</p>
+      <div id="achWrap"></div>
     </div>
   </section>
 
@@ -226,6 +237,7 @@
   <section id="screen-tools" class="screen">
     <div class="bar"><button class="back" onclick="showScreen('screen-home')">← Home</button><div class="bartitle">Study Tools</div></div>
     <div class="scroll"><div class="toolgrid">
+      <button class="tile" onclick="openAssistant()"><span class="ic">🤖</span><span class="tx"><span class="tt">AI Assistant<span class="lock"> 🔒</span></span><span class="ts">Ask about any topic or Lumina</span></span></button>
       <button class="tile" onclick="openBuilder()"><span class="ic">🪄</span><span class="tx"><span class="tt">Game Builder<span class="lock"> 🔒</span></span><span class="ts">Turn a lesson into a game</span></span></button>
       <button class="tile" onclick="openTimer()"><span class="ic">⏱️</span><span class="tx"><span class="tt">Study Timer</span><span class="ts">Focused study sessions</span></span></button>
       <button class="tile" onclick="openAllGuides()"><span class="ic">📒</span><span class="tx"><span class="tt">Study Guides<span class="lock"> 🔒</span></span><span class="ts">All your notes</span></span></button>
@@ -245,6 +257,20 @@
       <textarea id="coachText" placeholder="Paste your essay, paragraph, or thesis here…"></textarea>
       <button class="btn" id="coachGo">Coach me ✍️</button>
       <div id="coachOut" class="results" style="margin-top:14px"></div>
+    </div>
+  </section>
+
+  <!-- AI ASSISTANT -->
+  <section id="screen-assistant" class="screen">
+    <div class="bar"><button class="back" onclick="showScreen('screen-tools')">← Tools</button><div class="bartitle">🤖 AI Assistant</div></div>
+    <div class="scroll">
+      <p class="hint">Ask a study question about any subject on Lumina, or ask how the app works (plans, timer, flashcards, and more). It explains and points you to practice — it won't do graded work for you.</p>
+      <div id="asChat" class="results"></div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <input id="asInput" type="text" placeholder="e.g. What is photosynthesis? or How do I start a trial?" style="flex:1">
+        <button class="btn" style="width:auto" id="asSend">Ask</button>
+      </div>
+      <div id="asChips" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px"></div>
     </div>
   </section>
 
@@ -466,7 +492,6 @@ What is 6 x 7? : 42</div>
     {key:"prealgebra",name:"Pre-Algebra",emoji:"🔢",lvl:"hs"},{key:"earthsci",name:"Earth Science",emoji:"🌎",lvl:"hs"},
     {key:"econ",name:"Economics",emoji:"💰",lvl:"hs"},{key:"spanish",name:"Spanish",emoji:"🇪🇸",lvl:"hs"},
     {key:"compsci",name:"Computer Science",emoji:"💻",lvl:"hs"},
-    {key:"jewish",name:"Jewish Studies",emoji:"✡️",lvl:"hs"},
   ];
   const SUBJ=Object.fromEntries(SUBJECTS.map(s=>[s.key,s]));
   const TOPICS={
@@ -476,19 +501,18 @@ What is 6 x 7? : 42</div>
     shapes:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"sides",name:"Sides & Corners",emoji:"🔷"},{key:"3d",name:"3D Shapes",emoji:"🧊"},{key:"angles",name:"Angles",emoji:"📐"},{key:"polygons",name:"Polygons",emoji:"🔶"},{key:"quad",name:"Quadrilaterals",emoji:"▭"},{key:"lines",name:"Lines",emoji:"📏"},{key:"symmetry",name:"Symmetry",emoji:"🦋"},{key:"circleparts",name:"Parts of a Circle",emoji:"⭕"}],
     words:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"commas",name:"Commas",emoji:"✒️"},{key:"synonyms",name:"Synonyms",emoji:"🟰"},{key:"antonyms",name:"Antonyms",emoji:"↔️"},{key:"plurals",name:"Plurals",emoji:"🔁"},{key:"spelling",name:"Spelling",emoji:"🔤"},{key:"nouns",name:"Nouns",emoji:"🏷️"},{key:"verbs",name:"Verbs",emoji:"🏃"},{key:"adjectives",name:"Adjectives",emoji:"🎨"},{key:"capitals2",name:"Capitalization",emoji:"🔠"},{key:"prefixes",name:"Prefixes",emoji:"⬅️"},{key:"suffixes",name:"Suffixes",emoji:"➡️"},{key:"homophones",name:"Homophones",emoji:"👂"},{key:"contractions",name:"Contractions",emoji:"✂️"},{key:"apostrophes",name:"Apostrophes",emoji:"❜"},{key:"sentences",name:"Sentence Types",emoji:"📝"}],
     facts:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"time",name:"Time",emoji:"⏰"},{key:"colors",name:"Colors",emoji:"🎨"},{key:"numbers",name:"Numbers",emoji:"🔢"},{key:"holidays",name:"Holidays",emoji:"🎉"},{key:"sports",name:"Sports",emoji:"⚽"},{key:"food",name:"Food",emoji:"🍎"},{key:"music",name:"Music",emoji:"🎵"},{key:"history",name:"History",emoji:"🏺"},{key:"records",name:"World Records",emoji:"🏆"}],
-    algebra:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"orderops",name:"Order of Operations",emoji:"🔢"},{key:"integers",name:"Integers",emoji:"➖"},{key:"solving",name:"Solving Equations",emoji:"⚖️"},{key:"exponents",name:"Exponents",emoji:"²"}],
-    geometry:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"anglesg",name:"Angles",emoji:"📐"},{key:"triangles",name:"Triangles",emoji:"🔺"},{key:"pythag",name:"Pythagorean Theorem",emoji:"📏"},{key:"areavol",name:"Area & Volume",emoji:"🧊"}],
-    biology:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"cells",name:"Cells",emoji:"🔬"},{key:"genetics",name:"Genetics",emoji:"🧬"},{key:"ecology",name:"Ecology",emoji:"🌳"},{key:"bodysys",name:"Body Systems",emoji:"🫁"}],
-    chemistry:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"atoms",name:"Atoms",emoji:"⚛️"},{key:"periodic",name:"Periodic Table",emoji:"🧪"},{key:"bonding",name:"Bonds & Molecules",emoji:"💠"},{key:"reactions",name:"Reactions",emoji:"🔥"}],
-    physics:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"motion",name:"Motion",emoji:"🏃"},{key:"forces",name:"Forces",emoji:"🧲"},{key:"penergy",name:"Energy & Work",emoji:"⚡"},{key:"waves",name:"Waves & Electricity",emoji:"📡"}],
-    history:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"ancient",name:"Ancient",emoji:"🏺"},{key:"medieval",name:"Medieval",emoji:"🏰"},{key:"earlyus",name:"Early America",emoji:"🦅"},{key:"modern",name:"Modern World",emoji:"🌐"}],
-    literature:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"terms",name:"Literary Terms",emoji:"📖"},{key:"figurative",name:"Figurative Language",emoji:"🎭"},{key:"grammar",name:"Grammar",emoji:"✏️"},{key:"genres",name:"Genres",emoji:"📚"}],
+    algebra:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"orderops",name:"Order of Operations",emoji:"🔢"},{key:"integers",name:"Integers",emoji:"➖"},{key:"solving",name:"One-Step Equations",emoji:"⚖️"},{key:"linear",name:"Two-Step Equations",emoji:"🟰"},{key:"exponents",name:"Exponents",emoji:"²"},{key:"polynomials",name:"Combining Like Terms",emoji:"➕"},{key:"factoring",name:"Factoring",emoji:"✳️"},{key:"quadratics",name:"Quadratics",emoji:"📈"},{key:"inequalities",name:"Inequalities",emoji:"⟨"},{key:"slope",name:"Slope & Lines",emoji:"📉"},{key:"functions",name:"Functions",emoji:"ƒ"},{key:"systems",name:"Systems",emoji:"🔗"}],
+    geometry:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"anglesg",name:"Angles",emoji:"📐"},{key:"triangles",name:"Triangles",emoji:"🔺"},{key:"pythag",name:"Pythagorean Theorem",emoji:"📏"},{key:"areavol",name:"Area & Volume",emoji:"🧊"},{key:"perimeter",name:"Perimeter & Circumference",emoji:"⭕"},{key:"circlesg",name:"Circles",emoji:"🟠"},{key:"coordgeo",name:"Coordinate Plane",emoji:"📊"},{key:"transform",name:"Transformations",emoji:"🔄"}],
+    biology:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"cells",name:"Cells",emoji:"🔬"},{key:"genetics",name:"Genetics",emoji:"🧬"},{key:"ecology",name:"Ecology",emoji:"🌳"},{key:"bodysys",name:"Body Systems",emoji:"🫁"},{key:"photosyn",name:"Photosynthesis",emoji:"🌿"},{key:"evolution",name:"Evolution",emoji:"🦖"},{key:"classify",name:"Classification",emoji:"🐾"},{key:"microbes",name:"Microbes",emoji:"🦠"}],
+    chemistry:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"atoms",name:"Atoms",emoji:"⚛️"},{key:"periodic",name:"Periodic Table",emoji:"🧪"},{key:"bonding",name:"Bonds & Molecules",emoji:"💠"},{key:"reactions",name:"Reactions",emoji:"🔥"},{key:"statesc",name:"States of Matter",emoji:"💧"},{key:"acids",name:"Acids & Bases",emoji:"🧫"},{key:"mixtures",name:"Mixtures & Solutions",emoji:"🥤"},{key:"compounds",name:"Common Compounds",emoji:"🧴"}],
+    physics:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"motion",name:"Motion",emoji:"🏃"},{key:"forces",name:"Forces",emoji:"🧲"},{key:"penergy",name:"Energy & Work",emoji:"⚡"},{key:"waves",name:"Waves & Electricity",emoji:"📡"},{key:"gravity",name:"Gravity",emoji:"🌍"},{key:"light",name:"Light & Optics",emoji:"💡"},{key:"heat",name:"Heat & Temperature",emoji:"🌡️"},{key:"sound",name:"Sound",emoji:"🔊"}],
+    history:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"ancient",name:"Ancient",emoji:"🏺"},{key:"medieval",name:"Medieval",emoji:"🏰"},{key:"earlyus",name:"Early America",emoji:"🦅"},{key:"modern",name:"Modern World",emoji:"🌐"},{key:"explorers",name:"Age of Exploration",emoji:"⛵"},{key:"revolutions",name:"Revolutions",emoji:"⚔️"},{key:"worldwars",name:"World Wars",emoji:"🎖️"},{key:"civilrights",name:"Civil Rights",emoji:"✊"}],
+    literature:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"terms",name:"Literary Terms",emoji:"📖"},{key:"figurative",name:"Figurative Language",emoji:"🎭"},{key:"grammar",name:"Grammar",emoji:"✏️"},{key:"genres",name:"Genres",emoji:"📚"},{key:"poetry",name:"Poetry",emoji:"🖋️"},{key:"plot",name:"Story Elements",emoji:"📜"},{key:"punctuation",name:"Punctuation",emoji:"❔"},{key:"partsofspeech",name:"Parts of Speech",emoji:"🔤"}],
     prealgebra:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"fractions",name:"Fractions",emoji:"½"},{key:"decimals",name:"Decimals",emoji:"."},{key:"percents",name:"Percents",emoji:"%"},{key:"ratios",name:"Ratios",emoji:"➗"},{key:"pinteg",name:"Integers",emoji:"➖"},{key:"pexp",name:"Exponents",emoji:"²"},{key:"porder",name:"Order of Operations",emoji:"🔢"},{key:"pwordprob",name:"Word Problems",emoji:"❓"}],
     earthsci:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"rocks",name:"Rocks & Minerals",emoji:"🪨"},{key:"watercycle",name:"Water Cycle",emoji:"💧"},{key:"atmosphere",name:"Atmosphere",emoji:"🌫️"},{key:"astronomy",name:"Astronomy",emoji:"🔭"}],
     econ:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"basics",name:"Basics",emoji:"📈"},{key:"money",name:"Money",emoji:"💵"},{key:"trade",name:"Trade",emoji:"🚢"},{key:"finance",name:"Personal Finance",emoji:"🏦"}],
     spanish:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"greetings",name:"Greetings",emoji:"👋"},{key:"numbers",name:"Numbers",emoji:"🔢"},{key:"colors",name:"Colors",emoji:"🎨"},{key:"words",name:"Common Words",emoji:"🗣️"}],
     compsci:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"basics",name:"Computer Basics",emoji:"🖥️"},{key:"internet",name:"Internet",emoji:"🌐"},{key:"coding",name:"Coding",emoji:"⌨️"},{key:"binary",name:"Binary",emoji:"🔟"}],
-    jewish:[{key:"all",name:"Mixed",emoji:"🎲"},{key:"torah",name:"Torah (Chumash)",emoji:"📜"},{key:"hebrew",name:"Hebrew Alphabet",emoji:"🔠"},{key:"chagim",name:"Holidays (Chagim)",emoji:"🕎"},{key:"tefillah",name:"Prayer & Shabbat",emoji:"🕯️"},{key:"mitzvot",name:"Mitzvot & Values",emoji:"✡️"}],
   };
   const TOPICBANK={
     science:{
@@ -555,44 +579,76 @@ What is 6 x 7? : 42</div>
     algebra:{
       orderops:[["What is 2 + 3 × 4?","14",["20","24","9"]],["Solve: (5 + 3) × 2","16",["13","26","11"]],["What is 10 − 2 × 3?","4",["24","8","18"]],["In PEMDAS, what comes first?","Parentheses",["Exponents","Multiplication","Addition"]],["What is 6 + 6 ÷ 2?","9",["6","12","3"]]],
       integers:[["What is −5 + 3?","−2",["−8","2","8"]],["What is −4 × −2?","8",["−8","−6","6"]],["What is 7 − (−2)?","9",["5","−9","−5"]],["Which is greater: −3 or −7?","−3",["−7","they are equal","cannot tell"]],["What is −6 ÷ 3?","−2",["2","−3","3"]]],
-      solving:[["Solve for x: x + 5 = 12","7",["17","5","60"]],["Solve for x: 3x = 12","4",["36","9","15"]],["Solve for x: x − 4 = 10","14",["6","40","−6"]],["Solve for x: x ÷ 2 = 6","12",["3","8","4"]],["Solve for x: 2x + 1 = 9","4",["5","3","10"]]],
-      exponents:[["What is 2³?","8",["6","9","23"]],["What is 5²?","25",["10","7","52"]],["What is 10⁴?","10000",["1000","100","40"]],["Any number to the power of 0 equals?","1",["0","the number","10"]],["What is 3² × 3²?","81",["9","27","18"]]],
+      solving:[["Solve for x: x + 5 = 12","7",["17","5","60"]],["Solve for x: 3x = 12","4",["36","9","15"]],["Solve for x: x − 4 = 10","14",["6","40","−6"]],["Solve for x: x ÷ 2 = 6","12",["3","8","4"]],["Solve for x: 6x = 30","5",["180","24","6"]]],
+      exponents:[["What is 2³?","8",["6","9","23"]],["What is 5²?","25",["10","7","52"]],["What is 10⁴?","10000",["1000","100","40"]],["Any number to the power of 0 equals?","1",["0","the number","10"]],["What is 3² × 3²?","81",["9","27","18"]],["What is 4⁰ + 5⁰?","2",["0","9","1"]],["Simplify: x² · x³","x⁵",["x⁶","x⁵/⁶","x¹"]]],
+      linear:[["Solve for x: 2x + 3 = 11","4",["7","5","8"]],["Solve for x: 3x − 5 = 10","5",["15","3","45"]],["Solve for x: 4x + 8 = 0","−2",["2","8","−8"]],["Solve for x: 5x − 2 = 3x + 8","5",["3","10","1"]],["Distribute: 3(x + 4)","3x + 12",["3x + 4","x + 12","3x + 7"]],["Solve for x: (x ÷ 2) + 4 = 9","10",["2.5","26","5"]]],
+      polynomials:[["Combine: 3x + 5x","8x",["15x","8","8x²"]],["Combine: 7a − 2a + a","6a",["5a","4a","6"]],["Simplify: 2x + 3 + 4x","6x + 3",["9x","6x + 7","2x + 7"]],["The degree of 4x³ is?","3",["4","12","1"]],["Can 5x and 2y be combined?","No — unlike terms",["Yes: 7xy","Yes: 7","Yes: 10x"]],["Multiply: x · x","x²",["2x","x","1"]]],
+      factoring:[["Factor: x² + 5x","x(x + 5)",["x²(5)","5x²","(x + 5)"]],["GCF of 6x and 9x²","3x",["3","x","6x"]],["Factor: x² − 9","(x + 3)(x − 3)",["(x − 9)(x + 1)","(x − 3)²","(x + 3)²"]],["Factor: x² + 6x + 9","(x + 3)²",["(x + 9)(x + 1)","(x − 3)²","(x + 6)"]],["Factor out: 4x + 8","4(x + 2)",["4(x + 8)","2(2x + 8)","4x + 2"]]],
+      quadratics:[["Standard form of a quadratic is?","ax² + bx + c",["mx + b","ax + b","a ÷ x"]],["The graph of a quadratic is a?","Parabola",["Line","Circle","Hyperbola"]],["Solve: x² = 16","x = ±4",["4 only","8","±8"]],["How many real solutions can a quadratic have?","Up to 2",["Exactly 1","Up to 3","Always 4"]],["(x − 1)(x + 3) = 0. One root is 1, the other is?","−3",["3","−1","2"]],["The discriminant is?","b² − 4ac",["b² + 4ac","2a","−b ÷ 2a"]]],
+      inequalities:[["Solve: x + 3 > 7","x > 4",["x < 4","x > 10","x > 21"]],["Dividing an inequality by a negative means you must?","Flip the sign",["Keep the sign","Add 1","Square it"]],["Solve: 2x < 10","x < 5",["x < 20","x > 5","x < 8"]],["Which value satisfies x ≥ 3?","3",["2","1","0"]],["Solve: x − 5 ≤ 1","x ≤ 6",["x ≤ −4","x ≥ 6","x ≤ 4"]]],
+      slope:[["In y = mx + b, m is the?","Slope",["y-intercept","x-value","constant"]],["In y = mx + b, b is the?","y-intercept",["Slope","x-intercept","origin"]],["A horizontal line has slope?","0",["1","Undefined","−1"]],["A vertical line has slope?","Undefined",["0","1","−1"]],["Slope through (0,0) and (2,4)?","2",["½","4","8"]],["The slope formula is?","(y₂ − y₁) ÷ (x₂ − x₁)",["(x₂ − x₁) ÷ (y₂ − y₁)","y = mx + b","rise + run"]]],
+      functions:[["If f(x) = 2x + 1, then f(3) =","7",["6","5","9"]],["If f(x) = x², then f(4) =","16",["8","4","12"]],["A function gives each input how many outputs?","Exactly one",["Two","Many","Zero"]],["The set of all inputs is the?","Domain",["Range","Slope","Origin"]],["The set of all outputs is the?","Range",["Domain","Slope","Vertex"]],["If f(x) = x − 5, then f(10) =","5",["15","−5","2"]]],
+      systems:[["A system is solved when values make?","Both equations true",["One equation true","x = 0","the graph blue"]],["Two lines that cross once have how many solutions?","One",["Zero","Two","Infinite"]],["Parallel lines in a system have how many solutions?","Zero",["One","Two","Infinite"]],["The point where two lines meet is the?","Solution",["Slope","Intercept only","Domain"]],["Solve: x + y = 5 and x − y = 1","x = 3, y = 2",["x = 2, y = 3","x = 4, y = 1","x = 1, y = 4"]]],
     },
     geometry:{
       anglesg:[["Angles on a straight line add up to?","180°",["90°","360°","270°"]],["Two angles that add to 90° are?","Complementary",["Supplementary","Vertical","Right"]],["Two angles that add to 180° are?","Supplementary",["Complementary","Acute","Obtuse"]],["A full circle has how many degrees?","360°",["180°","90°","270°"]],["An angle of exactly 90° is a?","Right angle",["Acute angle","Obtuse angle","Straight angle"]]],
       triangles:[["A triangle with all equal sides is?","Equilateral",["Isosceles","Scalene","Right"]],["A triangle with a 90° angle is a?","Right triangle",["Equilateral","Acute","Obtuse"]],["Angles in a triangle add up to?","180°",["90°","360°","270°"]],["A triangle with two equal sides is?","Isosceles",["Scalene","Equilateral","Right"]],["A triangle with no equal sides is?","Scalene",["Isosceles","Equilateral","Right"]]],
       pythag:[["In a² + b² = c², c is the?","Hypotenuse",["Leg","Base","Height"]],["If the legs are 3 and 4, the hypotenuse is?","5",["7","6","12"]],["If the legs are 6 and 8, the hypotenuse is?","10",["14","12","48"]],["The Pythagorean theorem works only for which triangle?","Right",["Equilateral","Obtuse","Acute"]],["If a = 5 and b = 12, then c =?","13",["17","60","7"]]],
       areavol:[["Area of a rectangle = length × ?","width",["height","2","side"]],["Area of a triangle = ½ × base × ?","height",["width","side","2"]],["Volume of a cube with side 3 =?","27",["9","6","18"]],["Area of a square with side 5 =?","25",["10","20","55"]],["The distance around a circle is the?","Circumference",["Area","Radius","Diameter"]]],
+      perimeter:[["Perimeter of a square with side 4?","16",["8","12","20"]],["Perimeter of a rectangle 5 by 3?","16",["15","8","30"]],["Circumference = 2 × π × ?","radius",["diameter","area","side"]],["Using π ≈ 3.14, circumference of a circle with radius 10?","62.8",["31.4","314","6.28"]],["Perimeter of an equilateral triangle with side 6?","18",["12","24","36"]]],
+      circlesg:[["A line from the center to the edge of a circle is the?","Radius",["Diameter","Chord","Arc"]],["A line across a circle through the center is the?","Diameter",["Radius","Arc","Tangent"]],["The diameter is how many times the radius?","2",["3","½","4"]],["Area of a circle = π × ?","radius²",["diameter","radius","2 × radius"]],["A part of a circle's edge is an?","Arc",["Angle","Axis","Apex"]]],
+      coordgeo:[["The point (0, 0) is called the?","Origin",["Vertex","Midpoint","Slope"]],["In (x, y), which comes first?","x",["y","z","origin"]],["The horizontal axis is the?","x-axis",["y-axis","z-axis","number line"]],["Point (3, 4) is in which quadrant?","Quadrant I",["Quadrant II","Quadrant III","Quadrant IV"]],["The vertical axis is the?","y-axis",["x-axis","origin","diagonal"]]],
+      transform:[["Sliding a shape without turning it is a?","Translation",["Rotation","Reflection","Dilation"]],["Flipping a shape over a line is a?","Reflection",["Rotation","Translation","Dilation"]],["Turning a shape around a point is a?","Rotation",["Reflection","Translation","Dilation"]],["Resizing a shape bigger or smaller is a?","Dilation",["Rotation","Reflection","Translation"]],["Which transformation changes a shape's size?","Dilation",["Translation","Rotation","Reflection"]]],
     },
     biology:{
       cells:[["The basic unit of life is the?","Cell",["Atom","Organ","Tissue"]],["The 'powerhouse of the cell' is the?","Mitochondria",["Nucleus","Ribosome","Membrane"]],["The part that controls the cell is the?","Nucleus",["Membrane","Cytoplasm","Wall"]],["Plant cells have a cell wall and?","Chloroplasts",["Lungs","Bones","Fins"]],["Cells that carry oxygen in blood are?","Red blood cells",["White blood cells","Nerve cells","Skin cells"]]],
       genetics:[["DNA carries the body's?","Genetic information",["Energy","Water","Oxygen"]],["Units of heredity are called?","Genes",["Cells","Atoms","Organs"]],["How many chromosomes do humans have?","46",["23","48","12"]],["A trait passed from parents is?","Inherited",["Learned","Random","Chosen"]],["DNA is shaped like a?","Double helix",["Circle","Square","Line"]]],
       ecology:[["An organism that makes its own food is a?","Producer",["Consumer","Decomposer","Predator"]],["A diagram showing who eats whom is a food?","Chain",["Cycle","Map","List"]],["Decomposers mainly?","Break down dead matter",["Make food","Hunt prey","Produce oxygen"]],["Living things in an area plus their environment form an?","Ecosystem",["Atom","Organ","Cell"]],["Animals that eat both plants and meat are?","Omnivores",["Herbivores","Carnivores","Producers"]]],
       bodysys:[["The system that pumps blood is the?","Circulatory system",["Digestive system","Nervous system","Skeletal system"]],["The system with bones is the?","Skeletal system",["Muscular system","Nervous system","Digestive system"]],["The brain and nerves form the?","Nervous system",["Circulatory system","Respiratory system","Skeletal system"]],["The lungs are part of the?","Respiratory system",["Digestive system","Skeletal system","Nervous system"]],["The stomach is part of the?","Digestive system",["Respiratory system","Circulatory system","Nervous system"]]],
+      photosyn:[["Plants make food using sunlight in a process called?","Photosynthesis",["Respiration","Digestion","Evaporation"]],["Which gas do plants take in for photosynthesis?","Carbon dioxide",["Oxygen","Nitrogen","Helium"]],["Which gas do plants release?","Oxygen",["Carbon dioxide","Hydrogen","Methane"]],["The green pigment that captures light is?","Chlorophyll",["Hemoglobin","Keratin","Melanin"]],["Photosynthesis mainly happens in the plant's?","Leaves",["Roots","Flowers","Bark"]]],
+      evolution:[["Change in species over long time is?","Evolution",["Erosion","Digestion","Rotation"]],["Who proposed natural selection?","Charles Darwin",["Isaac Newton","Albert Einstein","Louis Pasteur"]],["'Survival of the fittest' relates to?","Natural selection",["Gravity","Photosynthesis","Combustion"]],["Preserved remains of ancient life are?","Fossils",["Minerals","Cells","Genes"]],["A feature that helps survival is an?","Adaptation",["Extinction","Reaction","Reflex"]]],
+      classify:[["The broadest group in classification is the?","Kingdom",["Species","Genus","Family"]],["Humans belong to which kingdom?","Animalia",["Plantae","Fungi","Bacteria"]],["A scientific name uses genus and?","Species",["Family","Order","Class"]],["Animals with a backbone are?","Vertebrates",["Invertebrates","Mammals only","Insects"]],["Warm-blooded animals with fur that feed milk are?","Mammals",["Reptiles","Birds","Fish"]]],
+      microbes:[["Single-celled organisms without a nucleus are?","Bacteria",["Mammals","Insects","Fungi"]],["A microbe smaller than bacteria that needs a host is a?","Virus",["Cell","Fungus","Protist"]],["Helpful bacteria in yogurt aid?","Digestion",["Vision","Hearing","Breathing"]],["Tiny living things seen only with a microscope are?","Microorganisms",["Planets","Minerals","Molecules"]],["Mushrooms and molds belong to which kingdom?","Fungi",["Animalia","Plantae","Bacteria"]]],
     },
     chemistry:{
       atoms:[["The center of an atom is the?","Nucleus",["Electron","Shell","Proton cloud"]],["Negatively charged particles are?","Electrons",["Protons","Neutrons","Ions"]],["Positively charged particles are?","Protons",["Electrons","Neutrons","Atoms"]],["Particles with no charge are?","Neutrons",["Protons","Electrons","Ions"]],["The smallest unit of an element is an?","Atom",["Molecule","Cell","Compound"]]],
       periodic:[["The chemical symbol for Oxygen is?","O",["Ox","O2","Og"]],["The chemical symbol for Gold is?","Au",["Gd","Go","Ag"]],["The chemical symbol for Hydrogen is?","H",["Hy","He","H2"]],["Rows in the periodic table are called?","Periods",["Groups","Families","Columns"]],["The symbol for Sodium is?","Na",["So","Sd","S"]]],
       bonding:[["Water's chemical formula is?","H₂O",["CO₂","O₂","HO"]],["Two or more atoms joined together form a?","Molecule",["Proton","Electron","Period"]],["Table salt is sodium and?","Chlorine",["Oxygen","Carbon","Hydrogen"]],["CO₂ is the formula for?","Carbon dioxide",["Water","Oxygen","Salt"]],["Atoms bond by sharing or transferring?","Electrons",["Protons","Neutrons","Nuclei"]]],
       reactions:[["A substance that speeds a reaction without being used up is a?","Catalyst",["Reactant","Product","Solvent"]],["In a reaction, the starting substances are?","Reactants",["Products","Catalysts","Ions"]],["Burning is an example of a chemical?","Reaction",["Mixture","State","Bond"]],["When ice melts, it is a ___ change.","Physical",["Chemical","Nuclear","Reaction"]],["The substance formed in a reaction is the?","Product",["Reactant","Catalyst","Solvent"]]],
+      statesc:[["The three common states of matter are solid, liquid, and?","Gas",["Plasma","Energy","Metal"]],["Solid to liquid is called?","Melting",["Freezing","Boiling","Condensing"]],["Liquid to gas is called?","Evaporation",["Melting","Freezing","Sublimation"]],["Gas to liquid is called?","Condensation",["Melting","Evaporation","Freezing"]],["Which state has a fixed shape and volume?","Solid",["Liquid","Gas","Plasma"]]],
+      acids:[["Acids have a pH below?","7",["14","10","9"]],["A pH of 7 is?","Neutral",["Acidic","Basic","Salty"]],["Lemon juice is an example of an?","Acid",["Base","Salt","Metal"]],["Bases have a pH above?","7",["0","5","3"]],["What scale measures how acidic something is?","pH scale",["Richter scale","Celsius scale","Mohs scale"]]],
+      mixtures:[["A mixture you can see the parts of is?","Heterogeneous",["Homogeneous","Pure","An element"]],["Salt dissolved in water is a?","Solution",["Suspension","Compound","Element"]],["The substance that dissolves another is the?","Solvent",["Solute","Product","Catalyst"]],["Can a mixture be separated by physical means?","Yes",["No","Only by burning","Never"]],["In salt water, salt is the?","Solute",["Solvent","Product","Acid"]]],
+      compounds:[["The compound NaCl is common?","Table salt",["Sugar","Water","Chalk"]],["CO₂ is?","Carbon dioxide",["Carbon monoxide","Oxygen","Water"]],["The formula for water is?","H₂O",["HO₂","H₂O₂","OH"]],["O₂ is a molecule of?","Oxygen",["Ozone","Water","Hydrogen"]],["A compound is made of two or more?","Elements",["Atoms of one kind","Mixtures","Solutions"]]],
     },
     physics:{
       motion:[["Speed is distance divided by?","Time",["Mass","Force","Weight"]],["A change in velocity is called?","Acceleration",["Speed","Momentum","Friction"]],["The metric unit of distance is the?","Meter",["Mile","Foot","Liter"]],["An object at rest stays at rest unless acted on by a?","Force",["Color","Sound","Smell"]],["Speed in a given direction is called?","Velocity",["Mass","Energy","Weight"]]],
       forces:[["The force that pulls objects toward Earth is?","Gravity",["Friction","Magnetism","Tension"]],["A force that opposes motion is?","Friction",["Gravity","Lift","Thrust"]],["The unit of force is the?","Newton",["Joule","Watt","Volt"]],["For every action there is an equal and opposite?","Reaction",["Motion","Force field","Speed"]],["Mass × acceleration equals?","Force",["Energy","Power","Work"]]],
       penergy:[["The unit of energy is the?","Joule",["Newton","Volt","Watt"]],["Energy of motion is ___ energy.","Kinetic",["Potential","Chemical","Nuclear"]],["Stored energy due to position is ___ energy.","Potential",["Kinetic","Sound","Light"]],["Energy cannot be created or destroyed — it is?","Conserved",["Lost","Created","Doubled"]],["The rate of doing work is?","Power",["Force","Mass","Speed"]]],
       waves:[["Light travels faster than?","Sound",["Nothing","Radio","Electrons"]],["The number of waves per second is the?","Frequency",["Amplitude","Wavelength","Speed"]],["Electric current is measured in?","Amperes",["Joules","Newtons","Meters"]],["A material that lets electricity flow is a?","Conductor",["Insulator","Magnet","Resistor"]],["The height of a wave is its?","Amplitude",["Frequency","Wavelength","Period"]]],
+      gravity:[["Gravity pulls objects toward the center of the?","Earth",["Sun","Moon","Sky"]],["Who described the law of universal gravitation?","Isaac Newton",["Galileo","Einstein","Edison"]],["The force of gravity on an object is its?","Weight",["Mass","Volume","Density"]],["On the Moon, gravity is ___ than on Earth.","Weaker",["Stronger","The same","Zero"]],["Objects in orbit are constantly ___ toward Earth.","Falling",["Rising","Stopping","Speeding up only"]]],
+      light:[["Light travels in straight?","Lines",["Circles","Waves only","Zigzags"]],["A tool that bends light to a point is a?","Lens",["Magnet","Wire","Prism only"]],["White light splits into a rainbow using a?","Prism",["Mirror","Magnet","Battery"]],["Light bouncing off a surface is?","Reflection",["Refraction","Absorption","Diffraction"]],["Light bending as it enters water is?","Refraction",["Reflection","Conduction","Insulation"]]],
+      heat:[["Heat flows from hot to?","Cold",["Hot","Nowhere","Up only"]],["Water boils at what temperature (°C)?","100",["0","50","212"]],["Water freezes at what temperature (°C)?","0",["32","100","-10"]],["Heat transfer through direct contact is?","Conduction",["Convection","Radiation","Reflection"]],["Heat from the Sun reaches Earth by?","Radiation",["Conduction","Convection","Friction"]]],
+      sound:[["Sound needs a ___ to travel through.","Medium",["Vacuum","Magnet","Lens"]],["Sound travels fastest through?","Solids",["Gases","Liquids","Empty space"]],["The highness or lowness of a sound is?","Pitch",["Volume","Echo","Speed"]],["Can sound travel through empty space (a vacuum)?","No",["Yes","Only in light","Only at night"]],["A reflected sound you hear again is an?","Echo",["Amplitude","Octave","Beam"]]],
     },
     history:{
       ancient:[["The ancient Egyptians wrote in?","Hieroglyphics",["Latin","Cuneiform","English"]],["Democracy began in ancient?","Greece",["Rome","Egypt","China"]],["The Great Pyramid was built in?","Egypt",["Greece","Rome","Mexico"]],["Roman gladiators fought in the?","Colosseum",["Parthenon","Forum","Pyramid"]],["The Great Wall was built to protect?","China",["Rome","Egypt","India"]]],
       medieval:[["A medieval warrior in armor was a?","Knight",["Pharaoh","Senator","Pilgrim"]],["A large stone home for nobles was a?","Castle",["Pyramid","Temple","Hut"]],["The disease that swept Europe in the 1300s was the?","Black Death",["Flu","Polio","Measles"]],["Lords gave land to vassals under?","Feudalism",["Democracy","Communism","Capitalism"]],["Wars to control the Holy Land were the?","Crusades",["Olympics","Renaissance","Reformation"]]],
       earlyus:[["Who was the first U.S. President?","George Washington",["Abraham Lincoln","John Adams","Ben Franklin"]],["The U.S. declared independence in?","1776",["1492","1865","1620"]],["The U.S. Civil War was mainly over?","Slavery",["Taxes only","Religion","Land in Europe"]],["Who mainly wrote the Declaration of Independence?","Thomas Jefferson",["George Washington","John Hancock","James Madison"]],["Lincoln freed enslaved people with the?","Emancipation Proclamation",["Bill of Rights","Magna Carta","Constitution"]]],
       modern:[["World War II ended in?","1945",["1918","1939","1965"]],["The first person on the Moon was?","Neil Armstrong",["Buzz Aldrin","Yuri Gagarin","John Glenn"]],["The Cold War was mainly between the USA and the?","Soviet Union",["United Kingdom","China","Germany"]],["Martin Luther King Jr. fought for?","Civil rights",["Taxes","Independence","Trade"]],["World War I began in?","1914",["1945","1865","1989"]]],
+      explorers:[["Who sailed to the Americas in 1492?","Christopher Columbus",["Magellan","Marco Polo","Cortés"]],["Whose crew first sailed around the world?","Ferdinand Magellan",["Columbus","Vasco da Gama","Hudson"]],["Explorers sought a sea route to the ___ for spices.","Indies",["Antarctica","Moon","Sahara"]],["Which country funded Columbus's 1492 voyage?","Spain",["England","France","Portugal"]],["The period of European sea voyages is the Age of?","Exploration",["Reason","Steam","Iron"]]],
+      revolutions:[["The American Revolution freed the colonies from?","Britain",["France","Spain","Russia"]],["The French Revolution began in?","1789",["1776","1812","1900"]],["The Industrial Revolution began with new?","Machines",["Religions","Continents","Planets"]],["'No taxation without ___' was a colonial cry.","Representation",["Money","Kings","Trade"]],["The 1917 revolution took place in?","Russia",["Mexico","China","India"]]],
+      worldwars:[["World War I lasted from 1914 to?","1918",["1920","1916","1939"]],["World War II began in?","1939",["1914","1945","1929"]],["The alliance of the US, UK, and USSR in WWII were the?","Allies",["Axis","Neutrals","Colonies"]],["WWII in Europe ended when Germany?","Surrendered",["Won","Invaded the US","Split in two"]],["The US entered WWII after the attack on?","Pearl Harbor",["New York","Normandy","Berlin"]]],
+      civilrights:[["Rosa Parks refused to give up her seat on a?","Bus",["Train","Plane","Boat"]],["Martin Luther King Jr. gave which famous speech?","I Have a Dream",["Gettysburg Address","Four Freedoms","The New Deal"]],["The movement sought equal rights regardless of?","Race",["Height","Age only","Wealth only"]],["Segregation means keeping groups?","Separated",["Together","Rich","Educated"]],["The 1964 law banning discrimination was the Civil Rights?","Act",["War","Treaty","March"]]],
     },
     literature:{
       terms:[["The main character of a story is the?","Protagonist",["Antagonist","Narrator","Author"]],["The character who opposes the hero is the?","Antagonist",["Protagonist","Narrator","Editor"]],["The time and place of a story is the?","Setting",["Plot","Theme","Mood"]],["The sequence of events is the?","Plot",["Setting","Theme","Tone"]],["The main message of a story is the?","Theme",["Plot","Setting","Title"]]],
       figurative:[["'As brave as a lion' is a?","Simile",["Metaphor","Hyperbole","Pun"]],["'The world is a stage' is a?","Metaphor",["Simile","Onomatopoeia","Idiom"]],["Giving human traits to objects is?","Personification",["Simile","Hyperbole","Alliteration"]],["'Buzz' and 'boom' are examples of?","Onomatopoeia",["Metaphor","Simile","Idiom"]],["An extreme exaggeration is a?","Hyperbole",["Simile","Symbol","Pun"]]],
       grammar:[["Which is a complete sentence?","She runs.",["Running fast.","The big dog.","Because of rain."]],["A word that joins clauses (and, but, or) is a?","Conjunction",["Noun","Adjective","Pronoun"]],["'He', 'she', and 'they' are?","Pronouns",["Verbs","Adjectives","Adverbs"]],["An adverb often describes a?","Verb",["Noun","Pronoun","Conjunction"]],["Which word is past tense?","walked",["walk","walking","walks"]]],
       genres:[["A made-up story is?","Fiction",["Nonfiction","Biography","Essay"]],["A true account of someone's life is a?","Biography",["Novel","Myth","Fable"]],["A poem with 14 lines is a?","Sonnet",["Haiku","Limerick","Ode"]],["A short story with a moral, often with animals, is a?","Fable",["Novel","Memoir","Report"]],["Writing about facts and real events is?","Nonfiction",["Fiction","Fantasy","Myth"]]],
+      poetry:[["A Japanese poem with 5-7-5 syllables is a?","Haiku",["Sonnet","Ode","Ballad"]],["Words with the same ending sound are a?","Rhyme",["Rhythm","Stanza","Verse"]],["A group of lines in a poem is a?","Stanza",["Chapter","Paragraph","Scene"]],["The beat or flow of a poem is its?","Rhythm",["Theme","Plot","Setting"]],["Repeating the first consonant sound (e.g. 'big blue') is?","Alliteration",["Rhyme","Simile","Irony"]]],
+      plot:[["The exciting build-up before the climax is the?","Rising action",["Resolution","Setting","Theme"]],["The turning point of a story is the?","Climax",["Exposition","Resolution","Setting"]],["The introduction of characters and setting is the?","Exposition",["Climax","Conflict","Ending"]],["The struggle the character faces is the?","Conflict",["Setting","Theme","Mood"]],["How a story's problem is solved is the?","Resolution",["Climax","Rising action","Exposition"]]],
+      punctuation:[["What ends a question?","Question mark",["Period","Comma","Colon"]],["What shows strong feeling?","Exclamation point",["Comma","Period","Semicolon"]],["Which shows possession, as in 'the dog's bone'?","Apostrophe",["Comma","Hyphen","Colon"]],["A period ends a?","Statement",["Question","Exclamation","List"]],["Which joins items in a list?","Comma",["Period","Apostrophe","Question mark"]]],
+      partsofspeech:[["A person, place, or thing is a?","Noun",["Verb","Adjective","Adverb"]],["An action word is a?","Verb",["Noun","Adjective","Pronoun"]],["A word that describes a noun is an?","Adjective",["Verb","Adverb","Conjunction"]],["A word that replaces a noun (he, she) is a?","Pronoun",["Verb","Adverb","Article"]],["'Quickly' and 'slowly' are?","Adverbs",["Nouns","Adjectives","Verbs"]]],
     },
     prealgebra:{
       fractions:[["Which fraction is bigger: 1/2 or 1/4?","1/2",["1/4","they are equal","cannot tell"]],["1/2 + 1/2 = ?","1",["1/4","2/4","1/2"]],["What is 1/2 of 10?","5",["2","10","20"]],["Which is equal to 1/2?","2/4",["1/3","3/4","2/3"]],["1/4 + 1/4 = ?","1/2",["2/8","1/4","1"]]],
@@ -627,13 +683,6 @@ What is 6 x 7? : 42</div>
       internet:[["WWW stands for World Wide?","Web",["Wire","Work","Window"]],["A web address is also called a?","URL",["CPU","RAM","USB"]],["A program used to browse the web is a?","Browser",["Printer","Folder","Driver"]],["Junk or unwanted email is called?","Spam",["Cookie","Cache","Link"]],["Keeping a password secret protects your?","Security",["Speed","Color","Battery"]]],
       coding:[["A set of steps to solve a problem is an?","Algorithm",["Error","Pixel","Cookie"]],["A mistake in code is called a?","Bug",["Byte","Pixel","Link"]],["Code that repeats is a?","Loop",["List","Link","Logo"]],["A value stored under a name is a?","Variable",["Loop","Bug","Pixel"]],["'If / else' in code makes a?","Decision",["Loop","Sound","Picture"]]],
       binary:[["Computers store data using which two digits?","0 and 1",["1 and 2","A and B","Yes and No"]],["A single 0 or 1 is called a?","Bit",["Byte","Pixel","Word"]],["8 bits make one?","Byte",["Bit","Kilobyte","Pixel"]],["Binary is base?","2",["10","8","16"]],["In binary, 1 + 1 = ?","10",["2","11","1"]]],
-    },
-    jewish:{
-      torah:[["How many books are in the Torah (Chumash)?","5",["4","6","10"]],["What is the first book of the Torah?","Bereishit (Genesis)",["Shemot (Exodus)","Vayikra (Leviticus)","Devarim (Deuteronomy)"]],["Which book describes the Exodus from Egypt?","Shemot (Exodus)",["Bereishit","Vayikra","Bamidbar"]],["Who led the Jewish people out of Egypt?","Moshe (Moses)",["Aharon","Yehoshua","David"]],["On which mountain was the Torah given?","Har Sinai",["Har Moriah","Har Carmel","Har Nevo"]],["How many of the Ten Commandments are there?","10",["7","12","5"]],["The Torah is written in which language?","Hebrew",["Aramaic","Yiddish","Greek"]]],
-      hebrew:[["What is the first letter of the Hebrew alphabet?","Aleph",["Bet","Tav","Shin"]],["How many letters are in the Hebrew alphabet?","22",["24","26","20"]],["Hebrew is read in which direction?","Right to left",["Left to right","Top to bottom","Bottom to top"]],["What is the last letter of the Hebrew alphabet?","Tav",["Aleph","Shin","Mem"]],["Which is the second letter of the Hebrew alphabet?","Bet",["Aleph","Gimel","Tav"]]],
-      chagim:[["Which holiday is the Jewish New Year?","Rosh Hashanah",["Yom Kippur","Purim","Shavuot"]],["On which day do we fast and ask forgiveness?","Yom Kippur",["Purim","Chanukah","Sukkot"]],["Which holiday remembers leaving Egypt, with matzah?","Pesach (Passover)",["Sukkot","Shavuot","Purim"]],["On which holiday do we sit in a sukkah?","Sukkot",["Pesach","Shavuot","Purim"]],["Which holiday celebrates receiving the Torah?","Shavuot",["Purim","Chanukah","Tisha B'Av"]],["How many nights do we light the menorah on Chanukah?","8",["7","9","5"]],["On which holiday do we read Megillat Esther?","Purim",["Pesach","Sukkot","Shavuot"]]],
-      tefillah:[["Which prayer declares that Hashem is One?","Shema",["Aleinu","Hallel","Kaddish"]],["When does Shabbat begin?","Friday at sunset",["Saturday morning","Sunday at sunset","Friday at noon"]],["When does Shabbat end?","Saturday night",["Friday night","Sunday morning","Saturday noon"]],["How many prayer services are there on a weekday?","3",["1","5","7"]],["What special bread is eaten on Shabbat?","Challah",["Matzah","Pita","Bagel"]],["The prayer said to end Shabbat is called?","Havdalah",["Kiddush","Shema","Hallel"]],["What do we light to welcome Shabbat?","Candles",["A bonfire","A lantern","Incense"]]],
-      mitzvot:[["How many mitzvot are there traditionally?","613",["10","100","365"]],["A boy becomes bar mitzvah at what age?","13",["12","10","18"]],["A girl becomes bat mitzvah at what age?","12",["13","10","16"]],["What is placed on the doorpost of a Jewish home?","Mezuzah",["Menorah","Dreidel","Shofar"]],["What is blown on Rosh Hashanah?","Shofar",["Trumpet","Drum","Bell"]],["Keeping kosher means not mixing meat with?","Milk (dairy)",["Fish","Bread","Vegetables"]],["What is worn on the head and arm at weekday morning prayers?","Tefillin",["Tzitzit only","A crown","A scarf"]]],
     },
   };
   const DIFFS=[
@@ -675,7 +724,9 @@ What is 6 x 7? : 42</div>
   let teacher=LS.get("sq_teacher",null);   // {pin}
   let rewards=LS.get("sq_rewards",[]);
   let pro=LS.get("sq_pro",false);
+  const FREE_USES=5;
   const FREE_GAMES=5;
+  const TRIAL_DAYS=5;
   let muted=false;
   const saveProg=()=>LS.set("sq_progress",progress);
 
@@ -685,6 +736,26 @@ What is 6 x 7? : 42</div>
   function rand(n){return Math.floor(Math.random()*n);}
   function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=rand(i+1);[a[i],a[j]]=[a[j],a[i]];}return a;}
   function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+  /* ---------- CONTENT SAFETY (school-appropriate filter) ---------- */
+  /* Whole-word matching (space padded) so ordinary words like "class" or "assignment" never trip it. */
+  const BADWORDS=["fuck","fucking","fucked","shit","shitty","bitch","bastard","asshole","dick","piss","crap","damn","slut","whore","cunt","nigger","nigga","faggot","fag","retard","retarded","kike","spic","chink","wetback","tranny","porn","porno","pornography","nude","nudes","naked","sex","sexy","sexual","boobs","tits","penis","vagina","dildo","orgasm","masturbate","rape","raping","rapist","molest","pedophile","cocaine","heroin","meth","weed","marijuana","cannabis","vape","bong","kill yourself","kys","suicide","self harm","cutting myself","i want to die","hang myself","murder","behead","terrorist","bomb","shoot up","school shooting","gun down"];
+  function moderate(text){
+    const raw=String(text||"");
+    const t=" "+raw.toLowerCase().replace(/[^a-z0-9\s]/g," ").replace(/\s+/g," ").trim()+" ";
+    const hits=[];
+    BADWORDS.forEach(w=>{const pad=" "+w+" ";if(t.indexOf(pad)>=0&&hits.indexOf(w)<0)hits.push(w);});
+    const selfHarm=hits.some(w=>["kill yourself","kys","suicide","self harm","cutting myself","i want to die","hang myself"].indexOf(w)>=0);
+    return {flagged:hits.length>0,hits:hits,count:hits.length,selfHarm:selfHarm};
+  }
+  function isFlagged(text){return moderate(text).flagged;}
+  /* Returns true when content was blocked (caller should stop). */
+  function blockContent(text){
+    const m=moderate(text);
+    if(!m.flagged)return false;
+    if(m.selfHarm){alert("💙 It sounds like you might be going through something hard.\n\nLumina can't help with this, but people who care can. In the US you can call or text 988 (Suicide & Crisis Lifeline), any time. Please talk to a trusted adult too.");return true;}
+    alert("🚫 Blocked — that contains language or a topic that isn't appropriate for a school tool.\n\nPlease remove the offensive or unsafe words and try again.");
+    return true;
+  }
   function ymd(d){const z=new Date(d.getTime()-d.getTimezoneOffset()*60000);return z.toISOString().slice(0,10);}
   function level(){return Math.floor(progress.xp/100)+1;}
   function dayStreak(){let n=0,d=new Date();for(;;){if(progress.days&&progress.days[ymd(d)]){n++;d.setDate(d.getDate()-1);}else break;}return n;}
@@ -698,8 +769,18 @@ What is 6 x 7? : 42</div>
   function applyTheme(){document.body.classList.toggle("light",theme==="light");$("theme").textContent=theme==="light"?"☀️":"🌙";}
   $("theme").addEventListener("click",()=>{theme=theme==="light"?"dark":"light";LS.set("sq_theme",theme);applyTheme();});
   applyTheme();
-  function applyPro(){document.body.classList.toggle("is-pro",pro);}
+  function applyPro(){document.body.classList.toggle("is-pro",isUnlocked());}
   function setPro(v){pro=v;LS.set("sq_pro",v);applyPro();}
+  /* ---------- ACCESS: trial + free-use credits ---------- */
+  function trialStart(){return LS.get("sq_trial",0);}
+  function trialActive(){const t=trialStart();return !!t && Date.now() < t + TRIAL_DAYS*86400000;}
+  function trialDaysLeft(){const t=trialStart();if(!t)return 0;return Math.max(0,Math.ceil((t+TRIAL_DAYS*86400000-Date.now())/86400000));}
+  function startTrial(){if(trialStart()){alert("Your free trial has already been used on this device.");return;}LS.set("sq_trial",Date.now());applyPro();snd("win");confetti();alert("🎉 Your "+TRIAL_DAYS+"-day free trial has started!\nEverything is unlocked until then.");renderHome();openPricing("");}
+  window.startTrial=startTrial;
+  function isUnlocked(){return pro||trialActive();}
+  function freeUsesLeft(){return Math.max(0,FREE_USES-(progress.freeUses||0));}
+  /* Spend one of the free-use credits for a metered action. Returns false (and opens pricing) when out. */
+  function useCredit(label){if(isUnlocked())return true;if((progress.freeUses||0)>=FREE_USES){openPricing(label||"Unlimited access");return false;}progress.freeUses=(progress.freeUses||0)+1;saveProg();renderPromo();return true;}
   applyPro();
   function ensureAudio(){if(!actx){try{actx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}}
 
@@ -717,7 +798,7 @@ What is 6 x 7? : 42</div>
   function recordStudy(sec){progress.studySec+=sec;addXP(Math.floor(sec/60)*2);markDay();saveProg();}
 
   /* ---------- HOME ---------- */
-  const SCOLOR={math:"linear-gradient(135deg,#3b82f6,#1e40af)",science:"linear-gradient(135deg,#10b981,#047857)",geo:"linear-gradient(135deg,#06b6d4,#0e7490)",shapes:"linear-gradient(135deg,#8b5cf6,#6d28d9)",words:"linear-gradient(135deg,#a855f7,#7e22ce)",facts:"linear-gradient(135deg,#f43f5e,#be123c)",algebra:"linear-gradient(135deg,#6366f1,#4338ca)",geometry:"linear-gradient(135deg,#14b8a6,#0f766e)",biology:"linear-gradient(135deg,#22c55e,#15803d)",chemistry:"linear-gradient(135deg,#ec4899,#9d174d)",physics:"linear-gradient(135deg,#0ea5e9,#1e3a8a)",history:"linear-gradient(135deg,#d97706,#92400e)",literature:"linear-gradient(135deg,#a855f7,#6b21a8)",prealgebra:"linear-gradient(135deg,#818cf8,#4f46e5)",earthsci:"linear-gradient(135deg,#0ea5e9,#0e7490)",econ:"linear-gradient(135deg,#f59e0b,#b45309)",spanish:"linear-gradient(135deg,#ef4444,#b91c1c)",compsci:"linear-gradient(135deg,#64748b,#334155)",jewish:"linear-gradient(135deg,#2563eb,#1e3a8a)"};
+  const SCOLOR={math:"linear-gradient(135deg,#3b82f6,#1e40af)",science:"linear-gradient(135deg,#10b981,#047857)",geo:"linear-gradient(135deg,#06b6d4,#0e7490)",shapes:"linear-gradient(135deg,#8b5cf6,#6d28d9)",words:"linear-gradient(135deg,#a855f7,#7e22ce)",facts:"linear-gradient(135deg,#f43f5e,#be123c)",algebra:"linear-gradient(135deg,#6366f1,#4338ca)",geometry:"linear-gradient(135deg,#14b8a6,#0f766e)",biology:"linear-gradient(135deg,#22c55e,#15803d)",chemistry:"linear-gradient(135deg,#ec4899,#9d174d)",physics:"linear-gradient(135deg,#0ea5e9,#1e3a8a)",history:"linear-gradient(135deg,#d97706,#92400e)",literature:"linear-gradient(135deg,#a855f7,#6b21a8)",prealgebra:"linear-gradient(135deg,#818cf8,#4f46e5)",earthsci:"linear-gradient(135deg,#0ea5e9,#0e7490)",econ:"linear-gradient(135deg,#f59e0b,#b45309)",spanish:"linear-gradient(135deg,#ef4444,#b91c1c)",compsci:"linear-gradient(135deg,#64748b,#334155)"};
   function renderSubjects(){const body=$("subjectsBody");const groups=[["Elementary & up","core"],["Middle & high school","hs"]];
     body.innerHTML=groups.map(g=>{const list=SUBJECTS.filter(s=>s.lvl===g[1]);if(!list.length)return"";return '<div class="sechead">'+g[0]+'</div><div class="subjectgrid">'+list.map(s=>'<button class="subject" data-k="'+s.key+'"><span class="ic" style="background:'+(SCOLOR[s.key]||"#6366f1")+'">'+s.emoji+'</span><span class="meta"><span class="nm">'+s.name+'</span><span class="sub">'+Math.max(0,(TOPICS[s.key]||[]).length-1)+' topics</span></span><span class="chev">›</span></button>').join("")+'</div>';}).join("");
     [...body.querySelectorAll(".subject")].forEach(b=>{b.onclick=()=>openSubject(b.dataset.k);});}
@@ -727,6 +808,40 @@ What is 6 x 7? : 42</div>
   function renderRewards(){const box=$("rewardBox");const active=rewards.filter(r=>!r.done);if(!active.length){box.innerHTML="";return;}
     box.innerHTML='<div class="label">Goals from your teacher</div>'+active.map(r=>{const met=rewardMet(r);return'<div class="reward"><span>'+(met?"✅ ":"🎯 ")+esc(r.goal)+' → <b>'+esc(r.text)+'</b><br><small style="opacity:.9">'+rewardProgressText(r)+(met?" — reached! 🎉":"")+'</small></span></div>';}).join("");}
   function renderHome(){renderHeader();renderXP();renderRewards();renderPromo();showScreen("screen-home");}
+
+  /* ---------- DAILY CHALLENGE ---------- */
+  function startDaily(){
+    if(!useCredit("The Daily Challenge"))return;
+    const subs=SUBJECTS.map(s=>s.key);
+    const items=[],seen={};let tries=0;
+    while(items.length<10&&tries<300){tries++;const s=subs[rand(subs.length)];let it;try{it=oneTopicQ(s,"all","medium");}catch(e){continue;}if(it&&it.q&&!seen[it.q]&&it.options&&it.options.length>=2){seen[it.q]=1;items.push(it);}}
+    if(items.length<4){alert("Couldn't build today's challenge — try again in a moment.");return;}
+    runQuiz(items,"📅 Daily Challenge",null,()=>startDaily(),()=>showScreen("screen-home"));
+  }
+  window.startDaily=startDaily;
+
+  /* ---------- ACHIEVEMENTS ---------- */
+  function achList(){
+    const lvl=level(),q=progress.quizzes||0,g=progress.games||0,st=dayStreak(),mins=Math.floor((progress.studySec||0)/60),best=progress.bestQuizPct||0;
+    return [
+      ["🌱","First Steps","Reach Level 2",lvl>=2],
+      ["📈","Rising Star","Reach Level 5",lvl>=5],
+      ["🏆","Scholar","Reach Level 10",lvl>=10],
+      ["📝","Quiz Taker","Finish 5 quizzes",q>=5],
+      ["🎯","Quiz Master","Finish 25 quizzes",q>=25],
+      ["💯","Perfect Score","Score 100% on a quiz",best>=100],
+      ["🎮","Gamer","Play 5 games",g>=5],
+      ["🕹️","Game Champ","Play 20 games",g>=20],
+      ["🔥","On a Streak","3-day study streak",st>=3],
+      ["⏱️","Focused","Study 60 minutes total",mins>=60]
+    ];
+  }
+  function openAchievements(){
+    const a=achList(),got=a.filter(x=>x[3]).length;
+    $("achWrap").innerHTML='<p class="rnote">'+got+' of '+a.length+' unlocked</p><div class="toolgrid">'+a.map(x=>'<div class="tile" style="opacity:'+(x[3]?"1":".45")+'"><span class="ic">'+(x[3]?x[0]:"🔒")+'</span><span class="tx"><span class="tt">'+esc(x[1])+'</span><span class="ts">'+esc(x[2])+(x[3]?" · ✓":"")+'</span></span></div>').join("")+'</div>';
+    showScreen("screen-achievements");
+  }
+  window.openAchievements=openAchievements;
   function showSubjects(){renderSubjects();showScreen("screen-subjects");}
   function showTools(){showScreen("screen-tools");}
   window.showSubjects=showSubjects;window.showTools=showTools;
@@ -746,6 +861,8 @@ What is 6 x 7? : 42</div>
   function runCoach(){
     const t=($("coachText").value||"").trim(),out=$("coachOut");
     if(t.length<15){out.innerHTML=coachCard("✏️","Too short","Too short to analyze. Write or paste more text.","warn");return;}
+    if(blockContent(t)){out.innerHTML=coachCard("🚫","Blocked — not school-appropriate","This writing contains offensive or unsafe language. Remove it, then run the coach again.","bad");return;}
+    if(!useCredit("The Writing Coach"))return;
     const words=t.split(/\s+/).filter(Boolean),lower=t.toLowerCase();
     const sentences=t.split(/[.!?]+/).map(s=>s.trim()).filter(Boolean);
     const paras=t.split(/\n\s*\n/).map(p=>p.trim()).filter(Boolean);
@@ -773,7 +890,20 @@ What is 6 x 7? : 42</div>
     if(found.length)tips.push(["🔤","Spelling errors","Fix these: "+found.join(", ")+".","bad"]);
     if(paras.length>=2&&words.length>120&&!/(in conclusion|to conclude|in summary|overall|to sum up)/i.test(t))tips.push(["✅","No conclusion","Add a conclusion. Restate your main point clearly.","warn"]);
     const good=[];if(trans.some(x=>lower.indexOf(x)>=0))good.push("clear transitions");if(paras.length>=3)good.push("organized into paragraphs");if(sentences.length>=5)good.push("developed with several sentences");if(!found.length&&t.length>60)good.push("no spelling slips");
-    let html='<p class="rnote">'+words.length+' words · '+sentences.length+' sentence'+(sentences.length===1?"":"s")+' · '+paras.length+' paragraph'+(paras.length===1?"":"s")+'</p>';
+    /* ---- final-draft grade ---- */
+    let score=100;
+    score-=tips.filter(x=>x[3]==="bad").length*12;
+    score-=tips.filter(x=>x[3]==="warn").length*6;
+    score-=found.length*4;
+    if(words.length<40)score-=18;else if(words.length<80)score-=8;
+    if(paras.length<2&&words.length>90)score-=8;
+    score=Math.max(40,Math.min(100,Math.round(score)));
+    const grade=score>=97?"A+":score>=93?"A":score>=90?"A-":score>=87?"B+":score>=83?"B":score>=80?"B-":score>=77?"C+":score>=73?"C":score>=70?"C-":score>=67?"D+":score>=60?"D":"F";
+    const gtone=score>=83?"good":score>=70?"warn":"bad";
+    const gc=gtone==="good"?"#22c55e":gtone==="warn"?"#f59e0b":"#ef4444";
+    let html='<div class="panel" style="border-left:4px solid '+gc+';text-align:center"><div style="font-size:14px;opacity:.75">Final draft grade</div><div style="font-size:44px;font-weight:800;line-height:1.1;color:'+gc+'">'+grade+'</div><div style="opacity:.8">'+score+' / 100</div><p style="margin-top:6px;font-size:13px;opacity:.8">An estimate from grammar, structure, support &amp; clarity — fix the notes below to raise it.</p></div>';
+    html+=coachCard("🛡️","Content check: appropriate","No offensive or unsafe language found. This writing is school-appropriate.","good");
+    html+='<p class="rnote">'+words.length+' words · '+sentences.length+' sentence'+(sentences.length===1?"":"s")+' · '+paras.length+' paragraph'+(paras.length===1?"":"s")+'</p>';
     if(good.length)html+=coachCard("🌟","Strengths","Working: "+good.join(", ")+".","good");
     html+='<p class="rnote" style="margin-top:10px">Whole-piece feedback</p>';
     html+=tips.map(x=>coachCard(x[0],x[1],x[2],x[3])).join("");
@@ -801,9 +931,59 @@ What is 6 x 7? : 42</div>
   }
   $("coachGo").addEventListener("click",runCoach);
 
+  /* ---------- AI STUDY ASSISTANT (rule-based, offline) ---------- */
+  let AS_FACTS=null;
+  function buildFacts(){
+    if(AS_FACTS)return AS_FACTS;
+    AS_FACTS=[];
+    const push=(q,a,src)=>{if(q&&a)AS_FACTS.push({q:String(q),a:String(a),src:src});};
+    try{for(const s in TOPICBANK){for(const tp in TOPICBANK[s]){(TOPICBANK[s][tp]||[]).forEach(r=>push(r[0],r[1],(SUBJ[s]?SUBJ[s].name:s)));}}}catch(e){}
+    try{for(const s in BANK){for(const d in BANK[s]){(BANK[s][d]||[]).forEach(r=>push(r[0],r[1],(SUBJ[s]?SUBJ[s].name:s)));}}}catch(e){}
+    return AS_FACTS;
+  }
+  const AS_FAQ=[
+    {k:["trial","free trial","5 day","five day"],a:"Tap Plans → “Start free trial” to unlock everything for "+TRIAL_DAYS+" days with no payment. After it ends you keep your progress and can pick a plan."},
+    {k:["free","how many","limit","cost","price","pay","cap"],a:"You get "+FREE_USES+" free uses (games, quizzes, coach, and tools count). After that you need a plan or a free trial. Pro is $4.99/mo, Premium $9.99/mo, and schools are $12/student/year."},
+    {k:["plan","subscription","upgrade","pro","premium"],a:"Plans: Free ("+FREE_USES+" uses), Pro $4.99/mo (unlimited use, all tools, this assistant), Premium $9.99/mo (families + analytics), and Schools $12/student/year. Open them from Plans in the top menu."},
+    {k:["flashcard","memorize","deck"],a:"Open Tools → Flashcards to build a deck. Type a front and back for each card, optionally add a picture, then tap Study to flip through them."},
+    {k:["make a game","own game","blooket","make game"],a:"Tools → Make a Game lets you write your own questions and choose which answer is right and which are wrong, then play it as a fast game or a quiz."},
+    {k:["game builder","lesson","notes into","paste"],a:"Tools → Game Builder turns notes into a game. Put one fact per line like “France - Paris” or “What is 2+2? = 4”, then tap Build."},
+    {k:["writing","coach","essay","thesis","grade my"],a:"Tools → Writing Coach checks your essay for a weak thesis, structure, transitions, filler, and spelling, blocks anything not school-appropriate, and gives your final draft a letter grade. It guides you — it never writes it for you."},
+    {k:["timer","study time","focus","pomodoro"],a:"Tools → Study Timer runs a focus session from 5 to 45 minutes with an alarm, and you earn XP for the time you study."},
+    {k:["teacher","parent","track","progress","reward","goal"],a:"Tools → Teacher Zone is PIN-protected. It tracks level, quizzes, average score, games, study time, and streak, and lets a teacher set reward goals like “Reach Level 5”."},
+    {k:["xp","level","points","streak"],a:"You earn XP from quizzes, games, and study time. Every 100 XP is a new level, and studying on different days builds your day streak."},
+    {k:["subject","topic","what can i study","list"],a:"Lumina has subjects like Math, Algebra, Geometry, Science, Biology, Chemistry, Physics, Geography, History, Literature, Spanish, Computer Science and more. Open Subjects to pick one, then choose a topic and a difficulty."},
+    {k:["quiz","mock","test"],a:"Pick a subject and topic, choose a difficulty, then tap Mock Quiz for a graded quiz (A–F) with a review of what you missed."},
+    {k:["who are you","what are you","help","hello","hi","what can you do"],a:"I'm the Lumina study assistant. Ask me a study question about any subject here, or ask how a feature works — plans, trial, timer, flashcards, coach, and more."}
+  ];
+  function assistantAnswer(qRaw){
+    const q=String(qRaw||"").trim();
+    if(!q)return "Type a question and I'll help.";
+    if(isFlagged(q)){const m=moderate(q);if(m.selfHarm)return "💙 If you're having thoughts of hurting yourself, please talk to someone now. In the US call or text 988 any time, and tell a trusted adult. You matter.";return "🚫 I can't help with that here — it isn't school-appropriate. Ask me a study question instead.";}
+    const lower=q.toLowerCase();
+    for(const f of AS_FAQ){if(f.k.some(k=>lower.indexOf(k)>=0))return f.a;}
+    const stop={what:1,is:1,are:1,the:1,a:1,an:1,of:1,to:1,in:1,on:1,how:1,do:1,does:1,did:1,who:1,whom:1,which:1,was:1,were:1,and:1,or:1,for:1,me:1,my:1,you:1,i:1,can:1,tell:1,about:1,explain:1,define:1,many:1,much:1,when:1,where:1,why:1,name:1,list:1};
+    const qw=lower.replace(/[^a-z0-9\s]/g," ").split(/\s+/).filter(w=>w.length>2&&!stop[w]);
+    if(!qw.length)return "Ask me a study question (like “what is a noun?”) or about how Lumina works (plans, timer, flashcards…).";
+    const facts=buildFacts();let best=null,bestScore=0;
+    facts.forEach(f=>{const fl=f.q.toLowerCase();let sc=0;qw.forEach(w=>{if(fl.indexOf(w)>=0)sc++;});if(sc>bestScore){bestScore=sc;best=f;}});
+    if(best&&bestScore>=Math.max(1,Math.ceil(qw.length/2))){return "The answer is **"+best.a+"**.\n\n(From "+best.src+" on Lumina — open that subject to practice more like it.)";}
+    const idxHits=SEARCHIDX.filter(e=>qw.some(w=>(e.label+" "+e.sub).toLowerCase().indexOf(w)>=0)).slice(0,3);
+    if(idxHits.length){return "I don't have that exact fact yet, but this is covered under "+idxHits.map(h=>"**"+h.label+"**"+(h.sub&&h.sub!=="Subject"?" ("+h.sub+")":"")).join(", ")+". Open it from Subjects to study and quiz it.";}
+    return "I couldn't find that in Lumina's subjects. Try rewording it, or use Subjects to browse — Math, Science, Algebra, History, and more. You can also ask me how any Lumina feature works.";
+  }
+  function asBubble(who,text){const me=who==="you";const bg=me?"var(--accent,#6366f1)":"var(--panel,#1e293b)";const al=me?"flex-end":"flex-start";const safe=esc(text).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/\n/g,"<br>");return '<div style="display:flex;justify-content:'+al+';margin:6px 0"><div style="max-width:85%;background:'+bg+';color:#fff;padding:10px 14px;border-radius:14px;font-size:14px;line-height:1.45">'+safe+'</div></div>';}
+  let asHist=[];
+  function renderAsChat(){const box=$("asChat");if(!box)return;if(!asHist.length){box.innerHTML='<p class="rnote">👋 Hi! Ask me anything about your subjects or about Lumina.</p>';return;}box.innerHTML=asHist.map(m=>asBubble(m.who,m.text)).join("");box.scrollTop=box.scrollHeight;}
+  function askAssistant(text){const q=(text!=null?text:$("asInput").value).trim();if(!q)return;if(!useCredit("The AI Assistant"))return;asHist.push({who:"you",text:q});renderAsChat();const a=assistantAnswer(q);asHist.push({who:"bot",text:a});$("asInput").value="";renderAsChat();snd("tick");}
+  function openAssistant(){if(!isUnlocked()){openPricing("AI Assistant");return;}renderAsChat();const chips=["What is photosynthesis?","How do I start a free trial?","Explain a fraction","How does the Writing Coach work?"];$("asChips").innerHTML=chips.map((c,i)=>'<button class="btn alt" style="width:auto;font-size:12px;padding:6px 12px" data-q="'+esc(c)+'">'+esc(c)+'</button>').join("");[...$("asChips").querySelectorAll("button")].forEach(b=>b.onclick=()=>askAssistant(b.getAttribute("data-q")));showScreen("screen-assistant");}
+  window.openAssistant=openAssistant;
+  $("asSend").addEventListener("click",()=>askAssistant());
+  $("asInput").addEventListener("keydown",e=>{if(e.key==="Enter")askAssistant();});
+
   /* ---------- FLASHCARDS ---------- */
   let decks=LS.get("sq_decks",[]),curDeck=null,dkImgData=null,flCards=[],flIdx=0,flShow="front";
-  function openDecks(){if(!pro){openPricing("Flashcards");return;}renderDecks();showScreen("screen-decks");}
+  function openDecks(){if(!isUnlocked()){openPricing("Flashcards");return;}renderDecks();showScreen("screen-decks");}
   window.openDecks=openDecks;
   function renderDecks(){const w=$("decksList");if(!decks.length)w.innerHTML='<p class="muted">No flashcard decks yet.<br>Make one to memorize words, terms, or pictures! 🃏</p>';else w.innerHTML=decks.slice().reverse().map(d=>'<div class="panel"><h3>'+esc(d.name||"Untitled")+'</h3><p style="opacity:.7;font-size:13px">'+d.cards.length+' card'+(d.cards.length===1?"":"s")+'</p><div class="rowbtns"><button class="mini play" onclick="studyDeck('+d.id+')">▶ Study</button><button class="mini edit" onclick="editDeck('+d.id+')">✏️ Edit</button><button class="mini del" onclick="delDeck('+d.id+')">🗑️</button></div></div>').join("");$("deckNew").onclick=newDeck;}
   function backDecks(){renderDecks();showScreen("screen-decks");}
@@ -816,7 +996,7 @@ What is 6 x 7? : 42</div>
   function renderDkCards(){const w=$("dkCards");if(!curDeck.cards.length){w.innerHTML='<p class="hint">No cards yet. Add a front and back above.</p>';return;}w.innerHTML=curDeck.cards.map((c,i)=>'<div class="panel" style="padding:10px 12px"><b>'+esc(c.front)+'</b><p style="margin:2px 0">'+esc(c.back)+(c.img?' 🖼️':'')+'</p><button class="mini del" onclick="delCard('+i+')">🗑️ Remove</button></div>').join("");}
   window.delCard=i=>{curDeck.cards.splice(i,1);saveDeck();renderDkCards();};
   $("dkImg").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;resizeImg(f,d=>{dkImgData=d;$("dkPreview").src=d;$("dkPreview").style.display="block";});});
-  $("dkAdd").addEventListener("click",()=>{const fr=$("dkFront").value.trim(),bk=$("dkBack").value.trim();if(!fr||!bk){alert("Fill in both the front and the back.");return;}curDeck.cards.push({front:fr,back:bk,img:dkImgData||null});dkImgData=null;$("dkFront").value="";$("dkBack").value="";$("dkImg").value="";$("dkPreview").style.display="none";saveDeck();renderDkCards();});
+  $("dkAdd").addEventListener("click",()=>{const fr=$("dkFront").value.trim(),bk=$("dkBack").value.trim();if(!fr||!bk){alert("Fill in both the front and the back.");return;}if(blockContent(fr+" "+bk))return;curDeck.cards.push({front:fr,back:bk,img:dkImgData||null});dkImgData=null;$("dkFront").value="";$("dkBack").value="";$("dkImg").value="";$("dkPreview").style.display="none";saveDeck();renderDkCards();});
   $("dkStudy").addEventListener("click",()=>{saveDeck();studyDeck(curDeck.id);});
   function studyDeck(id){const d=decks.find(x=>x.id===id);if(!d||!d.cards.length){alert("Add at least one card first.");return;}flCards=d.cards.slice();flIdx=0;flShow="front";$("flTitle").textContent="🃏 "+(d.name||"Deck");$("flBack").onclick=backDecks;renderFlash();showScreen("screen-flash");}
   window.studyDeck=studyDeck;
@@ -828,7 +1008,7 @@ What is 6 x 7? : 42</div>
 
   /* ---------- MAKE A GAME (custom question sets) ---------- */
   let sets=LS.get("sq_sets",[]),curSet=null;
-  function openSets(){if(!pro){openPricing("Make a Game");return;}renderSets();showScreen("screen-sets");}
+  function openSets(){if(!isUnlocked()){openPricing("Make a Game");return;}renderSets();showScreen("screen-sets");}
   window.openSets=openSets;
   function renderSets(){const w=$("setsList");if(!sets.length)w.innerHTML='<p class="muted">No games yet.<br>Write your own questions, pick right &amp; wrong, then play! 🎯</p>';else w.innerHTML=sets.slice().reverse().map(s=>'<div class="panel"><h3>'+esc(s.name||"Untitled")+'</h3><p style="opacity:.7;font-size:13px">'+s.qs.length+' question'+(s.qs.length===1?"":"s")+'</p><div class="rowbtns"><button class="mini play" onclick="playSet('+s.id+')">🎮 Play</button><button class="mini quiz" onclick="quizSet('+s.id+')">📝 Quiz</button><button class="mini edit" onclick="editSet('+s.id+')">✏️ Edit</button><button class="mini del" onclick="delSet('+s.id+')">🗑️</button></div></div>').join("");$("setNew").onclick=newSet;}
   function backSets(){renderSets();showScreen("screen-sets");}
@@ -841,27 +1021,30 @@ What is 6 x 7? : 42</div>
   function saveSet(){curSet.name=$("stName").value.trim()||"My Game";if(!sets.find(s=>s.id===curSet.id))sets.push(curSet);LS.set("sq_sets",sets);}
   function renderStList(){const w=$("stList");if(!curSet.qs.length){w.innerHTML='<p class="hint">No questions yet. Add one above.</p>';return;}w.innerHTML=curSet.qs.map((q,i)=>'<div class="panel" style="padding:10px 12px"><b>'+esc(q.q)+'</b><p style="margin:2px 0">✅ '+esc(q.correct)+'</p><button class="mini del" onclick="delSetQ('+i+')">🗑️ Remove</button></div>').join("");}
   window.delSetQ=i=>{curSet.qs.splice(i,1);saveSet();renderStList();};
-  $("stAdd").addEventListener("click",()=>{const q=$("stQ").value.trim(),c=$("stC").value.trim(),wr=[$("stW1").value.trim(),$("stW2").value.trim(),$("stW3").value.trim()].filter(Boolean);if(!q||!c||wr.length<1){alert("Add a question, the correct answer, and at least one wrong answer.");return;}curSet.qs.push({q,correct:c,wrong:wr});STF.forEach(id=>$(id).value="");saveSet();renderStList();});
+  $("stAdd").addEventListener("click",()=>{const q=$("stQ").value.trim(),c=$("stC").value.trim(),wr=[$("stW1").value.trim(),$("stW2").value.trim(),$("stW3").value.trim()].filter(Boolean);if(!q||!c||wr.length<1){alert("Add a question, the correct answer, and at least one wrong answer.");return;}if(blockContent(q+" "+c+" "+wr.join(" ")))return;curSet.qs.push({q,correct:c,wrong:wr});STF.forEach(id=>$(id).value="");saveSet();renderStList();});
   $("stPlay").addEventListener("click",()=>{saveSet();playSet(curSet.id);});
   $("stQuiz").addEventListener("click",()=>{saveSet();quizSet(curSet.id);});
   function playSet(id){const s=sets.find(x=>x.id===id);if(!s||!s.qs.length){alert("Add at least one question first.");return;}if(!canStartGame())return;const raws=s.qs.map(q=>[q.q,q.correct,q.wrong]);runGame(()=>normalize((s.name||"GAME").toUpperCase(),raws[rand(raws.length)]),s.name,7000,()=>openSets(),()=>playSet(id),selRound);}
   window.playSet=playSet;
-  function quizSet(id){const s=sets.find(x=>x.id===id);if(!s||!s.qs.length){alert("Add at least one question first.");return;}const norm=()=>s.qs.map(q=>normalize((s.name||"GAME").toUpperCase(),[q.q,q.correct,q.wrong]));let items=shuffle(norm());while(items.length<selQLen&&s.qs.length)items=items.concat(norm());items=items.slice(0,selQLen);runQuiz(items,s.name,null,()=>quizSet(id),()=>openSets());}
+  function quizSet(id){const s=sets.find(x=>x.id===id);if(!s||!s.qs.length){alert("Add at least one question first.");return;}const norm=()=>s.qs.map(q=>normalize((s.name||"GAME").toUpperCase(),[q.q,q.correct,q.wrong]));let items=shuffle(norm());while(items.length<selQLen&&s.qs.length)items=items.concat(norm());items=items.slice(0,selQLen);if(!useCredit("Unlimited access"))return;runQuiz(items,s.name,null,()=>quizSet(id),()=>openSets());}
   window.quizSet=quizSet;
-  function renderHeader(){const b=$("proBadge");if(b)b.style.display=pro?"inline-block":"none";}
-  function gamesLeft(){return Math.max(0,FREE_GAMES-(progress.gamesStarted||0));}
-  function canStartGame(){if(pro)return true;if((progress.gamesStarted||0)>=FREE_GAMES){openPricing("Unlimited games");return false;}return true;}
-  function renderPromo(){const box=$("proPromo");if(!box)return;if(pro){box.innerHTML='';return;}const left=gamesLeft();box.innerHTML='<div class="promo"><div><h4>🔓 Unlock Lumina Pro</h4><p>Study guides, custom questions &amp; unlimited games — '+left+' free game'+(left===1?"":"s")+' left.</p></div><button class="btn" style="width:auto" onclick="openPricing(\'\')">See plans</button></div>';}
+  function renderHeader(){const b=$("proBadge");if(b){b.style.display=isUnlocked()?"inline-block":"none";b.textContent=trialActive()&&!pro?"TRIAL":"PRO";}}
+  function gamesLeft(){return freeUsesLeft();}
+  function canStartGame(){return useCredit("Unlimited access");}
+  function renderPromo(){const box=$("proPromo");if(!box)return;if(pro){box.innerHTML='';return;}
+    if(trialActive()){const d=trialDaysLeft();box.innerHTML='<div class="promo"><div><h4>⭐ Free trial active</h4><p>Everything is unlocked — '+d+' day'+(d===1?"":"s")+' left. Pick a plan any time to keep it.</p></div><button class="btn" style="width:auto" onclick="openPricing(\'\')">See plans</button></div>';return;}
+    const left=freeUsesLeft();box.innerHTML='<div class="promo"><div><h4>🔓 Unlock Lumina Pro</h4><p>You have <b>'+left+'</b> free use'+(left===1?"":"s")+' left. After that, a plan or a free trial is needed.</p></div><button class="btn" style="width:auto" onclick="openPricing(\'\')">See plans</button></div>';}
   function planFeature(t,on){return'<li class="'+(on?"":"no")+'"><span class="'+(on?"feat":"")+'">'+(on?"✓":"–")+'</span> '+t+'</li>';}
   function planCard(o){return'<div class="plan'+(o.hi?" pro":"")+'">'+(o.tag?'<div class="ptag">'+o.tag+'</div>':'')+'<h3>'+o.name+'</h3><div class="price">'+o.price+(o.per?'<small>'+o.per+'</small>':'')+'</div>'+(o.note?'<div class="pnote">'+o.note+'</div>':'')+'<ul>'+o.feats.map(f=>planFeature(f[0],f[1])).join("")+'</ul>'+(o.btn?'<button class="btn'+(o.hi?'':' alt')+'" style="margin-top:16px" onclick="'+o.act+'">'+o.btn+'</button>':'')+'</div>';}
   function openPricing(reason){const left=gamesLeft();
     const banner=reason?'<div class="hint" style="border-color:rgba(99,102,241,.5)">🔒 <b>'+esc(reason)+'</b> is part of Lumina Pro or higher.</div>':'';
-    const status=pro?'<div class="promo"><div><h4>✓ '+esc(LS.get("sq_tier","Pro")||"Pro")+' is active</h4><p>All Pro features are unlocked on this device.</p></div><button class="btn warn" style="width:auto" onclick="deactivatePro()">Turn off (demo)</button></div>':'';
-    const free=planCard({name:"Free",price:"$0",feats:[["Unlimited mock quizzes",true],["Play 5 games total ("+left+" left)",true],["Levels, XP &amp; study timer",true],["Study guides",false],["Build your own questions",false],["Game Builder",false]]});
-    const propl=planCard({name:"Pro",price:"$4.99",per:"/mo",tag:"MOST POPULAR",hi:true,note:"For one student",feats:[["Everything in Free",true],["Unlimited games",true],["Study guides with photos",true],["Build your own questions",true],["Game Builder (lessons → games)",true]],btn:pro?"":"Get Pro",act:"getPlan('Pro')"});
+    const status=pro?'<div class="promo"><div><h4>✓ '+esc(LS.get("sq_tier","Pro")||"Pro")+' is active</h4><p>All Pro features are unlocked on this device.</p></div><button class="btn warn" style="width:auto" onclick="deactivatePro()">Turn off (demo)</button></div>':(trialActive()?'<div class="promo"><div><h4>⭐ Free trial active</h4><p>Everything is unlocked for '+trialDaysLeft()+' more day'+(trialDaysLeft()===1?"":"s")+'. Choose a plan to keep access when it ends.</p></div></div>':'');
+    const trialCta=(pro||trialActive()||trialStart())?'':'<div class="promo" style="border-color:rgba(99,102,241,.5)"><div><h4>⭐ Try everything free for '+TRIAL_DAYS+' days</h4><p>Unlock every subject, tool, the AI assistant &amp; unlimited use for '+TRIAL_DAYS+' days. No payment, cancel anytime.</p></div><button class="btn" style="width:auto" onclick="startTrial()">Start free trial</button></div>';
+    const free=planCard({name:"Free",price:"$0",feats:[["5 free uses total ("+left+" left)",true],["Mock quizzes &amp; games",true],["Levels, XP &amp; study timer",true],["Unlimited use",false],["Study guides &amp; tools",false],["AI study assistant",false]]});
+    const propl=planCard({name:"Pro",price:"$4.99",per:"/mo",tag:"MOST POPULAR",hi:true,note:"For one student",feats:[["Everything in Free",true],["Unlimited use — no cap",true],["AI study assistant",true],["Study guides, flashcards &amp; tools",true],["Build your own games &amp; questions",true]],btn:pro?"":"Get Pro",act:"getPlan('Pro')"});
     const prem=planCard({name:"Premium",price:"$9.99",per:"/mo",note:"For families",feats:[["Everything in Pro",true],["Up to 5 student profiles",true],["Advanced teacher analytics",true],["Printable progress reports",true],["Priority support",true]],btn:pro?"":"Get Premium",act:"getPlan('Premium')"});
     const school='<div class="promo" style="margin-top:16px;flex-direction:column;align-items:flex-start"><h4>🏫 Schools &amp; Districts</h4><p>Volume licensing at <b>$12 / student / year</b> — everything in Premium for every student, plus an admin dashboard, class rostering, and onboarding help. The more students, the lower the price each.</p><button class="btn" style="width:auto;margin-top:10px" onclick="contactSales()">Contact sales</button></div>';
-    $("priceBody").innerHTML=banner+status+'<div class="plans">'+free+propl+prem+'</div>'+school+'<p class="hint" style="margin-top:14px">Demo build: choosing a plan unlocks features on this device only — no payment is taken, and Lumina never handles money. Real billing would connect here for individuals and for school / district licenses.</p>';
+    $("priceBody").innerHTML=banner+status+trialCta+'<div class="plans">'+free+propl+prem+'</div>'+school+'<p class="hint" style="margin-top:14px">Demo build: choosing a plan unlocks features on this device only — no payment is taken, and Lumina never handles money. Real billing would connect here for individuals and for school / district licenses.</p>';
     showScreen("screen-pricing");}
   window.openPricing=openPricing;
   function getPlan(name){setPro(true);LS.set("sq_tier",name);snd("win");confetti();renderHome();}
@@ -879,18 +1062,18 @@ What is 6 x 7? : 42</div>
     const cta=document.createElement("button");cta.className="tile";cta.innerHTML='<span class="ic">➕</span><span class="tx"><span class="tt">Study something else</span><span class="ts">Build your own quiz &amp; game from any notes</span></span>';cta.onclick=()=>openBuilder();w.appendChild(cta);
     showScreen("screen-subject");}
   function openTopic(key,topic){curSubject=key;curTopic=topic;const s=SUBJ[key];$("subjTitle").textContent=s.emoji+" "+s.name+" · "+topicName(key,topic);$("subjLabel").textContent="What do you want to do?";$("subjBack").textContent="← Topics";$("subjBack").onclick=()=>openSubject(key);
-    const modes=[{ic:"📝",t:"Mock Quiz",d:"Practice & get graded",fn:()=>chooseDiff("quiz")},{ic:"🎮",t:"Play Game",d:"Fast timed challenge",fn:()=>chooseDiff("game")},{ic:"📖",t:'Study Guide<span class="lock"> 🔒</span>',d:"Notes for this subject",fn:()=>openGuides(key)},{ic:"✏️",t:'My Questions<span class="lock"> 🔒</span>',d:"Write your own",fn:()=>openQuestions(key)}];
+    const modes=[{ic:"📝",t:"Mock Quiz",d:"Practice & get graded",fn:()=>chooseDiff("quiz")},{ic:"🎮",t:"Play Game",d:"Fast timed challenge",fn:()=>chooseDiff("game")},{ic:"🕹️",t:"Survival",d:"3 lives, no clock — go far!",fn:()=>chooseDiff("survival")},{ic:"📖",t:'Study Guide<span class="lock"> 🔒</span>',d:"Notes for this subject",fn:()=>openGuides(key)},{ic:"✏️",t:'My Questions<span class="lock"> 🔒</span>',d:"Write your own",fn:()=>openQuestions(key)}];
     const w=$("modeGrid");w.innerHTML="";modes.forEach(m=>{const b=document.createElement("button");b.className="tile";b.innerHTML='<span class="ic">'+m.ic+'</span><span class="tx"><span class="tt">'+m.t+'</span><span class="ts">'+m.d+'</span></span>';b.onclick=m.fn;w.appendChild(b);});
     showScreen("screen-subject");}
   window.openTopic=openTopic;
 
   /* ---------- DIFFICULTY ---------- */
   let selRound=60,selQLen=10;
-  function renderDiffOpts(mode){const box=$("diffOpts");if(!box)return;if(mode==="game"){const o=[[30,"30s"],[60,"60s"],[90,"90s"],[120,"2 min"]];box.innerHTML='<div class="label" style="margin-top:0;border:none;padding-top:0">Round length</div><div class="optrow">'+o.map(x=>'<button class="opt'+(selRound===x[0]?" on":"")+'" onclick="setRound('+x[0]+')">'+x[1]+'</button>').join("")+'</div>';}else{const o=[5,10,20];box.innerHTML='<div class="label" style="margin-top:0;border:none;padding-top:0">Number of questions</div><div class="optrow">'+o.map(n=>'<button class="opt'+(selQLen===n?" on":"")+'" onclick="setQLen('+n+')">'+n+'</button>').join("")+'</div>';}}
+  function renderDiffOpts(mode){const box=$("diffOpts");if(!box)return;if(mode==="survival"){box.innerHTML='<div class="hint" style="margin:0">🕹️ <b>Survival:</b> no round clock — you get <b>3 lives</b>. Each miss loses one. Answer fast for bonus points and see how long you last. Pick a difficulty below.</div>';}else if(mode==="game"){const o=[[30,"30s"],[60,"60s"],[90,"90s"],[120,"2 min"]];box.innerHTML='<div class="label" style="margin-top:0;border:none;padding-top:0">Round length</div><div class="optrow">'+o.map(x=>'<button class="opt'+(selRound===x[0]?" on":"")+'" onclick="setRound('+x[0]+')">'+x[1]+'</button>').join("")+'</div>';}else{const o=[5,10,20];box.innerHTML='<div class="label" style="margin-top:0;border:none;padding-top:0">Number of questions</div><div class="optrow">'+o.map(n=>'<button class="opt'+(selQLen===n?" on":"")+'" onclick="setQLen('+n+')">'+n+'</button>').join("")+'</div>';}}
   window.setRound=n=>{selRound=n;renderDiffOpts("game");};
   window.setQLen=n=>{selQLen=n;renderDiffOpts("quiz");};
-  function chooseDiff(mode){$("diffTitle").textContent=(mode==="game"?"🎮 ":"📝 ")+SUBJ[curSubject].name+" · "+topicName(curSubject,curTopic);$("diffBack").onclick=()=>openTopic(curSubject,curTopic);renderDiffOpts(mode);
-    const w=$("diffList");w.innerHTML="";DIFFS.forEach(d=>{const b=document.createElement("button");b.className="diffcard";b.style.background=d.bg;b.innerHTML='<span class="de">'+d.emoji+'</span><span>'+d.name+'<small>'+d.desc+'</small></span>';b.onclick=()=>{if(mode==="game")startSubjectGame(curSubject,curTopic,d.key);else startSubjectQuiz(curSubject,curTopic,d.key);};w.appendChild(b);});showScreen("screen-difficulty");}
+  function chooseDiff(mode){const pre=mode==="game"?"🎮 ":mode==="survival"?"🕹️ ":"📝 ";$("diffTitle").textContent=pre+SUBJ[curSubject].name+" · "+topicName(curSubject,curTopic);$("diffBack").onclick=()=>openTopic(curSubject,curTopic);renderDiffOpts(mode);
+    const w=$("diffList");w.innerHTML="";DIFFS.forEach(d=>{const b=document.createElement("button");b.className="diffcard";b.style.background=d.bg;b.innerHTML='<span class="de">'+d.emoji+'</span><span>'+d.name+'<small>'+d.desc+'</small></span>';b.onclick=()=>{if(mode==="quiz")startSubjectQuiz(curSubject,curTopic,d.key);else startSubjectGame(curSubject,curTopic,d.key,mode);};w.appendChild(b);});showScreen("screen-difficulty");}
 
   /* ---------- QUESTION SOURCING ---------- */
   function makeMath(diffKey){const base={easy:10,medium:25,intermediate:50,hard:99}[diffKey];const ops=diffKey==="easy"?["+","-"]:diffKey==="medium"?["+","-","×"]:["+","-","×","÷"];const op=ops[rand(ops.length)];let a,b,ans;const m={medium:6,intermediate:10,hard:12}[diffKey]||6;
@@ -927,19 +1110,20 @@ What is 6 x 7? : 42</div>
 
   /* ---------- GENERIC GAME ---------- */
   const ROUND=60;const CHEERS=["Nice! 👍","Great! ✨","On fire! 🔥","Brain power! 🧠","Boom! 💥","Genius! 🌟","Unstoppable! 🚀","Wow! 🤩"];
-  let gScore,gCombo,gBest,gCorrect,gTotal,gTime,gQT,gRT,gDL,gPerQ,gAccept,gGet,gBackFn,gCur,gAgainFn;
-  function runGame(getter,label,perQ,backFn,againFn,roundSecs){progress.gamesStarted=(progress.gamesStarted||0)+1;saveProg();gGet=getter;gPerQ=perQ;gBackFn=backFn;gAgainFn=againFn;gScore=0;gCombo=0;gBest=0;gCorrect=0;gTotal=0;gTime=roundSecs||ROUND;
-    $("goBackMenu").onclick=backFn;$("goAgain").onclick=againFn;ensureAudio();updHud();showScreen("screen-game");clearInterval(gRT);gRT=setInterval(gTick,1000);nextG();}
+  let gScore,gCombo,gBest,gCorrect,gTotal,gTime,gQT,gRT,gDL,gPerQ,gAccept,gGet,gBackFn,gCur,gAgainFn,gMode,gLives,gOver;
+  function gAlive(){return gMode==="survival"?gLives>0:gTime>0;}
+  function runGame(getter,label,perQ,backFn,againFn,roundSecs,mode){progress.gamesStarted=(progress.gamesStarted||0)+1;saveProg();gGet=getter;gPerQ=perQ;gBackFn=backFn;gAgainFn=againFn;gScore=0;gCombo=0;gBest=0;gCorrect=0;gTotal=0;gMode=mode||"timed";gLives=3;gOver=false;gTime=roundSecs||ROUND;
+    $("goBackMenu").onclick=backFn;$("goAgain").onclick=againFn;ensureAudio();updHud();showScreen("screen-game");clearInterval(gRT);if(gMode!=="survival")gRT=setInterval(gTick,1000);nextG();}
   function gTick(){gTime--;if(gTime<=5&&gTime>0)snd("tick");$("gClock").textContent=Math.max(0,gTime);if(gTime<=0)endGame();}
-  function updHud(){$("gScore").textContent=gScore;$("gClock").textContent=gTime;const c=$("gCombo");c.textContent="x"+Math.max(1,gCombo||1);c.classList.toggle("hot",gCombo>=3);}
+  function updHud(){$("gScore").textContent=gScore;$("gClock").textContent=gMode==="survival"?("❤️".repeat(Math.max(0,gLives))||"💀"):gTime;const c=$("gCombo");c.textContent="x"+Math.max(1,gCombo||1);c.classList.toggle("hot",gCombo>=3);}
   function nextG(){gAccept=true;gCur=gGet();$("gCat").textContent=gCur.cat;$("gQ").textContent=gCur.q;$("gCheer").textContent="";const w=$("gAns");w.innerHTML="";gCur.options.forEach(o=>{const b=document.createElement("button");b.className="ans";b.textContent=o;b.onclick=()=>gAnswer(b,o);w.appendChild(b);});gDL=Date.now()+gPerQ;$("timebar").style.width="100%";clearInterval(gQT);gQT=setInterval(()=>{const l=gDL-Date.now();$("timebar").style.width=Math.max(0,l/gPerQ*100)+"%";if(l<=0)gTimeout();},70);}
   function gLock(){gAccept=false;clearInterval(gQT);[...$("gAns").children].forEach(b=>b.style.pointerEvents="none");}
   function gShow(){[...$("gAns").children].forEach(b=>{if(b.textContent===gCur.correct)b.classList.add("correct");});}
   function gfb(e){const f=$("gFb");f.textContent=e;f.classList.remove("show");void f.offsetWidth;f.classList.add("show");}
-  function gAnswer(btn,opt){if(!gAccept)return;gTotal++;gLock();const bonus=Math.max(0,Math.ceil((gDL-Date.now())/1000));if(opt===gCur.correct){gCorrect++;gCombo++;gBest=Math.max(gBest,gCombo);gScore+=(10+bonus*2)*Math.min(5,gCombo);btn.classList.add("correct");gfb("✅");snd("correct");$("gCheer").textContent=CHEERS[Math.min(CHEERS.length-1,gCombo-1)]||"Awesome!";}else{gCombo=0;gTime=Math.max(0,gTime-2);btn.classList.add("wrong");gShow();gfb("❌");snd("wrong");$("gCheer").textContent="Oops! It was "+gCur.correct;}updHud();setTimeout(()=>{if(gTime>0)nextG();},700);}
-  function gTimeout(){if(!gAccept)return;gTotal++;gCombo=0;gLock();gShow();gfb("⏱️");snd("wrong");$("gCheer").textContent="Too slow! It was "+gCur.correct;updHud();setTimeout(()=>{if(gTime>0)nextG();},700);}
-  function endGame(){clearInterval(gRT);clearInterval(gQT);gAccept=false;snd("over");const isNew=gScore>progress.bestGame;recordGame(gScore);if(isNew){confetti();snd("win");}$("goScore").textContent=gScore;$("goCorrect").textContent=gCorrect;$("goStreak").textContent=gBest;$("goAcc").textContent=(gTotal?Math.round(gCorrect/gTotal*100):0)+"%";$("goNew").style.display=isNew?"block":"none";$("goTitle").textContent=isNew?"Amazing! 🌟":"Time's Up! ⏰";showScreen("screen-gameover");}
-  function startSubjectGame(s,t,d){if(!canStartGame())return;runGame(()=>oneTopicQ(s,t,d),SUBJ[s].name,DIFF[d].time,()=>openTopic(s,t),()=>startSubjectGame(s,t,d),selRound);}
+  function gAnswer(btn,opt){if(!gAccept)return;gTotal++;gLock();const bonus=Math.max(0,Math.ceil((gDL-Date.now())/1000));if(opt===gCur.correct){gCorrect++;gCombo++;gBest=Math.max(gBest,gCombo);gScore+=(10+bonus*2)*Math.min(5,gCombo);btn.classList.add("correct");gfb("✅");snd("correct");$("gCheer").textContent=CHEERS[Math.min(CHEERS.length-1,gCombo-1)]||"Awesome!";}else{gCombo=0;if(gMode==="survival")gLives--;else gTime=Math.max(0,gTime-2);btn.classList.add("wrong");gShow();gfb("❌");snd("wrong");$("gCheer").textContent="Oops! It was "+gCur.correct;}updHud();setTimeout(()=>{if(gAlive())nextG();else endGame();},700);}
+  function gTimeout(){if(!gAccept)return;gTotal++;gCombo=0;if(gMode==="survival")gLives--;gLock();gShow();gfb("⏱️");snd("wrong");$("gCheer").textContent="Too slow! It was "+gCur.correct;updHud();setTimeout(()=>{if(gAlive())nextG();else endGame();},700);}
+  function endGame(){if(gOver)return;gOver=true;clearInterval(gRT);clearInterval(gQT);gAccept=false;snd("over");const isNew=gScore>progress.bestGame;recordGame(gScore);if(isNew){confetti();snd("win");}$("goScore").textContent=gScore;$("goCorrect").textContent=gCorrect;$("goStreak").textContent=gBest;$("goAcc").textContent=(gTotal?Math.round(gCorrect/gTotal*100):0)+"%";$("goNew").style.display=isNew?"block":"none";$("goTitle").textContent=isNew?"Amazing! 🌟":(gMode==="survival"?"Game Over 🕹️":"Time's Up! ⏰");showScreen("screen-gameover");}
+  function startSubjectGame(s,t,d,mode){if(!canStartGame())return;runGame(()=>oneTopicQ(s,t,d),SUBJ[s].name,DIFF[d].time,()=>openTopic(s,t),()=>startSubjectGame(s,t,d,mode),mode==="survival"?ROUND:selRound,mode);}
   function playBuilt(g){if(g.pairs.length<2){alert("This game needs at least 2 facts to play.");return;}if(!canStartGame())return;runGame(()=>oneFromPairs(g.pairs,g.title),g.title,7000,()=>openBuilder(),()=>playBuilt(g));}
   window.playBuilt=playBuilt;
 
@@ -951,12 +1135,12 @@ What is 6 x 7? : 42</div>
   function quizDone(){const pct=Math.round(qz.score/qz.items.length*100);let L,m;if(pct>=90){L="A";m="Outstanding! 🌟";}else if(pct>=80){L="B";m="Great job! 😄";}else if(pct>=70){L="C";m="Good effort! 👍";}else if(pct>=60){L="D";m="Keep practicing! 💪";}else{L="F";m="Try again — you got this! 🔁";}if(pct>=80){confetti();snd("win");}else snd("over");recordQuiz(pct,qz.score,qz.items.length,qz.subjectKey);$("qrTitle").textContent=m;$("qrGrade").textContent=L;$("qrScore").textContent="You got "+qz.score+" / "+qz.items.length+" ("+pct+"%) — +XP!";const r=$("qrReview");r.innerHTML=qz.wrong.length?'<div class="label">Review these:</div>'+qz.wrong.map(w=>'<div class="panel"><b>'+esc(w.q)+'</b><p>✅ '+esc(w.correct)+'</p></div>').join(""):'<p class="muted">Perfect — no mistakes! 🎉</p>';showScreen("screen-quizresult");}
   function buildItems(subject,topic,diffKey,n){n=n||QLEN;let items=[];if(subject==="math"){for(let i=0;i<n;i++)items.push(makeMathTopic(topic,diffKey));return items;}const label=topicName(subject,topic).toUpperCase();let pool=topicRawPool(subject,topic,diffKey).map(r=>normalize(label,r));pool=shuffle(pool);if(!pool.length){for(let i=0;i<n;i++)items.push(makeMath(diffKey));return items;}if(pool.length>=n)items=pool.slice(0,n);else{items=pool.slice();while(items.length<n&&pool.length)items.push(pool[rand(pool.length)]);}return items;}
   function itemsFromPairs(pairs,title){let items=[];const n=Math.min(QLEN,Math.max(pairs.length,1));const order=shuffle(pairs);for(let i=0;i<Math.max(n,Math.min(QLEN,pairs.length));i++){items.push(oneFromPairs(pairs,title));}return items.slice(0,QLEN);}
-  function startSubjectQuiz(s,t,d){runQuiz(buildItems(s,t,d,selQLen),SUBJ[s].name,s,()=>startSubjectQuiz(s,t,d),()=>openTopic(s,t));}
-  function quizBuilt(g){if(g.pairs.length<2){alert("This game needs at least 2 facts.");return;}runQuiz(itemsFromPairs(g.pairs,g.title),g.title,null,()=>quizBuilt(g),()=>openBuilder());}
+  function startSubjectQuiz(s,t,d){if(!useCredit("Unlimited access"))return;runQuiz(buildItems(s,t,d,selQLen),SUBJ[s].name,s,()=>startSubjectQuiz(s,t,d),()=>openTopic(s,t));}
+  function quizBuilt(g){if(g.pairs.length<2){alert("This game needs at least 2 facts.");return;}if(!useCredit("Unlimited access"))return;runQuiz(itemsFromPairs(g.pairs,g.title),g.title,null,()=>quizBuilt(g),()=>openBuilder());}
   window.quizBuilt=quizBuilt;
 
   /* ---------- GAME BUILDER ---------- */
-  function openBuilder(){if(!pro){openPricing("Game Builder");return;}const w=$("builtList");if(!builtGames.length)w.innerHTML='<p class="muted">No built games yet.<br>Paste a lesson or study guide and turn it into a game! 🪄</p>';else w.innerHTML=builtGames.slice().reverse().map(g=>'<div class="panel"><h3>'+esc(g.title)+'</h3><p style="opacity:.7;font-size:13px">'+g.pairs.length+' facts</p><div class="rowbtns"><button class="mini play" onclick="playBuilt(builtById('+g.id+'))">🎮 Play</button><button class="mini quiz" onclick="quizBuilt(builtById('+g.id+'))">📝 Quiz</button><button class="mini del" onclick="delBuilt('+g.id+')">🗑️</button></div></div>').join("");$("builtNew").onclick=newBuilt;showScreen("screen-builder");}
+  function openBuilder(){if(!isUnlocked()){openPricing("Game Builder");return;}const w=$("builtList");if(!builtGames.length)w.innerHTML='<p class="muted">No built games yet.<br>Paste a lesson or study guide and turn it into a game! 🪄</p>';else w.innerHTML=builtGames.slice().reverse().map(g=>'<div class="panel"><h3>'+esc(g.title)+'</h3><p style="opacity:.7;font-size:13px">'+g.pairs.length+' facts</p><div class="rowbtns"><button class="mini play" onclick="playBuilt(builtById('+g.id+'))">🎮 Play</button><button class="mini quiz" onclick="quizBuilt(builtById('+g.id+'))">📝 Quiz</button><button class="mini del" onclick="delBuilt('+g.id+')">🗑️</button></div></div>').join("");$("builtNew").onclick=newBuilt;showScreen("screen-builder");}
   window.openBuilder=openBuilder;
   window.builtById=id=>builtGames.find(g=>g.id===id);
   window.delBuilt=id=>{if(confirm("Delete this game?")){builtGames=builtGames.filter(g=>g.id!==id);LS.set("sq_games",builtGames);openBuilder();}};
@@ -965,12 +1149,12 @@ What is 6 x 7? : 42</div>
   $("bImg").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;resizeImg(f,d=>{bImgData=d;$("bPreview").src=d;$("bPreview").style.display="block";});});
   function splitPair(line){const seps=[" = "," — "," – "," - "," | ",": ","\t"];for(const s of seps){const i=line.indexOf(s);if(i>0)return[line.slice(0,i).trim(),line.slice(i+s.length).trim()];}const q=line.indexOf("?");if(q>0&&q<line.length-1)return[line.slice(0,q+1).trim(),line.slice(q+1).replace(/^[=:\-\s]+/,"").trim()];return null;}
   function parseLesson(text){const pairs=[];text.split(/\r?\n/).forEach(ln=>{ln=ln.trim();if(!ln)return;const p=splitPair(ln);if(p&&p[0]&&p[1])pairs.push({prompt:p[0],answer:p[1]});});return pairs;}
-  $("bBuild").addEventListener("click",()=>{const title=$("bTitle").value.trim()||"My Study Game";const pairs=parseLesson($("bText").value);if(pairs.length<3){alert("Add at least 3 facts.\nPut each on its own line like:\n  France - Paris\n  What is 2+2? = 4");return;}const g={id:Date.now(),title,pairs};builtGames.push(g);LS.set("sq_games",builtGames);alert("🎉 Built \""+title+"\" with "+pairs.length+" facts! Now tap Play or Quiz.");openBuilder();});
+  $("bBuild").addEventListener("click",()=>{const title=$("bTitle").value.trim()||"My Study Game";if(blockContent(title+" "+$("bText").value))return;const pairs=parseLesson($("bText").value);if(pairs.length<3){alert("Add at least 3 facts.\nPut each on its own line like:\n  France - Paris\n  What is 2+2? = 4");return;}const g={id:Date.now(),title,pairs};builtGames.push(g);LS.set("sq_games",builtGames);alert("🎉 Built \""+title+"\" with "+pairs.length+" facts! Now tap Play or Quiz.");openBuilder();});
 
   /* ---------- STUDY GUIDES ---------- */
   let guideFilter=null,editGuideId=null,gImgData=null;
-  function openGuides(subject){if(!pro){openPricing("Study guides");return;}guideFilter=subject;$("guidesTitle").textContent="📖 "+SUBJ[subject].name+" Guides";$("guidesBack").onclick=()=>openSubject(subject);renderGuides();showScreen("screen-guides");}
-  function openAllGuides(){if(!pro){openPricing("Study guides");return;}guideFilter=null;$("guidesTitle").textContent="📒 All Study Guides";$("guidesBack").onclick=()=>showScreen("screen-home");renderGuides();showScreen("screen-guides");}
+  function openGuides(subject){if(!isUnlocked()){openPricing("Study guides");return;}guideFilter=subject;$("guidesTitle").textContent="📖 "+SUBJ[subject].name+" Guides";$("guidesBack").onclick=()=>openSubject(subject);renderGuides();showScreen("screen-guides");}
+  function openAllGuides(){if(!isUnlocked()){openPricing("Study guides");return;}guideFilter=null;$("guidesTitle").textContent="📒 All Study Guides";$("guidesBack").onclick=()=>showScreen("screen-home");renderGuides();showScreen("screen-guides");}
   window.openAllGuides=openAllGuides;
   function renderGuides(){const list=guides.filter(g=>!guideFilter||g.subject===guideFilter);const w=$("guidesList");if(!list.length)w.innerHTML='<p class="muted">No study guides yet.<br>Tap "New Study Guide" to make one! ✍️</p>';else w.innerHTML=list.slice().reverse().map(g=>'<div class="panel"><h3>'+esc(g.title||"Untitled")+'</h3><p style="opacity:.7;font-size:13px">'+SUBJ[g.subject].emoji+" "+SUBJ[g.subject].name+'</p><div class="rowbtns"><button class="mini play" onclick="viewGuide('+g.id+')">📖 Open</button><button class="mini edit" onclick="editGuide('+g.id+')">✏️ Edit</button></div></div>').join("");$("guideNew").onclick=newGuide;}
   function backGuides(){renderGuides();showScreen("screen-guides");}
@@ -978,20 +1162,20 @@ What is 6 x 7? : 42</div>
   function editGuide(id){const g=guides.find(x=>x.id===id);if(!g)return;editGuideId=id;gImgData=null;$("geTitle").value=g.title||"";$("geText").value=g.text||"";if(g.img){$("gePreview").src=g.img;$("gePreview").style.display="block";}else $("gePreview").style.display="none";$("geImg").value="";$("geBack").onclick=backGuides;showScreen("screen-guideedit");}
   window.editGuide=editGuide;
   $("geImg").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;resizeImg(f,d=>{gImgData=d;$("gePreview").src=d;$("gePreview").style.display="block";});});
-  $("geSave").addEventListener("click",()=>{const title=$("geTitle").value.trim(),text=$("geText").value.trim();if(!title&&!text){alert("Add a title or some notes first!");return;}if(editGuideId){const g=guides.find(x=>x.id===editGuideId);g.title=title;g.text=text;if(gImgData)g.img=gImgData;}else guides.push({id:Date.now(),subject:guideFilter||curSubject||"facts",title,text,img:gImgData||null});LS.set("sq_guides",guides);backGuides();});
+  $("geSave").addEventListener("click",()=>{const title=$("geTitle").value.trim(),text=$("geText").value.trim();if(!title&&!text){alert("Add a title or some notes first!");return;}if(blockContent(title+" "+text))return;if(editGuideId){const g=guides.find(x=>x.id===editGuideId);g.title=title;g.text=text;if(gImgData)g.img=gImgData;}else guides.push({id:Date.now(),subject:guideFilter||curSubject||"facts",title,text,img:gImgData||null});LS.set("sq_guides",guides);backGuides();});
   function viewGuide(id){const g=guides.find(x=>x.id===id);if(!g)return;$("gvBody").innerHTML='<div class="panel"><h3>'+esc(g.title||"Untitled")+'</h3><p style="opacity:.7;font-size:13px">'+SUBJ[g.subject].emoji+" "+SUBJ[g.subject].name+'</p>'+(g.img?'<img class="guideimg" src="'+g.img+'">':"")+'<p>'+esc(g.text||"")+'</p></div>';$("gvBack").onclick=backGuides;$("gvEdit").onclick=()=>editGuide(id);$("gvDel").onclick=()=>{if(confirm("Delete this study guide?")){guides=guides.filter(x=>x.id!==id);LS.set("sq_guides",guides);backGuides();}};showScreen("screen-guideview");}
   window.viewGuide=viewGuide;
 
   /* ---------- MY QUESTIONS ---------- */
   let qSubject=null,editQIdx=null;
-  function openQuestions(subject){if(!pro){openPricing("Custom questions");return;}qSubject=subject;$("qTitle").textContent="✏️ "+SUBJ[subject].name+" Questions";$("qBack").onclick=()=>openSubject(subject);renderQList();showScreen("screen-questions");}
+  function openQuestions(subject){if(!isUnlocked()){openPricing("Custom questions");return;}qSubject=subject;$("qTitle").textContent="✏️ "+SUBJ[subject].name+" Questions";$("qBack").onclick=()=>openSubject(subject);renderQList();showScreen("screen-questions");}
   function renderQList(){const arr=custom[qSubject]||[];const w=$("qList");if(!arr.length)w.innerHTML='<p class="muted">No custom questions yet.<br>Make your own to use in the Quiz & Game! 🎯</p>';else w.innerHTML=arr.map((c,i)=>'<div class="panel"><b>'+esc(c.q)+'</b><p>✅ '+esc(c.correct)+'</p><div class="rowbtns"><button class="mini edit" onclick="editQ('+i+')">✏️ Edit</button><button class="mini del" onclick="delQ('+i+')">🗑️ Delete</button></div></div>').join("");$("qNew").onclick=newQ;}
   function newQ(){editQIdx=null;["qeQ","qeC","qeW1","qeW2","qeW3"].forEach(id=>$(id).value="");$("qeBack").onclick=()=>{renderQList();showScreen("screen-questions");};showScreen("screen-questionedit");}
   function editQ(i){const c=custom[qSubject][i];editQIdx=i;$("qeQ").value=c.q;$("qeC").value=c.correct;$("qeW1").value=c.wrong[0]||"";$("qeW2").value=c.wrong[1]||"";$("qeW3").value=c.wrong[2]||"";$("qeBack").onclick=()=>{renderQList();showScreen("screen-questions");};showScreen("screen-questionedit");}
   window.editQ=editQ;
   function delQ(i){if(confirm("Delete this question?")){custom[qSubject].splice(i,1);LS.set("sq_custom",custom);renderQList();}}
   window.delQ=delQ;
-  $("qeSave").addEventListener("click",()=>{const q=$("qeQ").value.trim(),c=$("qeC").value.trim();const w=[$("qeW1").value.trim(),$("qeW2").value.trim(),$("qeW3").value.trim()].filter(x=>x);if(!q||!c||w.length<3){alert("Fill in the question, the correct answer, and all 3 wrong answers.");return;}if(!custom[qSubject])custom[qSubject]=[];const o={q,correct:c,wrong:w};if(editQIdx!==null)custom[qSubject][editQIdx]=o;else custom[qSubject].push(o);LS.set("sq_custom",custom);renderQList();showScreen("screen-questions");});
+  $("qeSave").addEventListener("click",()=>{const q=$("qeQ").value.trim(),c=$("qeC").value.trim();const w=[$("qeW1").value.trim(),$("qeW2").value.trim(),$("qeW3").value.trim()].filter(x=>x);if(!q||!c||w.length<3){alert("Fill in the question, the correct answer, and all 3 wrong answers.");return;}if(blockContent(q+" "+c+" "+w.join(" ")))return;if(!custom[qSubject])custom[qSubject]=[];const o={q,correct:c,wrong:w};if(editQIdx!==null)custom[qSubject][editQIdx]=o;else custom[qSubject].push(o);LS.set("sq_custom",custom);renderQList();showScreen("screen-questions");});
 
   /* ---------- TIMER ---------- */
   const PRESETS=[5,10,15,25,45];let tTotal=25*60,tLeft=25*60,tRun=false,tInt=null;
