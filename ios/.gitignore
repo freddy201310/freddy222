@@ -1,0 +1,5 @@
+.build/
+.swiftpm/
+HavenKids.xcodeproj/
+DerivedData/
+*.xcuserstate

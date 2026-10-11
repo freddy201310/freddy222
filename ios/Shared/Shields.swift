@@ -17,7 +17,7 @@ enum Shields {
         store.dateAndTime.requireAutomaticDateAndTime = true
         store.passcode.lockPasscode = true
         store.account.lockAccounts = true
-        store.appStore.maximumAppRating = appRating(rules.installs?.maxAgeRating)
+        store.appStore.maximumRating = appRating(rules.installs?.maxAgeRating)
         store.application.denyAppInstallation = rules.installs?.mode == "block"
 
         // Websites: Apple's adult-content filter, plus the parent's own lists.
