@@ -1,0 +1,11 @@
+{
+  "": {
+    "swift-dependencies": "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCoreTests.build/master.swiftdeps"
+  },
+  "/src/Tests/HavenCoreTests/HavenCoreTests.swift": {
+    "dependencies": "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCoreTests.build/HavenCoreTests.d",
+    "object": "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCoreTests.build/HavenCoreTests.swift.o",
+    "swiftmodule": "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCoreTests.build/HavenCoreTests~partial.swiftmodule",
+    "swift-dependencies": "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCoreTests.build/HavenCoreTests.swiftdeps"
+  }
+}

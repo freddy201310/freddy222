@@ -1,0 +1,108 @@
+# XcodeGen spec: `brew install xcodegen && xcodegen` creates HavenKids.xcodeproj.
+name: HavenKids
+options:
+  bundleIdPrefix: com.haven
+  deploymentTarget:
+    iOS: "16.0"
+packages:
+  HavenCore:
+    path: .
+settings:
+  base:
+    DEVELOPMENT_TEAM: "" # your Apple Developer team ID
+    SWIFT_VERSION: "5.9"
+targets:
+  HavenKids:
+    type: application
+    platform: iOS
+    sources: [App, Shared]
+    dependencies:
+      - package: HavenCore
+      - target: HavenMonitor
+      - target: HavenShieldConfiguration
+      - target: HavenShieldAction
+      - sdk: FamilyControls.framework
+      - sdk: ManagedSettings.framework
+      - sdk: DeviceActivity.framework
+      - sdk: NetworkExtension.framework
+    info:
+      path: Config/App-Info.plist
+      properties:
+        CFBundleDisplayName: Haven Kids
+        HavenServer: https://havenparents.com
+        UILaunchScreen: {}
+        BGTaskSchedulerPermittedIdentifiers: [com.haven.kids.refresh]
+        UIBackgroundModes: [fetch, location]
+        NSLocationAlwaysAndWhenInUseUsageDescription: Haven shares this phone's location with your parents so they know you're safe.
+        NSLocationWhenInUseUsageDescription: Haven shares this phone's location with your parents so they know you're safe.
+    entitlements:
+      path: Config/App.entitlements
+      properties:
+        com.apple.developer.family-controls: true
+        com.apple.developer.networking.networkextension: [dns-settings]
+        com.apple.security.application-groups: [group.com.haven.kids]
+        keychain-access-groups: [$(AppIdentifierPrefix)group.com.haven.kids]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.haven.kids
+
+  HavenMonitor:
+    type: app-extension
+    platform: iOS
+    sources: [Extensions/Monitor, Shared]
+    dependencies:
+      - package: HavenCore
+    info:
+      path: Config/Monitor-Info.plist
+      properties:
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.deviceactivity.monitor-extension
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).HavenMonitor
+    entitlements:
+      path: Config/Extension.entitlements
+      properties:
+        com.apple.developer.family-controls: true
+        com.apple.security.application-groups: [group.com.haven.kids]
+        keychain-access-groups: [$(AppIdentifierPrefix)group.com.haven.kids]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.haven.kids.monitor
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: HAVEN_EXTENSION
+
+  HavenShieldConfiguration:
+    type: app-extension
+    platform: iOS
+    sources: [Extensions/ShieldConfiguration, Shared]
+    dependencies:
+      - package: HavenCore
+    info:
+      path: Config/ShieldConfiguration-Info.plist
+      properties:
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.ManagedSettingsUI.shield-configuration-service
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).ShieldConfig
+    entitlements:
+      path: Config/Extension.entitlements
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.haven.kids.shieldconfig
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: HAVEN_EXTENSION
+
+  HavenShieldAction:
+    type: app-extension
+    platform: iOS
+    sources: [Extensions/ShieldAction, Shared]
+    dependencies:
+      - package: HavenCore
+    info:
+      path: Config/ShieldAction-Info.plist
+      properties:
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.ManagedSettings.shield-action-service
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).ShieldActionHandler
+    entitlements:
+      path: Config/Extension.entitlements
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.haven.kids.shieldaction
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: HAVEN_EXTENSION

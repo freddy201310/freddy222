@@ -1,0 +1,29 @@
+{
+  "": {
+    "swift-dependencies": "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/master.swiftdeps"
+  },
+  "/src/Sources/HavenCore/API.swift": {
+    "dependencies": "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/API.d",
+    "object": "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/API.swift.o",
+    "swiftmodule": "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/API~partial.swiftmodule",
+    "swift-dependencies": "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/API.swiftdeps"
+  },
+  "/src/Sources/HavenCore/Policy.swift": {
+    "dependencies": "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/Policy.d",
+    "object": "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/Policy.swift.o",
+    "swiftmodule": "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/Policy~partial.swiftmodule",
+    "swift-dependencies": "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/Policy.swiftdeps"
+  },
+  "/src/Sources/HavenCore/ServerClock.swift": {
+    "dependencies": "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/ServerClock.d",
+    "object": "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/ServerClock.swift.o",
+    "swiftmodule": "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/ServerClock~partial.swiftmodule",
+    "swift-dependencies": "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/ServerClock.swiftdeps"
+  },
+  "/src/Sources/HavenCore/Usage.swift": {
+    "dependencies": "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/Usage.d",
+    "object": "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/Usage.swift.o",
+    "swiftmodule": "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/Usage~partial.swiftmodule",
+    "swift-dependencies": "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/Usage.swiftdeps"
+  }
+}

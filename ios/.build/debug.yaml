@@ -1,0 +1,164 @@
+client:
+  name: basic
+  file-system: device-agnostic
+tools: {}
+targets:
+  "HavenCore-x86_64-unknown-linux-gnu-debug.module": ["<HavenCore-x86_64-unknown-linux-gnu-debug.module>"]
+  "HavenCorePackageDiscoveredTests-x86_64-unknown-linux-gnu-debug.module": ["<HavenCorePackageDiscoveredTests-x86_64-unknown-linux-gnu-debug.module>"]
+  "HavenCorePackageTests-x86_64-unknown-linux-gnu-debug.module": ["<HavenCorePackageTests-x86_64-unknown-linux-gnu-debug.module>"]
+  "HavenCorePackageTests-x86_64-unknown-linux-gnu-debug.test": ["<HavenCorePackageTests-x86_64-unknown-linux-gnu-debug.test>"]
+  "HavenCoreTests-x86_64-unknown-linux-gnu-debug.module": ["<HavenCoreTests-x86_64-unknown-linux-gnu-debug.module>"]
+  "PackageStructure": ["<PackageStructure>"]
+  "main": ["<HavenCore-x86_64-unknown-linux-gnu-debug.module>"]
+  "test": ["<HavenCore-x86_64-unknown-linux-gnu-debug.module>","<HavenCorePackageTests-x86_64-unknown-linux-gnu-debug.test>","<HavenCoreTests-x86_64-unknown-linux-gnu-debug.module>"]
+default: "main"
+nodes:
+  "/src/Sources/HavenCore/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+  "/src/Tests/HavenCoreTests/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+commands:
+  "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/HavenCore.swiftmodule.o":
+    tool: shell
+    inputs: ["/src/.build/x86_64-unknown-linux-gnu/debug/Modules/HavenCore.swiftmodule"]
+    outputs: ["/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/HavenCore.swiftmodule.o"]
+    description: "Wrapping AST for HavenCore for debugging"
+    args: ["/usr/bin/swiftc","-modulewrap","/src/.build/x86_64-unknown-linux-gnu/debug/Modules/HavenCore.swiftmodule","-o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/HavenCore.swiftmodule.o","-target","x86_64-unknown-linux-gnu"]
+
+  "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/src/Sources/HavenCore/API.swift","/src/Sources/HavenCore/Policy.swift","/src/Sources/HavenCore/ServerClock.swift","/src/Sources/HavenCore/Usage.swift"]
+    outputs: ["/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/sources"]
+    description: "Write auxiliary file /src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/sources"
+
+  "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageDiscoveredTests.build/HavenCorePackageDiscoveredTests.swiftmodule.o":
+    tool: shell
+    inputs: ["/src/.build/x86_64-unknown-linux-gnu/debug/Modules/HavenCorePackageDiscoveredTests.swiftmodule"]
+    outputs: ["/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageDiscoveredTests.build/HavenCorePackageDiscoveredTests.swiftmodule.o"]
+    description: "Wrapping AST for HavenCorePackageDiscoveredTests for debugging"
+    args: ["/usr/bin/swiftc","-modulewrap","/src/.build/x86_64-unknown-linux-gnu/debug/Modules/HavenCorePackageDiscoveredTests.swiftmodule","-o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageDiscoveredTests.build/HavenCorePackageDiscoveredTests.swiftmodule.o","-target","x86_64-unknown-linux-gnu"]
+
+  "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageDiscoveredTests.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageDiscoveredTests.derived/HavenCoreTests.swift","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageDiscoveredTests.derived/all-discovered-tests.swift"]
+    outputs: ["/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageDiscoveredTests.build/sources"]
+    description: "Write auxiliary file /src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageDiscoveredTests.build/sources"
+
+  "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageDiscoveredTests.derived/all-discovered-tests.swift":
+    tool: test-discovery-tool
+    inputs: ["/src/.build/x86_64-unknown-linux-gnu/debug/HavenCoreTests.build/HavenCoreTests.swift.o"]
+    outputs: ["/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageDiscoveredTests.derived/HavenCoreTests.swift","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageDiscoveredTests.derived/all-discovered-tests.swift"]
+
+  "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageTests.build/HavenCorePackageTests.swiftmodule.o":
+    tool: shell
+    inputs: ["/src/.build/x86_64-unknown-linux-gnu/debug/Modules/HavenCorePackageTests.swiftmodule"]
+    outputs: ["/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageTests.build/HavenCorePackageTests.swiftmodule.o"]
+    description: "Wrapping AST for HavenCorePackageTests for debugging"
+    args: ["/usr/bin/swiftc","-modulewrap","/src/.build/x86_64-unknown-linux-gnu/debug/Modules/HavenCorePackageTests.swiftmodule","-o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageTests.build/HavenCorePackageTests.swiftmodule.o","-target","x86_64-unknown-linux-gnu"]
+
+  "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageTests.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageTests.derived/runner.swift"]
+    outputs: ["/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageTests.build/sources"]
+    description: "Write auxiliary file /src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageTests.build/sources"
+
+  "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageTests.derived/runner.swift":
+    tool: test-entry-point-tool
+    inputs: ["/src/.build/x86_64-unknown-linux-gnu/debug/Modules/HavenCorePackageDiscoveredTests.swiftmodule"]
+    outputs: ["/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageTests.derived/runner.swift"]
+
+  "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageTests.product/Objects.LinkFileList":
+    tool: write-auxiliary-file
+    inputs: ["<link-file-list>","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/API.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/HavenCore.swiftmodule.o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/Policy.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/ServerClock.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/Usage.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageDiscoveredTests.build/HavenCorePackageDiscoveredTests.swiftmodule.o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageDiscoveredTests.build/HavenCoreTests.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageDiscoveredTests.build/all-discovered-tests.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageTests.build/HavenCorePackageTests.swiftmodule.o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageTests.build/runner.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCoreTests.build/HavenCoreTests.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCoreTests.build/HavenCoreTests.swiftmodule.o"]
+    outputs: ["/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageTests.product/Objects.LinkFileList"]
+    description: "Write auxiliary file /src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageTests.product/Objects.LinkFileList"
+
+  "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCoreTests.build/HavenCoreTests.swiftmodule.o":
+    tool: shell
+    inputs: ["/src/.build/x86_64-unknown-linux-gnu/debug/Modules/HavenCoreTests.swiftmodule"]
+    outputs: ["/src/.build/x86_64-unknown-linux-gnu/debug/HavenCoreTests.build/HavenCoreTests.swiftmodule.o"]
+    description: "Wrapping AST for HavenCoreTests for debugging"
+    args: ["/usr/bin/swiftc","-modulewrap","/src/.build/x86_64-unknown-linux-gnu/debug/Modules/HavenCoreTests.swiftmodule","-o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCoreTests.build/HavenCoreTests.swiftmodule.o","-target","x86_64-unknown-linux-gnu"]
+
+  "/src/.build/x86_64-unknown-linux-gnu/debug/HavenCoreTests.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/src/Tests/HavenCoreTests/HavenCoreTests.swift"]
+    outputs: ["/src/.build/x86_64-unknown-linux-gnu/debug/HavenCoreTests.build/sources"]
+    description: "Write auxiliary file /src/.build/x86_64-unknown-linux-gnu/debug/HavenCoreTests.build/sources"
+
+  "/src/.build/x86_64-unknown-linux-gnu/debug/swift-version-24593BA9C3E375BF.txt":
+    tool: write-auxiliary-file
+    inputs: ["<swift-get-version>","/usr/bin/swiftc"]
+    outputs: ["/src/.build/x86_64-unknown-linux-gnu/debug/swift-version-24593BA9C3E375BF.txt"]
+    always-out-of-date: "true"
+    description: "Write auxiliary file /src/.build/x86_64-unknown-linux-gnu/debug/swift-version-24593BA9C3E375BF.txt"
+
+  "<HavenCore-x86_64-unknown-linux-gnu-debug.module>":
+    tool: phony
+    inputs: ["/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/API.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/Policy.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/ServerClock.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/Usage.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/Modules/HavenCore.swiftmodule"]
+    outputs: ["<HavenCore-x86_64-unknown-linux-gnu-debug.module>"]
+
+  "<HavenCorePackageDiscoveredTests-x86_64-unknown-linux-gnu-debug.module>":
+    tool: phony
+    inputs: ["/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageDiscoveredTests.build/HavenCoreTests.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageDiscoveredTests.build/all-discovered-tests.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/Modules/HavenCorePackageDiscoveredTests.swiftmodule"]
+    outputs: ["<HavenCorePackageDiscoveredTests-x86_64-unknown-linux-gnu-debug.module>"]
+
+  "<HavenCorePackageTests-x86_64-unknown-linux-gnu-debug.module>":
+    tool: phony
+    inputs: ["/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageTests.build/runner.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/Modules/HavenCorePackageTests.swiftmodule"]
+    outputs: ["<HavenCorePackageTests-x86_64-unknown-linux-gnu-debug.module>"]
+
+  "<HavenCorePackageTests-x86_64-unknown-linux-gnu-debug.test>":
+    tool: phony
+    inputs: ["/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageTests.xctest"]
+    outputs: ["<HavenCorePackageTests-x86_64-unknown-linux-gnu-debug.test>"]
+
+  "<HavenCoreTests-x86_64-unknown-linux-gnu-debug.module>":
+    tool: phony
+    inputs: ["/src/.build/x86_64-unknown-linux-gnu/debug/HavenCoreTests.build/HavenCoreTests.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/Modules/HavenCoreTests.swiftmodule"]
+    outputs: ["<HavenCoreTests-x86_64-unknown-linux-gnu-debug.module>"]
+
+  "C.HavenCore-x86_64-unknown-linux-gnu-debug.module":
+    tool: shell
+    inputs: ["/src/Sources/HavenCore/API.swift","/src/Sources/HavenCore/Policy.swift","/src/Sources/HavenCore/ServerClock.swift","/src/Sources/HavenCore/Usage.swift","/src/.build/x86_64-unknown-linux-gnu/debug/swift-version-24593BA9C3E375BF.txt","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/sources"]
+    outputs: ["/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/API.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/Policy.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/ServerClock.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/Usage.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/Modules/HavenCore.swiftmodule"]
+    description: "Compiling Swift Module 'HavenCore' (4 sources)"
+    args: ["/usr/bin/swiftc","-module-name","HavenCore","-emit-dependencies","-emit-module","-emit-module-path","/src/.build/x86_64-unknown-linux-gnu/debug/Modules/HavenCore.swiftmodule","-output-file-map","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/output-file-map.json","-parse-as-library","-incremental","-c","@/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/sources","-I","/src/.build/x86_64-unknown-linux-gnu/debug/Modules","-target","x86_64-unknown-linux-gnu","-enable-batch-mode","-index-store-path","/src/.build/x86_64-unknown-linux-gnu/debug/index/store","-Onone","-enable-testing","-j4","-DSWIFT_PACKAGE","-DDEBUG","-module-cache-path","/src/.build/x86_64-unknown-linux-gnu/debug/ModuleCache","-parseable-output","-parse-as-library","-swift-version","5","-g","-Xcc","-fPIC","-Xcc","-g","-package-name","src","-Xcc","-fno-omit-frame-pointer"]
+
+  "C.HavenCorePackageDiscoveredTests-x86_64-unknown-linux-gnu-debug.module":
+    tool: shell
+    inputs: ["/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageDiscoveredTests.derived/HavenCoreTests.swift","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageDiscoveredTests.derived/all-discovered-tests.swift","/src/.build/x86_64-unknown-linux-gnu/debug/swift-version-24593BA9C3E375BF.txt","/src/.build/x86_64-unknown-linux-gnu/debug/Modules/HavenCoreTests.swiftmodule","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageDiscoveredTests.build/sources"]
+    outputs: ["/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageDiscoveredTests.build/HavenCoreTests.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageDiscoveredTests.build/all-discovered-tests.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/Modules/HavenCorePackageDiscoveredTests.swiftmodule"]
+    description: "Compiling Swift Module 'HavenCorePackageDiscoveredTests' (2 sources)"
+    args: ["/usr/bin/swiftc","-module-name","HavenCorePackageDiscoveredTests","-emit-dependencies","-emit-module","-emit-module-path","/src/.build/x86_64-unknown-linux-gnu/debug/Modules/HavenCorePackageDiscoveredTests.swiftmodule","-output-file-map","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageDiscoveredTests.build/output-file-map.json","-parse-as-library","-incremental","-c","@/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageDiscoveredTests.build/sources","-I","/src/.build/x86_64-unknown-linux-gnu/debug/Modules","-target","x86_64-unknown-linux-gnu","-enable-batch-mode","-index-store-path","/src/.build/x86_64-unknown-linux-gnu/debug/index/store","-Onone","-enable-testing","-j4","-DSWIFT_PACKAGE","-DDEBUG","-module-cache-path","/src/.build/x86_64-unknown-linux-gnu/debug/ModuleCache","-parseable-output","-parse-as-library","-g","-Xcc","-fPIC","-Xcc","-g","-package-name","src","-Xcc","-fno-omit-frame-pointer"]
+
+  "C.HavenCorePackageTests-x86_64-unknown-linux-gnu-debug.module":
+    tool: shell
+    inputs: ["/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageTests.derived/runner.swift","/src/.build/x86_64-unknown-linux-gnu/debug/swift-version-24593BA9C3E375BF.txt","/src/.build/x86_64-unknown-linux-gnu/debug/Modules/HavenCoreTests.swiftmodule","/src/.build/x86_64-unknown-linux-gnu/debug/Modules/HavenCorePackageDiscoveredTests.swiftmodule","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageTests.build/sources"]
+    outputs: ["/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageTests.build/runner.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/Modules/HavenCorePackageTests.swiftmodule"]
+    description: "Compiling Swift Module 'HavenCorePackageTests' (1 sources)"
+    args: ["/usr/bin/swiftc","-module-name","HavenCorePackageTests","-emit-dependencies","-emit-module","-emit-module-path","/src/.build/x86_64-unknown-linux-gnu/debug/Modules/HavenCorePackageTests.swiftmodule","-output-file-map","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageTests.build/output-file-map.json","-parse-as-library","-incremental","-c","@/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageTests.build/sources","-I","/src/.build/x86_64-unknown-linux-gnu/debug/Modules","-target","x86_64-unknown-linux-gnu","-enable-batch-mode","-index-store-path","/src/.build/x86_64-unknown-linux-gnu/debug/index/store","-Onone","-enable-testing","-j4","-DSWIFT_PACKAGE","-DDEBUG","-module-cache-path","/src/.build/x86_64-unknown-linux-gnu/debug/ModuleCache","-parseable-output","-parse-as-library","-g","-Xcc","-fPIC","-Xcc","-g","-package-name","src","-Xcc","-fno-omit-frame-pointer"]
+
+  "C.HavenCorePackageTests-x86_64-unknown-linux-gnu-debug.test":
+    tool: shell
+    inputs: ["/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/API.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/HavenCore.swiftmodule.o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/Policy.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/ServerClock.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCore.build/Usage.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageDiscoveredTests.build/HavenCorePackageDiscoveredTests.swiftmodule.o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageDiscoveredTests.build/HavenCoreTests.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageDiscoveredTests.build/all-discovered-tests.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageTests.build/HavenCorePackageTests.swiftmodule.o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageTests.build/runner.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCoreTests.build/HavenCoreTests.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCoreTests.build/HavenCoreTests.swiftmodule.o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageTests.product/Objects.LinkFileList"]
+    outputs: ["/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageTests.xctest"]
+    description: "Linking ./.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageTests.xctest"
+    args: ["/usr/bin/swiftc","-L","/src/.build/x86_64-unknown-linux-gnu/debug","-o","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageTests.xctest","-module-name","HavenCorePackageTests","-emit-executable","-Xlinker","-rpath=$ORIGIN","@/src/.build/x86_64-unknown-linux-gnu/debug/HavenCorePackageTests.product/Objects.LinkFileList","-target","x86_64-unknown-linux-gnu","-g"]
+
+  "C.HavenCoreTests-x86_64-unknown-linux-gnu-debug.module":
+    tool: shell
+    inputs: ["/src/Tests/HavenCoreTests/HavenCoreTests.swift","/src/.build/x86_64-unknown-linux-gnu/debug/swift-version-24593BA9C3E375BF.txt","/src/.build/x86_64-unknown-linux-gnu/debug/Modules/HavenCore.swiftmodule","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCoreTests.build/sources"]
+    outputs: ["/src/.build/x86_64-unknown-linux-gnu/debug/HavenCoreTests.build/HavenCoreTests.swift.o","/src/.build/x86_64-unknown-linux-gnu/debug/Modules/HavenCoreTests.swiftmodule"]
+    description: "Compiling Swift Module 'HavenCoreTests' (1 sources)"
+    args: ["/usr/bin/swiftc","-module-name","HavenCoreTests","-emit-dependencies","-emit-module","-emit-module-path","/src/.build/x86_64-unknown-linux-gnu/debug/Modules/HavenCoreTests.swiftmodule","-output-file-map","/src/.build/x86_64-unknown-linux-gnu/debug/HavenCoreTests.build/output-file-map.json","-parse-as-library","-incremental","-c","@/src/.build/x86_64-unknown-linux-gnu/debug/HavenCoreTests.build/sources","-I","/src/.build/x86_64-unknown-linux-gnu/debug/Modules","-target","x86_64-unknown-linux-gnu","-enable-batch-mode","-index-store-path","/src/.build/x86_64-unknown-linux-gnu/debug/index/store","-Onone","-enable-testing","-j4","-DSWIFT_PACKAGE","-DDEBUG","-module-cache-path","/src/.build/x86_64-unknown-linux-gnu/debug/ModuleCache","-parseable-output","-parse-as-library","-swift-version","5","-g","-Xcc","-fPIC","-Xcc","-g","-package-name","src","-Xcc","-fno-omit-frame-pointer"]
+
+  "PackageStructure":
+    tool: package-structure-tool
+    inputs: ["/src/Sources/HavenCore/","/src/Tests/HavenCoreTests/","/src/Package.swift","/src/Package.resolved"]
+    outputs: ["<PackageStructure>"]
+    description: "Planning build"
+    allow-missing-inputs: true
+

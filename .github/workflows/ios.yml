@@ -1,0 +1,36 @@
+name: iPhone app
+
+on:
+  push:
+    paths: ["ios/**", ".github/workflows/ios.yml"]
+  pull_request:
+    paths: ["ios/**", ".github/workflows/ios.yml"]
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: ios
+
+jobs:
+  core:
+    runs-on: ubuntu-latest
+    container: swift:6.0-noble
+    steps:
+      - uses: actions/checkout@v4
+      - name: HavenCore tests
+        run: swift test
+
+  app:
+    # Compiles the app and Screen Time extensions with Xcode (no signing, so no Apple account needed).
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate Xcode project
+        run: brew install xcodegen && xcodegen
+      - name: Build for iOS
+        run: |
+          xcodebuild -project HavenKids.xcodeproj -scheme HavenKids \
+            -destination 'generic/platform=iOS' -configuration Debug \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO build | tail -200
+          exit ${PIPESTATUS[0]}

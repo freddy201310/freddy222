@@ -55,6 +55,7 @@ The response holds everything needed until the next check-in:
 | Field | Meaning |
 | --- | --- |
 | `serverTime` | Keep time from this plus a monotonic clock, never the wall clock |
+| `timeZone` | The family time zone; count "today" in this zone |
 | `policyVersion` | Apply `rules`, then report this number as `appliedPolicyVersion` |
 | `state.mode` | `open`, `schedule`, `limit`, `paused`, or `tamper` |
 | `rules` | The full rule set (see `src/lib/rules.ts`) |

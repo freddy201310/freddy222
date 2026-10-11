@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Haven Kids</string>
+    <string name="accessibility_description">Haven uses this to notice which app is open, so it can pause apps when your parent\'s screen-time rules say so. Haven never reads what is on your screen.</string>
+</resources>

@@ -144,6 +144,7 @@ export async function compiledPolicy(device: AuthedDevice, rules = parseRules(de
   const categories = Object.fromEntries(APP_CATEGORIES.map((c) => [c.id, appDecision(rules, ctx, `category:${c.id}`, c.id)]));
   return {
     serverTime: now.toISOString(), // phones keep time from this, not from their own clock
+    timeZone: child.family.timeZone, // "today" for usage counting is the family's day, not the phone's
     nextCheckInSeconds: 60,
     policyVersion,
     state: deviceState(rules, ctx),
@@ -154,6 +155,13 @@ export async function compiledPolicy(device: AuthedDevice, rules = parseRules(de
   };
 }
 
+/**
+ * iPhones can't run a background service, so they check in when iOS lets them (screen-time events,
+ * background refresh, opening the app) — often less than hourly. Waiting at least 4 hours avoids
+ * false "offline" alarms; Android phones check in every minute and use the parent's setting.
+ */
+export const offlineWindowMinutes = (platform: "IOS" | "ANDROID", configured: number) => (platform === "IOS" ? Math.max(configured, 240) : configured);
+
 /** Mark phones that stopped checking in. Silence is how a factory reset or removed app looks. */
 export async function sweepOfflineDevices(now = new Date()) {
   const devices = await db.device.findMany({
@@ -163,7 +171,8 @@ export async function sweepOfflineDevices(now = new Date()) {
   let flagged = 0;
   for (const d of devices) {
     const rules = parseRules(d.child.policy?.rules, ageOf(d.child.birthYear));
-    if (now.getTime() - d.lastSeenAt!.getTime() < rules.tamper.offlineAlertMinutes * 60_000) continue;
+    const windowMinutes = offlineWindowMinutes(d.platform, rules.tamper.offlineAlertMinutes);
+    if (now.getTime() - d.lastSeenAt!.getTime() < windowMinutes * 60_000) continue;
     await db.device.update({ where: { id: d.id }, data: { offlineAlertedAt: now } });
     await raiseAlert({
       familyId: d.child.familyId,
@@ -171,7 +180,7 @@ export async function sweepOfflineDevices(now = new Date()) {
       deviceId: d.id,
       kind: "offline",
       severity: "WARNING",
-      message: `${d.name} hasn't checked in for over ${rules.tamper.offlineAlertMinutes} minutes. It may be off, out of signal, reset, or the Haven app was removed.`,
+      message: `${d.name} hasn't checked in for over ${windowMinutes >= 120 ? `${Math.round(windowMinutes / 60)} hours` : `${windowMinutes} minutes`}. It may be off, out of signal, reset, or the Haven app was removed.`,
     });
     flagged++;
   }

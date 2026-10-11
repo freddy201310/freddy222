@@ -48,7 +48,7 @@ export function SafetyEditor({ childId, rules, readOnly }: { childId: string; ru
           <select id="offline" className="input max-w-xs" value={tamper.offlineAlertMinutes} onChange={(e) => setTamper({ ...tamper, offlineAlertMinutes: Number(e.target.value) })}>
             {[15, 30, 60, 120, 240, 480].map((n) => <option key={n} value={n}>{n < 60 ? `${n} minutes` : `${n / 60} hour${n > 60 ? "s" : ""}`}</option>)}
           </select>
-          <p className="hint mt-1">A reset or removed app looks like silence, so Haven tells you instead of failing quietly.</p>
+          <p className="hint mt-1">A reset or removed app looks like silence, so Haven tells you instead of failing quietly. iPhones check in less often (Apple limits background activity), so for iPhones Haven waits at least 4 hours.</p>
         </div>
       </section>
 
