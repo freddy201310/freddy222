@@ -37,6 +37,10 @@ export default async function NewChild() {
               ))}
             </div>
           </fieldset>
+          <label className="flex items-start gap-2 text-sm text-ink-600">
+            <input type="checkbox" name="consent" required className="mt-1 h-4 w-4 accent-haven-600" />
+            <span>I'm this child's parent or legal guardian, and I consent to Haven collecting their app usage, website activity, and phone location to provide these controls, as described in the <a href="/privacy" target="_blank" className="underline">Privacy Policy</a>.</span>
+          </label>
         </ActionForm>
       </div>
     </div>

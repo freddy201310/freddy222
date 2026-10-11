@@ -25,7 +25,14 @@ export function AuthForm({ mode, next = "" }: { mode: "login" | "signup"; next?:
         <label className="label" htmlFor="password">Password</label>
         <input id="password" name="password" type="password" className="input" minLength={mode === "signup" ? 10 : undefined} autoComplete={mode === "signup" ? "new-password" : "current-password"} required />
         {mode === "signup" && <p className="hint mt-1.5">At least 10 characters. Don't reuse your phone passcode — kids often know it.</p>}
+        {mode === "login" && <Link href="/forgot" className="mt-1.5 inline-block text-sm text-ink-500 underline underline-offset-4">Forgot password?</Link>}
       </div>
+      {mode === "signup" && (
+        <label className="flex items-start gap-2 text-sm text-ink-600">
+          <input type="checkbox" name="terms" required className="mt-1 h-4 w-4 accent-haven-600" />
+          <span>I'm a parent or legal guardian, and I agree to the <Link href="/terms" className="underline">Terms</Link> and <Link href="/privacy" className="underline">Privacy Policy</Link>.</span>
+        </label>
+      )}
       <Message state={state} />
       <button className="btn-primary w-full py-3" disabled={pending}>
         {pending ? "One moment…" : mode === "login" ? "Continue" : "Create parent account"}

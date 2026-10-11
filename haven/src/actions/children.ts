@@ -7,6 +7,7 @@ import type { Platform, Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import { audit, loadChild, requireEditor, requireFamily } from "@/lib/family";
 import { localParts } from "@/lib/time";
+import { billingState } from "@/lib/billing";
 import { defaultRules, RulesSchema, type Rules } from "@/lib/rules";
 import { newEnrollmentCode, sha256 } from "@/lib/tokens";
 import { confirmWithCode, type FormState } from "./auth";
@@ -24,6 +25,7 @@ export async function addChild(_: FormState, form: FormData): Promise<FormState>
     })
     .safeParse(Object.fromEntries(form));
   if (!parsed.success) return { error: parsed.error.issues[0].message };
+  if (form.get("consent") !== "on") return { error: "Please confirm you're this child's parent or guardian." };
   const child = await db.child.create({
     data: { familyId: family.id, ...parsed.data, policy: { create: { rules: defaultRules(year - parsed.data.birthYear), updatedById: parent.id } } },
   });
@@ -41,7 +43,7 @@ export async function removeChild(_: FormState, form: FormData): Promise<FormSta
   redirect("/dashboard");
 }
 
-const SECTIONS = ["paused", "dailyLimit", "schedules", "categories", "apps", "alwaysAllowed", "installs", "web", "requests", "communication", "tamper"] as const;
+const SECTIONS = ["paused", "dailyLimit", "schedules", "categories", "apps", "alwaysAllowed", "installs", "web", "requests", "communication", "tamper", "location"] as const;
 type Section = (typeof SECTIONS)[number];
 
 /** Save one or more sections of a child's rules. Every change bumps the version phones must confirm. */
@@ -70,6 +72,7 @@ export async function setPaused(childId: string, paused: boolean) {
 
 export async function createEnrollment(_: FormState, form: FormData): Promise<FormState> {
   const { family, parent } = await requireEditor();
+  if (billingState(family).needsPayment) return { error: "Your free trial has ended. Subscribe on the Billing page to connect new phones. Phones already connected stay protected." };
   const child = await loadChild(family.id, String(form.get("childId")));
   const platform = String(form.get("platform")) as Platform;
   if (platform !== "IOS" && platform !== "ANDROID") return { error: "Pick iPhone or Samsung/Android." };

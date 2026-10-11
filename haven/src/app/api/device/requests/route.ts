@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { deviceFromRequest } from "@/lib/device";
+import { deviceFromRequest, deviceRateLimit } from "@/lib/device";
 import { raiseAlert } from "@/lib/family";
 import { ageOf, parseRules } from "@/lib/rules";
 import { localParts } from "@/lib/time";
@@ -18,6 +18,8 @@ const Body = z.object({
 export async function POST(req: Request) {
   const device = await deviceFromRequest(req);
   if (!device) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  const limited = await deviceRateLimit(req, "requests", 20, 600, device.id);
+  if (limited) return limited;
   const parsed = Body.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "invalid_request" }, { status: 400 });
 

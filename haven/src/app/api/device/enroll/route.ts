@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { audit } from "@/lib/family";
+import { deviceRateLimit } from "@/lib/device";
 import { newToken, normalizeCode, sha256 } from "@/lib/tokens";
 
 const Body = z.object({
@@ -14,6 +15,8 @@ const Body = z.object({
 
 // A parent creates a one-time code on the website; the phone trades it for its own token.
 export async function POST(req: Request) {
+  const limited = await deviceRateLimit(req, "enroll", 10, 900);
+  if (limited) return limited;
   const parsed = Body.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "invalid_request" }, { status: 400 });
   const { code, platform, ...device } = parsed.data;

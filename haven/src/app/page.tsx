@@ -59,7 +59,10 @@ export default function Home() {
         <Link href="/why" className="btn-ghost mt-4">Read all of them →</Link>
       </section>
 
-      <footer className="border-t border-ink-100 py-8 text-center text-sm text-ink-400">Haven · Built for parents. Kids never get a login.</footer>
+      <footer className="border-t border-ink-100 py-8 text-center text-sm text-ink-400">
+        Haven · Built for parents. Kids never get a login. ·{" "}
+        <Link href="/privacy" className="underline">Privacy</Link> · <Link href="/terms" className="underline">Terms</Link>
+      </footer>
     </div>
   );
 }

@@ -7,6 +7,14 @@ import { appDecision, deviceState, type Context, type Grant } from "./engine";
 import { analyzeHeartbeat, isTampered, type Signals } from "./tamper";
 import { localParts } from "./time";
 import { raiseAlert } from "./family";
+import { ipFrom, rateLimit } from "./ratelimit";
+
+/** Per-device (or per-IP before enrollment) request budget. Returns a 429 response when exceeded. */
+export async function deviceRateLimit(req: Request, scope: string, max: number, windowSeconds: number, id?: string) {
+  const who = id ?? ipFrom(req.headers);
+  if (await rateLimit(`dev:${scope}:${who}`, max, windowSeconds)) return null;
+  return Response.json({ error: "rate_limited" }, { status: 429, headers: { "retry-after": String(windowSeconds) } });
+}
 
 /** Authenticate a phone by its bearer token. Revoked devices are refused. */
 export async function deviceFromRequest(req: Request) {
@@ -106,7 +114,7 @@ export async function handleHeartbeat(device: AuthedDevice, input: z.infer<typeo
       osVersion: input.osVersion ?? device.osVersion,
       signals,
       offlineAlertedAt: null,
-      ...(input.location ? { latitude: input.location.latitude, longitude: input.location.longitude, locationAt: now } : {}),
+      ...(input.location && rules.location.enabled ? { latitude: input.location.latitude, longitude: input.location.longitude, locationAt: now } : {}),
     },
   });
 

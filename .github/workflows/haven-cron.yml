@@ -1,0 +1,24 @@
+name: Haven maintenance
+
+# Flags phones that stopped checking in and applies data retention.
+# Needs two repository secrets: HAVEN_URL (e.g. https://havenparents.com) and CRON_SECRET.
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Run maintenance
+        env:
+          HAVEN_URL: ${{ secrets.HAVEN_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$HAVEN_URL" ] || [ -z "$CRON_SECRET" ]; then
+            echo "HAVEN_URL / CRON_SECRET not set yet; skipping."
+            exit 0
+          fi
+          curl -fsS --max-time 60 -H "Authorization: Bearer $CRON_SECRET" "$HAVEN_URL/api/cron/maintenance"

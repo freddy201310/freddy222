@@ -12,9 +12,10 @@ const LINKS = [
   { href: "/family", label: "Family" },
   { href: "/activity", label: "History" },
   { href: "/settings", label: "Settings" },
+  { href: "/billing", label: "Billing" },
 ] as const;
 
-export function AppNav({ familyName, parentName, role, requests, alerts }: { familyName: string; parentName: string; role: string; requests: number; alerts: number }) {
+export function AppNav({ familyName, parentName, role, requests, alerts, billing }: { familyName: string; parentName: string; role: string; requests: number; alerts: number; billing: boolean }) {
   const path = usePathname();
   const counts = { requests, alerts };
   return (
@@ -27,7 +28,7 @@ export function AppNav({ familyName, parentName, role, requests, alerts }: { fam
         </div>
       </div>
       <nav className="mx-auto flex max-w-5xl gap-1 overflow-x-auto px-2 pb-2 sm:px-4" aria-label="Main">
-        {LINKS.map((l) => {
+        {LINKS.filter((l) => billing || l.href !== "/billing").map((l) => {
           const active = path === l.href || (l.href === "/dashboard" && path.startsWith("/children"));
           const n = "badge" in l ? counts[l.badge] : 0;
           return (

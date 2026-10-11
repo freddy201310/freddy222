@@ -43,6 +43,10 @@ model Parent {
   totpSecret    String? // encrypted with APP_SECRET; null until two-step setup finishes
   totpPending   String? // encrypted secret shown during setup, before the first code confirms it
   recoveryCodes String[]  @default([]) // sha256 of unused one-time recovery codes
+  phone         String? // E.164, for text-message alerts
+  notifyEmail   Boolean   @default(true)
+  notifySms     Boolean   @default(false)
+  notifyLevel   Severity  @default(WARNING) // lowest alert level sent outside the dashboard
   failedLogins  Int       @default(0)
   lockedUntil   DateTime?
   createdAt     DateTime  @default(now())
@@ -50,6 +54,34 @@ model Parent {
   sessions    Session[]
   memberships FamilyMember[]
   audit       AuditLog[]
+  resets      PasswordReset[]
+}
+
+model PasswordReset {
+  id        String    @id @default(cuid())
+  parentId  String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  parent    Parent    @relation(fields: [parentId], references: [id], onDelete: Cascade)
+}
+
+// Fixed-window counters for rate limiting (login attempts, enrollment, device check-ins).
+model RateLimit {
+  key     String   @id
+  count   Int
+  resetAt DateTime
+}
+
+// Website categories imported from public block lists (see scripts/import-categories.ts).
+model DomainCategory {
+  domain   String
+  category String
+  source   String @default("")
+
+  @@id([domain, category])
+  @@index([category])
 }
 
 model Session {
@@ -70,6 +102,12 @@ model Family {
   name      String
   timeZone  String   @default("America/New_York")
   createdAt DateTime @default(now())
+
+  // Billing (only enforced when Stripe is configured)
+  trialEndsAt          DateTime @default(dbgenerated("(now() + interval '30 days')"))
+  stripeCustomerId     String?  @unique
+  stripeSubscriptionId String?
+  subscriptionStatus   String? // Stripe status: active, trialing, past_due, canceled…
 
   members  FamilyMember[]
   invites  Invite[]
@@ -106,6 +144,7 @@ model Child {
   name      String
   birthYear Int
   color     String   @default("indigo")
+  consentAt DateTime @default(now()) // when a parent confirmed they are this child's parent or guardian
   createdAt DateTime @default(now())
   family    Family   @relation(fields: [familyId], references: [id], onDelete: Cascade)
 
@@ -199,18 +238,19 @@ model TimeRequest {
 }
 
 model Alert {
-  id        String    @id @default(cuid())
-  familyId  String
-  childId   String?
-  deviceId  String?
-  kind      String
-  severity  Severity
-  message   String
-  readAt    DateTime?
-  createdAt DateTime  @default(now())
-  family    Family    @relation(fields: [familyId], references: [id], onDelete: Cascade)
-  child     Child?    @relation(fields: [childId], references: [id], onDelete: Cascade)
-  device    Device?   @relation(fields: [deviceId], references: [id], onDelete: SetNull)
+  id         String    @id @default(cuid())
+  familyId   String
+  childId    String?
+  deviceId   String?
+  kind       String
+  severity   Severity
+  message    String
+  readAt     DateTime?
+  notifiedAt DateTime? // when email/text notifications were sent
+  createdAt  DateTime  @default(now())
+  family     Family    @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  child      Child?    @relation(fields: [childId], references: [id], onDelete: Cascade)
+  device     Device?   @relation(fields: [deviceId], references: [id], onDelete: SetNull)
 
   @@index([familyId, createdAt])
 }

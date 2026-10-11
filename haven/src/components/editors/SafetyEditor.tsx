@@ -10,6 +10,7 @@ export function SafetyEditor({ childId, rules, readOnly }: { childId: string; ru
   const [requests, setRequests] = useState(rules.requests);
   const [tamper, setTamper] = useState(rules.tamper);
   const [always, setAlways] = useState(rules.alwaysAllowed);
+  const [location, setLocation] = useState(rules.location);
   const { state, pending, save } = useSave(childId);
 
   return (
@@ -61,7 +62,12 @@ export function SafetyEditor({ childId, rules, readOnly }: { childId: string; ru
         <Toggle checked={always.approvedContactsMessaging} onChange={(v) => setAlways({ ...always, approvedContactsMessaging: v })} label="Messages with approved contacts" />
       </section>
 
-      <SaveBar state={state} pending={pending} readOnly={readOnly} onSave={() => save({ requests, tamper, alwaysAllowed: always })} />
+      <section className="card space-y-4">
+        <h2 className="h2">Location</h2>
+        <Toggle checked={location.enabled} onChange={(v) => setLocation({ enabled: v })} label="Share this child's phone location with parents" hint="Haven keeps only the latest location, never a history. The “I need help” button always sends location." />
+      </section>
+
+      <SaveBar state={state} pending={pending} readOnly={readOnly} onSave={() => save({ requests, tamper, alwaysAllowed: always, location })} />
     </fieldset>
   );
 }

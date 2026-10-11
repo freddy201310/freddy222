@@ -4,6 +4,7 @@ import type { FamilyRole, Severity } from "@prisma/client";
 import { db } from "./db";
 import { requireParent } from "./auth";
 import { ageOf, parseRules } from "./rules";
+import { notifyParents } from "./notify";
 
 /** The signed-in parent and their family. Every page and action goes through this. */
 export async function requireFamily() {
@@ -33,5 +34,8 @@ export async function audit(familyId: string, parentId: string | null, action: s
 }
 
 export async function raiseAlert(data: { familyId: string; childId?: string; deviceId?: string; kind: string; severity: Severity; message: string }) {
-  await db.alert.create({ data });
+  const alert = await db.alert.create({ data });
+  // A failed email or text must never break the phone's check-in.
+  await notifyParents(alert).catch((e) => console.error("[notify]", e));
+  return alert;
 }

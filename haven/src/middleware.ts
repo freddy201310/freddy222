@@ -12,5 +12,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/children/:path*", "/requests/:path*", "/alerts/:path*", "/family/:path*", "/activity/:path*", "/settings/:path*", "/onboarding/:path*", "/setup-2fa/:path*", "/login/verify"],
+  matcher: ["/dashboard/:path*", "/children/:path*", "/requests/:path*", "/alerts/:path*", "/family/:path*", "/activity/:path*", "/settings/:path*", "/billing/:path*", "/onboarding/:path*", "/setup-2fa/:path*", "/login/verify"],
 };

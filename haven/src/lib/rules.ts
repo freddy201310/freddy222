@@ -86,6 +86,7 @@ export const RulesSchema = z.object({
     maxMinutesPerRequest: z.number().int().min(5).max(240).default(30),
   }),
   communication: z.enum(["everyone", "contacts", "approved"]).default("contacts"),
+  location: z.object({ enabled: z.boolean().default(true) }).default({ enabled: true }),
   tamper: z.object({
     lockOnTamper: z.boolean().default(true),
     offlineAlertMinutes: z.number().int().min(10).max(24 * 60).default(60),
