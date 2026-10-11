@@ -86,7 +86,7 @@ export function AppsEditor({ childId, rules, readOnly }: { childId: string; rule
           </select>
           <button type="button" className="btn-soft" onClick={addApp}>Add</button>
         </div>
-        <p className="hint">Apps your child has used show their IDs on the Overview tab.</p>
+        <p className="hint">Apps your child has used show their IDs on the Overview tab. On iPhone, Apple hides app IDs, so specific-app rules apply to Android phones. On iPhones, rules follow the categories you sorted apps into during setup.</p>
       </section>
 
       <section className="card space-y-4">

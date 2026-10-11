@@ -8,7 +8,7 @@ import Link from "next/link";
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const { family, parent, role } = await requireFamily();
   // Catch phones that went quiet even if the cron job isn't set up.
-  await sweepOfflineDevices();
+  await sweepOfflineDevices(new Date(), family.id);
   const [requests, alerts] = await Promise.all([
     db.timeRequest.count({ where: { child: { familyId: family.id }, status: "PENDING" } }),
     db.alert.count({ where: { familyId: family.id, readAt: null, kind: { not: "time_request" } } }),

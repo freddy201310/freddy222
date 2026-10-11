@@ -43,6 +43,7 @@ model Parent {
   totpSecret    String? // encrypted with APP_SECRET; null until two-step setup finishes
   totpPending   String? // encrypted secret shown during setup, before the first code confirms it
   recoveryCodes String[]  @default([]) // sha256 of unused one-time recovery codes
+  totpLastStep  Int       @default(0) // last 30-second step used, so a code can\'t be replayed
   phone         String? // E.164, for text-message alerts
   notifyEmail   Boolean   @default(true)
   notifySms     Boolean   @default(false)

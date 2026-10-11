@@ -5,11 +5,14 @@ import { randomBytes } from "node:crypto";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { createSession, destroySession, getSession, hashPassword, LOCKOUT_MS, MAX_FAILED_LOGINS, requireParent, verifyPassword } from "@/lib/auth";
-import { seal, unseal, verifyTotp } from "@/lib/totp";
+import { seal, totpStep, unseal } from "@/lib/totp";
 import { newToken, sha256 } from "@/lib/tokens";
 import { rateLimit, requestIp } from "@/lib/ratelimit";
 import { appUrl, sendEmail } from "@/lib/email";
 import { isE164 } from "@/lib/sms";
+
+// bcrypt hash of a random string, used to equalize timing for unknown emails.
+const DUMMY_HASH = "$2b$12$qWQ/CJDZPa.pS6T/uzGGAu6dntBlxqaeuQUybEHlsSLQNBtEKa08O";
 
 export type FormState = { error?: string; ok?: string; codes?: string[]; code?: string; link?: string } | undefined;
 
@@ -41,7 +44,11 @@ export async function login(_: FormState, form: FormData): Promise<FormState> {
   }
   const parent = await db.parent.findUnique({ where: { email } });
   const generic = { error: "That email and password don't match." };
-  if (!parent) return generic;
+  if (!parent) {
+    // Spend the same time as a real check so response time doesn't reveal which emails have accounts.
+    await verifyPassword(password, DUMMY_HASH);
+    return generic;
+  }
   if (parent.lockedUntil && parent.lockedUntil > new Date()) return { error: "Too many attempts. Try again in a few minutes." };
   if (!(await verifyPassword(password, parent.passwordHash))) {
     await recordFailure(parent.id, parent.failedLogins);
@@ -62,9 +69,14 @@ async function recordFailure(parentId: string, failed: number) {
 }
 
 /** Check a 6-digit code, or spend a one-time recovery code. */
-async function checkSecondFactor(parent: { id: string; totpSecret: string | null; recoveryCodes: string[] }, raw: string) {
+async function checkSecondFactor(parent: { id: string; totpSecret: string | null; recoveryCodes: string[]; totpLastStep: number }, raw: string) {
   const code = raw.trim();
-  if (parent.totpSecret && verifyTotp(unseal(parent.totpSecret), code)) return true;
+  const step = parent.totpSecret ? totpStep(unseal(parent.totpSecret), code) : null;
+  if (step !== null) {
+    // Each code works once: someone who sees a code over a parent's shoulder can't reuse it.
+    const claimed = await db.parent.updateMany({ where: { id: parent.id, totpLastStep: { lt: step } }, data: { totpLastStep: step } });
+    return claimed.count === 1;
+  }
   const hash = sha256(code.toUpperCase().replace(/[^A-Z0-9]/g, ""));
   if (parent.recoveryCodes.includes(hash)) {
     await db.parent.update({ where: { id: parent.id }, data: { recoveryCodes: parent.recoveryCodes.filter((c) => c !== hash) } });
@@ -101,12 +113,13 @@ export async function confirmSetup(_: FormState, form: FormData): Promise<FormSt
   if (parent.totpSecret && !session.mfaPassed) return { error: "Sign in with your existing code first." };
   if (!parent.totpPending) return { error: "Reload the page to get a new setup code." };
   const secret = unseal(parent.totpPending);
-  if (!verifyTotp(secret, String(form.get("code") ?? ""))) return { error: "That code didn't match. Check your authenticator app and try again." };
+  const step = totpStep(secret, String(form.get("code") ?? ""));
+  if (step === null) return { error: "That code didn't match. Check your authenticator app and try again." };
 
   const codes = Array.from({ length: 8 }, () => randomBytes(5).toString("hex").toUpperCase());
   await db.parent.update({
     where: { id: parent.id },
-    data: { totpSecret: seal(secret), totpPending: null, recoveryCodes: codes.map((c) => sha256(c)) },
+    data: { totpSecret: seal(secret), totpPending: null, recoveryCodes: codes.map((c) => sha256(c)), totpLastStep: step },
   });
   // A new authenticator means every other session must sign in again.
   await db.session.deleteMany({ where: { parentId: parent.id, NOT: { id: session.id } } });

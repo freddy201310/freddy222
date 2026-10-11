@@ -22,45 +22,59 @@ sources, is on the `/why` page (`src/lib/flaws.ts`).
 | Co-parents share one login | Separate accounts with roles (owner, co-parent, view only) and a permanent change history |
 | Alert floods and false alarms | Block first, alert second. Severity levels, and no repeat alerts within 6 hours |
 
-## What's in this folder
+## What's in this repository
 
-- **Parent website** (Next.js): sign-up with required two-step sign-in and recovery codes;
-  family and co-parent invites; children with age-based starting rules; daily limits per weekday;
-  overnight-safe schedules (bedtime, school, homework); app categories and per-app rules;
-  web filtering; time requests; alerts; location; a full change history.
-- **Device API** (`/api/device/*`): what the phone apps use to enroll, check in, ask for time,
-  and send SOS. See [`docs/PHONE_APPS.md`](docs/PHONE_APPS.md).
-- **Rules engine** (`src/lib/engine.ts`) and **tamper detection** (`src/lib/tamper.ts`), both pure
-  and unit-tested.
+| Folder | What it is |
+| --- | --- |
+| `haven/` | **Parent website + device API** (Next.js, Postgres). Everything below |
+| `android/` | **Haven Kids for Android/Samsung** (Kotlin). See [`android/README.md`](../android/README.md) |
+| `ios/` | **Haven Kids for iPhone** (Swift, Screen Time frameworks). See [`ios/README.md`](../ios/README.md) |
 
-### Not built yet
+### Website features
 
-The **Haven Kids** apps for iPhone and Android, which do the on-device blocking. A website can't
-control a phone by itself: Apple only allows it through its Screen Time frameworks (which need
-Apple's Family Controls entitlement), and Android through a device-policy app. The API contract
-and the platform plan are in [`docs/PHONE_APPS.md`](docs/PHONE_APPS.md). Until the apps ship,
-the dashboard tells parents they're coming soon. Set `NEXT_PUBLIC_PHONE_APPS_LIVE=true` to remove
-that notice once they're in the stores.
+- Parent accounts with required two-step sign-in, recovery codes, password reset by email, lockouts
+- Families with co-parents and view-only members, invites, roles, and a permanent change history
+- Children with age-based starting rules and recorded parent/guardian consent
+- Per-weekday daily limits, overnight-safe schedules, app categories and per-app rules
+- Web filtering: about 520,000 categorized sites from public block lists, custom block and allow
+  lists, SafeSearch/YouTube rewrites, family-safe DNS
+- Time requests, alerts by email and urgent text messages, location, data export, account deletion
+- Optional Stripe subscriptions. A lapsed subscription never switches protection off
+- Error reporting (Sentry), `/api/health`, rate limits on every sign-in and device endpoint
+
+### Owner to-do list
+
+Accounts, keys, legal review, and app-store steps are in
+[`docs/LAUNCH_CHECKLIST.md`](docs/LAUNCH_CHECKLIST.md). Ready-to-paste text for Apple and
+Google is in `docs/apple-family-controls-request.md` and `docs/google-play-declarations.md`.
 
 ## Getting started
 
 ```bash
 cd haven
-cp .env.example .env    # set DATABASE_URL, APP_SECRET, CRON_SECRET
+cp .env.example .env          # at least DATABASE_URL, APP_SECRET, CRON_SECRET
 npm install
 npx prisma migrate deploy
-npm run dev             # http://localhost:3000
-npm test                # rules engine, tamper detection, two-step codes
+npm run categories:import     # website categories (about 2 minutes, about 75 MB)
+npm run dev                   # http://localhost:3000
+npm test                      # engine, tamper, two-step, billing, web filter, Stripe signatures
 ```
 
-## Deploy (Vercel)
+Without email, text-message, or Stripe keys, everything still runs locally: emails and texts are
+printed to the server log, and billing is off.
 
-1. Import this repository on vercel.com and set **Root Directory** to `haven`.
-2. Add a Postgres database (Storage → Neon). It sets `DATABASE_URL`.
-3. Add `APP_SECRET` (a long random string, e.g. `openssl rand -base64 48`) and `CRON_SECRET`.
-4. Deploy. `vercel-build` runs the database migrations.
-5. Optional: call `GET /api/cron/offline` with `Authorization: Bearer $CRON_SECRET` every
-   5 minutes so offline phones are flagged even when no parent has the dashboard open.
+## Deploy
+
+Follow section A of [`docs/LAUNCH_CHECKLIST.md`](docs/LAUNCH_CHECKLIST.md). In short: Vercel with
+Root Directory `haven`, a Neon database, the environment variables from `.env.example`, and the
+GitHub secrets `HAVEN_URL` and `CRON_SECRET` so the 5-minute maintenance workflow runs.
+
+## Data sources
+
+Website categories come from [The Block List Project](https://github.com/blocklistproject/Lists)
+(Unlicense) and the [UT1 blacklists](https://dsi.ut-capitole.fr/blacklists/) by Université
+Toulouse Capitole (CC BY-SA 4.0), mirrored at github.com/olbat/ut1-blacklists. Keep this
+attribution if you redistribute the lists.
 
 ## Security notes
 
@@ -68,3 +82,4 @@ npm test                # rules engine, tamper detection, two-step codes
 - Two-step secrets are encrypted at rest (AES-256-GCM with `APP_SECRET`).
 - 5 wrong passwords or codes lock the account for 15 minutes.
 - Device tokens and enrollment codes are stored only as hashes. Removing a phone revokes its token.
+- Stripe webhooks are verified (HMAC-SHA256 with a 5-minute replay window), and cron calls use a constant-time secret check.

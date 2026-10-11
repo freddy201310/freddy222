@@ -163,9 +163,9 @@ export async function compiledPolicy(device: AuthedDevice, rules = parseRules(de
 export const offlineWindowMinutes = (platform: "IOS" | "ANDROID", configured: number) => (platform === "IOS" ? Math.max(configured, 240) : configured);
 
 /** Mark phones that stopped checking in. Silence is how a factory reset or removed app looks. */
-export async function sweepOfflineDevices(now = new Date()) {
+export async function sweepOfflineDevices(now = new Date(), familyId?: string) {
   const devices = await db.device.findMany({
-    where: { revokedAt: null, offlineAlertedAt: null, lastSeenAt: { not: null } },
+    where: { revokedAt: null, offlineAlertedAt: null, lastSeenAt: { not: null }, ...(familyId ? { child: { familyId } } : {}) },
     include: { child: { include: { policy: true } } },
   });
   let flagged = 0;

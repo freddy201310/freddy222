@@ -46,13 +46,21 @@ export function totpCode(secret: string, counter: number) {
   return String(n % 1_000_000).padStart(6, "0");
 }
 
-/** Accepts the current 30-second code and one step either side for clock drift. */
-export function verifyTotp(secret: string, code: string, now = Date.now()) {
+/**
+ * Accepts the current 30-second code and one step either side for clock drift. Returns the
+ * matching time step (so callers can refuse a replayed code), or null.
+ */
+export function totpStep(secret: string, code: string, now = Date.now()): number | null {
   const clean = code.replace(/\s/g, "");
-  if (!/^\d{6}$/.test(clean)) return false;
+  if (!/^\d{6}$/.test(clean)) return null;
   const counter = Math.floor(now / 30_000);
-  return [-1, 0, 1].some((d) => timingSafeEqual(Buffer.from(totpCode(secret, counter + d)), Buffer.from(clean)));
+  for (const d of [-1, 0, 1]) {
+    if (timingSafeEqual(Buffer.from(totpCode(secret, counter + d)), Buffer.from(clean))) return counter + d;
+  }
+  return null;
 }
+
+export const verifyTotp = (secret: string, code: string, now = Date.now()) => totpStep(secret, code, now) !== null;
 
 export const otpauthUrl = (secret: string, email: string) =>
   `otpauth://totp/Haven:${encodeURIComponent(email)}?secret=${secret}&issuer=Haven&digits=6&period=30`;
