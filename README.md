@@ -32,3 +32,10 @@ with no install and no sign-in.
 - One self-contained HTML file. No accounts, no internet needed, 100% free.
 - Progress, guides, custom questions, and built games are saved in your browser.
 - The Teacher PIN is a simple on-device lock, not a bank-style login.
+
+---
+
+## Also in this repository
+
+- [`haven/`](haven/): **Haven**, a parent-only parental-controls website for iPhone and Samsung.
+- [`mindgarden/`](mindgarden/): **MindGarden**, a personal growth and reflection companion.

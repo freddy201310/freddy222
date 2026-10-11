@@ -1,0 +1,229 @@
+// Haven data model.
+// Only parents have accounts. Children never sign in; their phones authenticate with a
+// per-device token that can read rules and send reports, but can never change rules.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum FamilyRole {
+  OWNER // full control, manages co-parents
+  CO_PARENT // full control of children and rules
+  VIEWER // read-only (grandparent, babysitter)
+}
+
+enum Platform {
+  IOS
+  ANDROID
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  DENIED
+  EXPIRED
+}
+
+enum Severity {
+  INFO
+  WARNING
+  CRITICAL
+}
+
+model Parent {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String
+  name          String
+  totpSecret    String? // encrypted with APP_SECRET; null until two-step setup finishes
+  totpPending   String? // encrypted secret shown during setup, before the first code confirms it
+  recoveryCodes String[]  @default([]) // sha256 of unused one-time recovery codes
+  failedLogins  Int       @default(0)
+  lockedUntil   DateTime?
+  createdAt     DateTime  @default(now())
+
+  sessions    Session[]
+  memberships FamilyMember[]
+  audit       AuditLog[]
+}
+
+model Session {
+  id        String    @id // sha256 of the cookie token; the raw token is never stored
+  parentId  String
+  mfaPassed Boolean   @default(false)
+  reauthAt  DateTime? // last time the parent re-confirmed for a sensitive change
+  userAgent String    @default("")
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+  parent    Parent    @relation(fields: [parentId], references: [id], onDelete: Cascade)
+
+  @@index([parentId])
+}
+
+model Family {
+  id        String   @id @default(cuid())
+  name      String
+  timeZone  String   @default("America/New_York")
+  createdAt DateTime @default(now())
+
+  members  FamilyMember[]
+  invites  Invite[]
+  children Child[]
+  alerts   Alert[]
+  audit    AuditLog[]
+}
+
+model FamilyMember {
+  parentId  String
+  familyId  String
+  role      FamilyRole
+  createdAt DateTime   @default(now())
+  parent    Parent     @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  family    Family     @relation(fields: [familyId], references: [id], onDelete: Cascade)
+
+  @@id([parentId, familyId])
+}
+
+model Invite {
+  id        String     @id @default(cuid())
+  familyId  String
+  email     String
+  role      FamilyRole
+  tokenHash String     @unique
+  expiresAt DateTime
+  createdAt DateTime   @default(now())
+  family    Family     @relation(fields: [familyId], references: [id], onDelete: Cascade)
+}
+
+model Child {
+  id        String   @id @default(cuid())
+  familyId  String
+  name      String
+  birthYear Int
+  color     String   @default("indigo")
+  createdAt DateTime @default(now())
+  family    Family   @relation(fields: [familyId], references: [id], onDelete: Cascade)
+
+  policy   Policy?
+  devices  Device[]
+  codes    EnrollmentCode[]
+  requests TimeRequest[]
+  alerts   Alert[]
+
+  @@index([familyId])
+}
+
+model Policy {
+  childId     String   @id
+  version     Int      @default(1) // bumped on every change; devices must confirm they applied it
+  rules       Json
+  updatedAt   DateTime @updatedAt
+  updatedById String?
+  child       Child    @relation(fields: [childId], references: [id], onDelete: Cascade)
+}
+
+model EnrollmentCode {
+  id        String    @id @default(cuid())
+  childId   String
+  codeHash  String    @unique
+  platform  Platform
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  child     Child     @relation(fields: [childId], references: [id], onDelete: Cascade)
+}
+
+model Device {
+  id                   String    @id @default(cuid())
+  childId              String
+  name                 String
+  platform             Platform
+  model                String    @default("")
+  osVersion            String    @default("")
+  tokenHash            String    @unique
+  revokedAt            DateTime?
+  enrolledAt           DateTime  @default(now())
+  lastSeenAt           DateTime?
+  appliedPolicyVersion Int       @default(0)
+  clockSkewSeconds     Int       @default(0)
+  battery              Int?
+  signals              Json      @default("{}") // latest tamper signals reported by the device
+  latitude             Float?
+  longitude            Float?
+  locationAt           DateTime?
+  offlineAlertedAt     DateTime?
+  child                Child     @relation(fields: [childId], references: [id], onDelete: Cascade)
+
+  usage    Usage[]
+  requests TimeRequest[]
+  alerts   Alert[]
+
+  @@index([childId])
+}
+
+model Usage {
+  deviceId String
+  day      String // YYYY-MM-DD in the family's time zone
+  appId    String // bundle id / package name, or "web:<domain>"
+  appName  String
+  category String @default("")
+  minutes  Int
+  device   Device @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  @@id([deviceId, day, appId])
+}
+
+model TimeRequest {
+  id          String        @id @default(cuid())
+  childId     String
+  deviceId    String?
+  appId       String // the one app (or "*" for overall screen time) the extra time is for
+  appName     String
+  minutes     Int
+  reason      String        @default("")
+  status      RequestStatus @default(PENDING)
+  grantedMins Int?
+  day         String // family-local day the grant applies to
+  decidedById String?
+  decidedAt   DateTime?
+  createdAt   DateTime      @default(now())
+  child       Child         @relation(fields: [childId], references: [id], onDelete: Cascade)
+  device      Device?       @relation(fields: [deviceId], references: [id], onDelete: SetNull)
+
+  @@index([childId, status])
+}
+
+model Alert {
+  id        String    @id @default(cuid())
+  familyId  String
+  childId   String?
+  deviceId  String?
+  kind      String
+  severity  Severity
+  message   String
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+  family    Family    @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  child     Child?    @relation(fields: [childId], references: [id], onDelete: Cascade)
+  device    Device?   @relation(fields: [deviceId], references: [id], onDelete: SetNull)
+
+  @@index([familyId, createdAt])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  familyId  String
+  parentId  String?
+  action    String
+  detail    String   @default("")
+  createdAt DateTime @default(now())
+  family    Family   @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  parent    Parent?  @relation(fields: [parentId], references: [id], onDelete: SetNull)
+
+  @@index([familyId, createdAt])
+}
