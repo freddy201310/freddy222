@@ -22,7 +22,7 @@ struct HavenKidsApp: App {
         WindowGroup {
             RootView()
         }
-        .onChange(of: phase) { _, newPhase in
+        .onChange(of: phase) { newPhase in // iOS 16-compatible form
             if newPhase == .active { Task { await Sync.checkIn(location: LocationReporter.shared.last) } }
             if newPhase == .background { Self.scheduleRefresh() }
         }
