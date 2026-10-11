@@ -41,6 +41,14 @@ npm run dev                   # http://localhost:3000
 
 Production: `npm run build && npm start`.
 
+## Deploy from GitHub (Vercel)
+
+1. On vercel.com, choose **Add New → Project** and import this repository.
+2. Set **Root Directory** to `mindgarden`, then deploy. The first build will fail because there's no database yet.
+3. In the project, open **Storage → Create Database → Neon (Postgres)** and connect it. This sets `DATABASE_URL` automatically.
+4. Optionally add `ANTHROPIC_API_KEY` and `CRON_SECRET` under **Settings → Environment Variables**.
+5. **Deployments → Redeploy**. The `vercel-build` script creates the database tables (`prisma migrate deploy`) and then builds the site.
+
 ### Letter delivery
 
 Due letters are delivered whenever their owner opens the app. To deliver on schedule (for example, to add email notifications later in `src/lib/letters.ts`), call this hourly:
