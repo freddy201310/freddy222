@@ -1,0 +1,30 @@
+name: Haven website categories
+
+# Refreshes the website category lists weekly. Needs repository secret HAVEN_DATABASE_URL.
+on:
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: haven
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: haven/package-lock.json
+      - name: Import
+        env:
+          DATABASE_URL: ${{ secrets.HAVEN_DATABASE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then echo "HAVEN_DATABASE_URL not set yet; skipping."; exit 0; fi
+          npm ci
+          npm run categories:import
