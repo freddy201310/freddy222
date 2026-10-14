@@ -65,9 +65,10 @@ printed to the server log, and billing is off.
 
 ## Deploy
 
-Follow section A of [`docs/LAUNCH_CHECKLIST.md`](docs/LAUNCH_CHECKLIST.md). In short: Vercel with
-Root Directory `haven`, a Neon database, the environment variables from `.env.example`, and the
-GitHub secrets `HAVEN_URL` and `CRON_SECRET` so the 5-minute maintenance workflow runs.
+Easiest: the **Deploy to Render** button in the repository README. It uses [`render.yaml`](../render.yaml)
+to create the website and database. Then follow section A of
+[`docs/LAUNCH_CHECKLIST.md`](docs/LAUNCH_CHECKLIST.md) for the GitHub secrets that run the
+5-minute maintenance job. Vercel + Neon also works (see the same checklist).
 
 ## Data sources
 
