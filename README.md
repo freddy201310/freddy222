@@ -39,3 +39,10 @@ with no install and no sign-in.
 
 - [`haven/`](haven/): **Haven**, a parent-only parental-controls website for iPhone and Samsung.
 - [`mindgarden/`](mindgarden/): **MindGarden**, a personal growth and reflection companion.
+
+## Deploy Haven
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/freddy201310/freddy222)
+
+One click creates the Haven website and its database from [`render.yaml`](render.yaml).
+Step-by-step instructions are in [`haven/docs/LAUNCH_CHECKLIST.md`](haven/docs/LAUNCH_CHECKLIST.md).

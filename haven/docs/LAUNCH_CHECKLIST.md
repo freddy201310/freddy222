@@ -4,42 +4,49 @@ Everything in the code is done. These steps need **you**, because they need your
 money, your signature, or a human decision. Work top to bottom. Items in the same section can run
 in parallel.
 
-## A. Put the website online (about 1 hour)
+## A. Put the website online with Render (about 20 minutes, about $13 a month)
 
-1. **Merge the code** into `main` on GitHub.
-2. **Vercel** (vercel.com): sign up with GitHub → Add New → Project → import `freddy222` →
-   set **Root Directory** to `haven` → Deploy. The first deploy fails until step 3 is done.
-3. **Database:** in the Vercel project → Storage → Create Database → **Neon** → connect it.
-4. **Settings → Environment Variables:**
+1. Open the repository on GitHub and click the **Deploy to Render** button in `README.md`.
+   (Or go to render.com → **New → Blueprint** → pick `freddy222`.)
+2. **Sign in with GitHub** and allow Render to see the `freddy222` repository.
+3. Render reads `render.yaml` and shows two things to create: **haven** (the website) and
+   **haven-db** (the database). Type your support email for `CONTACT_EMAIL`, then click **Apply**.
+   Render generates `APP_SECRET` and `CRON_SECRET` for you.
+4. Add a payment card when asked. The website ("Starter", about $7/month) stays awake 24/7,
+   which children's phones need. The database ("Basic 256 MB", about $6/month) keeps your data.
+5. Wait for the first deploy to finish (about 5 minutes). Your address looks like
+   `https://haven-xxxx.onrender.com`. Check `https://haven-xxxx.onrender.com/api/health`: it
+   should say `"ok": true`.
+6. **Turn on the background jobs.** On GitHub, open `freddy222` → **Settings → Secrets and
+   variables → Actions → New repository secret**, and add:
+   - `HAVEN_URL` = your Render address
+   - `CRON_SECRET` = in Render, open **haven → Environment**, reveal `CRON_SECRET`, and copy it
+   - `HAVEN_DATABASE_URL` = in Render, open **haven-db → Connect → External Database URL**
+7. **Load website categories:** on GitHub → **Actions → Haven website categories → Run workflow**.
+8. **Try it:** open your address, create your parent account, and set up two-step sign-in.
+   Save the recovery codes.
+9. **Your own domain (optional):** Render → **haven → Settings → Custom Domains**. Add the DNS
+   records it shows at your registrar, then add `APP_URL` = `https://your-domain.com` under
+   **Environment**, and update `HAVEN_URL` on GitHub.
+10. **Uptime monitor (free):** UptimeRobot or Better Stack → watch `/api/health`.
 
-   | Name | Value |
-   | --- | --- |
-   | `APP_SECRET` | run `openssl rand -base64 48` and paste the result. **Never change it later** |
-   | `CRON_SECRET` | another random string |
-   | `APP_URL` | `https://your-domain.com` |
-   | `CONTACT_EMAIL` | the address parents can write to |
-   | `COMPANY_NAME`, `COMPANY_ADDRESS` | from your LLC paperwork |
+From now on, every change merged into `main` on GitHub redeploys automatically.
 
-5. **Redeploy**, then open `https://<your-app>.vercel.app/api/health`. It should say `"ok": true`.
-6. **Website categories:** on your computer, `cd haven`, then
-   `DATABASE_URL="<Neon URL>" npm run categories:import`. Or add the GitHub secret in step 8 and
-   run the "Haven website categories" workflow by hand.
-7. **Domain:** buy one (Vercel → Domains, or any registrar), then Vercel → Settings → Domains → add it.
-8. **GitHub → repo Settings → Secrets and variables → Actions**, add:
-   - `HAVEN_URL` = `https://your-domain.com`
-   - `CRON_SECRET` = the same value as in Vercel
-   - `HAVEN_DATABASE_URL` = the Neon connection string (for the weekly category refresh)
+<details>
+<summary>Alternative: Vercel + Neon</summary>
 
-   The "Haven maintenance" workflow then runs every 5 minutes for free.
-9. **Uptime monitor (free):** UptimeRobot or Better Stack → watch `https://your-domain.com/api/health`.
+On vercel.com, import `freddy222` with **Root Directory** `haven`, add a Neon database
+under Storage, and set `APP_SECRET`, `CRON_SECRET`, `APP_URL` and `CONTACT_EMAIL` under
+Settings → Environment Variables. Then redeploy and do steps 6–10 above.
+</details>
 
 ## B. Email, text messages, errors (about 1 hour)
 
 1. **Resend** (resend.com): add your domain, add the DNS records it shows, create an API key →
-   Vercel env `RESEND_API_KEY`, plus `EMAIL_FROM` = `Haven <alerts@your-domain.com>`.
+   `RESEND_API_KEY` (Render: haven → Environment), plus `EMAIL_FROM` = `Haven <alerts@your-domain.com>`.
    Without this, password resets and alerts can't be emailed.
 2. **Twilio** (twilio.com): buy a number. US numbers need **A2P 10DLC registration** (brand +
-   campaign, takes days). Then set `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM`.
+   campaign, takes days). Then set (in Render's Environment tab) `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM`.
 3. **Sentry** (sentry.io): create a Next.js project, copy the DSN → `SENTRY_DSN`.
 4. Redeploy. Test: Settings → turn on text alerts, then have a test phone press "I need help".
 
@@ -81,7 +88,7 @@ in parallel.
    `ios/project.yml` (`HavenServer`).
 6. **Test on real phones:** at least one recent Samsung Galaxy, one older Android, an iPhone in a
    Family Sharing child account, and an iPhone without one.
-7. When both apps are live, set `NEXT_PUBLIC_PHONE_APPS_LIVE=true` in Vercel and redeploy.
+7. When both apps are live, set `NEXT_PUBLIC_PHONE_APPS_LIVE=true` in Render's Environment tab and redeploy.
 
 ## E. Before inviting the public
 

@@ -5,7 +5,8 @@ import "server-only";
 
 export type Email = { to: string; subject: string; text: string; html?: string };
 
-export const appUrl = () => (process.env.APP_URL ?? "http://localhost:3000").replace(/\/$/, "");
+// APP_URL wins; on Render the service's own address is used until you connect a domain.
+export const appUrl = () => (process.env.APP_URL || process.env.RENDER_EXTERNAL_URL || "http://localhost:3000").replace(/\/$/, "");
 
 export async function sendEmail(email: Email): Promise<boolean> {
   const key = process.env.RESEND_API_KEY;
